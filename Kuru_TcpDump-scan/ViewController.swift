@@ -9,11 +9,14 @@
 import Cocoa
 import MapKit
 
+
+
 class ViewController: NSViewController {
 
-    @IBOutlet weak var map: MKMapView!
+//    @IBOutlet weak var map: MKMapView!
     
-     let tcpDump = Kuru_TcpDump()
+    
+    
     
     @IBAction func StartTcpDumpScan(_ sender: Any) {
          tcpDump.startTcpScan()
@@ -23,6 +26,11 @@ class ViewController: NSViewController {
     @IBAction func StopTcpDumpScan(_ sender: Any) {
          tcpDump.terminateCommand()
     }
+    
+    
+    
+    
+    let tcpDump = Kuru_TcpDump()
     
     
     override func viewDidLoad() {

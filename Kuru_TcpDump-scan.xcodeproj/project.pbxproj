@@ -46,13 +46,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6169AD351F49E63D0016B252 = {
+		616706E71F4EED0700F76988 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
 				616706DF1F4EEC7B00F76988 /* PortConection+CoreDataClass.swift */,
 				616706E01F4EEC7B00F76988 /* PortConection+CoreDataProperties.swift */,
 				616706E11F4EEC7B00F76988 /* IpAdress+CoreDataClass.swift */,
 				616706E21F4EEC7B00F76988 /* IpAdress+CoreDataProperties.swift */,
+			);
+			name = CoreData;
+			sourceTree = "<group>";
+		};
+		6169AD351F49E63D0016B252 = {
+			isa = PBXGroup;
+			children = (
+				616706E71F4EED0700F76988 /* CoreData */,
 				6169AD401F49E63E0016B252 /* Kuru_TcpDump-scan */,
 				6169AD3F1F49E63E0016B252 /* Products */,
 			);

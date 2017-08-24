@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
-        <plugIn identifier="com.apple.MapKitIBPlugin" version="12121"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -702,10 +701,6 @@
                                     <action selector="StartTcpDumpScan:" target="XfG-lQ-9wD" id="Ne3-j7-dnB"/>
                                 </connections>
                             </button>
-                            <mapView fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Icj-K2-YvS">
-                                <rect key="frame" x="387" y="310" width="698" height="530"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES"/>
-                            </mapView>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X7F-0U-I1v">
                                 <rect key="frame" x="82" y="801" width="41" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -719,13 +714,10 @@
                             </button>
                         </subviews>
                     </view>
-                    <connections>
-                        <outlet property="map" destination="Icj-K2-YvS" id="nqa-Nz-7o5"/>
-                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="654" y="153"/>
+            <point key="canvasLocation" x="643" y="160"/>
         </scene>
     </scenes>
 </document>

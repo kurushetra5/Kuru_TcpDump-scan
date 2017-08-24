@@ -40,19 +40,10 @@ class Kuru_TcpDump {
     
     
     func startTcpScan() {
-      executeIpLocation()
-      
+ 
+      fetchIpLocation(ip:"216.58.211.228")
         
-//        do {
-//            let data:Data = try  Data(contentsOf:URL(fileURLWithPath:"/Users/kurushetra/Desktop/ip.json"))
-//            
-//            let dataString:String = String(data:data, encoding:.utf8)!
-//            print(dataString)
-//            
-//        }catch {
-//            print("Error")
-//        }
-
+ 
 //        startTimerEvery(seconds:0.1)
 //        executeTcpDump()
        
@@ -287,74 +278,38 @@ class Kuru_TcpDump {
         
     }
     
-    func executeIpLocation()   {
-        
-         let task2 = Process()
-        var output2:FileHandle!
-        var ip = "176.80.247.118"
-//        176.80.247.118 216.58.211.228
-        var args = "freegeoip.net/json/" + "\(ip)"
-        
-        task2.launchPath = "/usr/bin/curl"
-        task2.arguments = [args]
-        output2 = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/ip.json")
-        task2.standardOutput = output2
-        
-         task2.launch()
-        
-//           task2.waitUntilExit()
-        
-        do {
-            let data:Data = try  Data(contentsOf:URL(fileURLWithPath:"/Users/kurushetra/Desktop/ip.json"))
-            
-            let dataString:String = String(data:data, encoding:.utf8)!
-            
-//            print(dataString)
-            
-        }catch {
-            print("Error")
-        }
-
-        do {
-            
-            if let ruta =  String("/Users/kurushetra/Desktop/ip.json"),
-                let datosJSON = FileManager.default.contents(atPath: ruta),
-                let datos = try? JSONSerialization.jsonObject(with: datosJSON, options: .mutableContainers) as? [[String:String]] {
-                print(datos ??  "No hay")
-            }
-            
-//            let datosJSON = FileManager.default.contents(atPath:"/Users/kurushetra/Desktop/ip.json")
-//            var  dat = try? JSONSerialization.jsonObject(with: datosJSON!, options: .mutableContainers) as? [[String:String]] {
-//                
-//            print("json: \(dat)")
-//            }
-            
-//            let data:Data = try  Data(contentsOf:URL(fileURLWithPath:"/Users/kurushetra/Desktop/ip.json"))
-
-            
-//              var   json = String(data: data, encoding: String.Encoding.utf8)!
-//                print("json: \(json)")
-            
-//               var datas =  json.data(using: .utf8)
-            
-           
-//                 let json2 = try JSONSerialization.jsonObject(with: data ) as? [String: String]
-//                 let city = json2?["city"]
-//               let country = json?["country_code"]
-//               let region = json?["region_name"]
-//            
-//             print(city!)
-//            print(country!)
-//            print(region!)
-//            }
-        } catch {
-            print("Error deserializing JSON: \(error)")
-        }
-
      
+    
+    func fetchIpLocation(ip:String) {
         
+        let url = URL(string:"http://freegeoip.net/json/" + "\(ip)")
+        URLSession.shared.dataTask(with: url!, completionHandler: {
+            (data, response, error) in
+            if(error != nil){
+                print(error)
+            }else{
+                do{
+                    let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments) as! [String : AnyObject]
+                    
+                    
+                    OperationQueue.main.addOperation({
+//                        self.tableView.reloadData()
+                    })
+                    
+                }catch let error as NSError{
+                    print(error)
+                }
+            }
+        }).resume()
     }
-
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     func terminateCommand() {
