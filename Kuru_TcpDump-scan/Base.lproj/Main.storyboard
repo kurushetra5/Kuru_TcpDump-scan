@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="12121"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -667,12 +668,12 @@
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="89" y="109" width="1085" height="840"/>
+                        <rect key="contentRect" x="0.0" y="29" width="1473" height="998"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
-                        <value key="minSize" type="size" width="1085" height="840"/>
-                        <value key="maxSize" type="size" width="1085" height="840"/>
-                        <value key="minFullScreenContentSize" type="size" width="1085" height="840"/>
-                        <value key="maxFullScreenContentSize" type="size" width="1085" height="840"/>
+                        <value key="minSize" type="size" width="1473" height="998"/>
+                        <value key="maxSize" type="size" width="1473" height="998"/>
+                        <value key="minFullScreenContentSize" type="size" width="1473" height="998"/>
+                        <value key="maxFullScreenContentSize" type="size" width="1473" height="998"/>
                     </window>
                     <connections>
                         <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
@@ -680,18 +681,18 @@
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-556" y="153"/>
+            <point key="canvasLocation" x="-402.5" y="-451"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="Kuru_TcpDump_scan" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="1085" height="840"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1473" height="998"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iLo-0c-ECg">
-                                <rect key="frame" x="13" y="801" width="42" height="19"/>
+                                <rect key="frame" x="10" y="226" width="42" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="roundRect" title="Start" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BmI-85-y4K">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -701,8 +702,12 @@
                                     <action selector="StartTcpDumpScan:" target="XfG-lQ-9wD" id="Ne3-j7-dnB"/>
                                 </connections>
                             </button>
+                            <mapView fixedFrame="YES" mapType="standard" pitchEnabled="NO" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eAU-6p-QfV">
+                                <rect key="frame" x="0.0" y="253" width="1473" height="745"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                            </mapView>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X7F-0U-I1v">
-                                <rect key="frame" x="82" y="801" width="41" height="19"/>
+                                <rect key="frame" x="11" y="200" width="41" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="roundRect" title="Stop" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HsA-ng-Ojq">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -714,10 +719,13 @@
                             </button>
                         </subviews>
                     </view>
+                    <connections>
+                        <outlet property="map" destination="eAU-6p-QfV" id="68F-F4-1Y6"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="643" y="160"/>
+            <point key="canvasLocation" x="612" y="44"/>
         </scene>
     </scenes>
 </document>
