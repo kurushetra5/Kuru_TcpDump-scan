@@ -11,11 +11,12 @@ import MapKit
 
 
 
-class ViewController: NSViewController {
+class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTableViewDelegate{
 
     @IBOutlet weak var map: MKMapView!
     
     
+    @IBOutlet weak var ipsTableView: NSTableView!
     
     
     @IBAction func StartTcpDumpScan(_ sender: Any) {
@@ -31,10 +32,11 @@ class ViewController: NSViewController {
     
     
     let tcpDump = Kuru_TcpDump()
-    
+    var ipsToShow:[String]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tcpDump.ipsDelegate = self
     }
 
     
@@ -45,6 +47,29 @@ class ViewController: NSViewController {
         }
     }
 
+    
+    func newIpComing(ips:[String]) {
+         ipsToShow = ips
+         ipsTableView.reloadData()
+    }
+    
+    
+    func numberOfRows(in tableView: NSTableView) -> Int {
+         return ipsToShow?.count ?? 0
+    }
+    
+    
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        
+        
+        
+        let cell = tableView.make(withIdentifier: "ipsCell", owner: nil) as? NSTableCellView
+        cell?.textField?.stringValue = ipsToShow[row]
+        
+        
+        return cell
 
+    }
+    
 }
 

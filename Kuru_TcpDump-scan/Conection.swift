@@ -11,12 +11,27 @@ import Foundation
 struct  Conection  {
     
     var comIp:String!
-    var comIpLocation:String!
+    var comIpLongitude:String!
+    var comIpLatitud:String!
     var goIp:String!
-    var goIpLocation:String!
+    var goIpLongitude:String!
+    var goIpLatitud:String!
     var conectionTime:Double!
     
     
+    init() {
+        
+    }
+    
+    
+    func isFilled() -> Bool {
+        
+        if comIp != nil && goIp != nil && comIpLongitude != nil && comIpLatitud != nil && goIpLongitude != nil && goIpLatitud != nil && conectionTime != nil {
+            return true
+        } else {
+           return false
+        }
+    }
     
 }
 
