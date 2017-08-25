@@ -16,28 +16,59 @@ protocol  IPsDelegate {
 
 
 
-class Kuru_TcpDump:NSObject  {
+class Kuru_TcpDump   {
     
     //MARK: ---------------- VARS -------------------------
     
     let appDelegate = NSApplication.shared().delegate  as! AppDelegate
+    let managedContext:NSManagedObjectContext!
     var ipsDelegate:IPsDelegate?
-    let task =  Process()
-    var output:FileHandle!
-    var ips:[String] = []
-    var timer:Timer!
+    let tcpDumpTask =  Process()
+    var tcpDumpOutFile:FileHandle!
+    var ipsFounded:[String] = []
+    var extractLinesTimer:Timer!
     var newConection:Conection = Conection()
     var conectionsToShow:[Conection] = []
     
     
+    var  tcpDumpFileLine:String {
+        
+       var arrayData:[String] = ["No data"]
+       var  data:Data!
+        
+        do   {
+            data = try  Data(contentsOf:URL(fileURLWithPath:"/Users/kurushetra/Desktop/netstat2.txt"))
+            let dataString:String = String(data:data, encoding:.utf8)!
+            arrayData = dataString.components(separatedBy:"\n")
+            
+            if arrayData.count >= 2 { //FIXME: Cambiar ha ??
+               return arrayData[0]
+            }else {
+               arrayData[0] = "No data"
+               return arrayData[0]
+            }
+
+        }catch {
+            print("no hay data")
+        }
+         return arrayData[0]
+        
+    }
     
+    
+    //MARK: ---------------- INIT -------------------------
+      init() {
+        managedContext = self.appDelegate.persistentContainer.viewContext
+        getIps()
+ 
+    }
     
     
     //MARK: ---------------- START -------------------------
     
     func startTcpScan() {
-        cleanDataBase()
-        getIps()
+//        cleanDataBase()
+        
         startTimerEvery(seconds:0.1)
         executeTcpDump()
     }
@@ -51,32 +82,31 @@ class Kuru_TcpDump:NSObject  {
         
         let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "IpAdress")
         let request = NSBatchDeleteRequest(fetchRequest: fetch)
-        let managedContext = self.appDelegate.persistentContainer.viewContext
-        
         do {
             try managedContext.execute(request)
             
         } catch {
             // Error Handling
         }
-        
     }
+    
+    
     
     func getIps() {
         
-        ips = []
+        ipsFounded = []
         
         let fetchRequest: NSFetchRequest<IpAdress> = IpAdress.fetchRequest()
-        let managedContext = self.appDelegate.persistentContainer.viewContext
+ 
         do {
             let searchResults = try managedContext.fetch(fetchRequest)
             print ("num of results = \(searchResults.count)")
             
             for ip in searchResults as [IpAdress] {
-                ips.append(ip.number!)
+                ipsFounded.append(ip.number!)
                 print("\(String(describing: ip.value(forKey: "number")))")
             }
-            ipsDelegate?.newIpComing(ips:ips)
+            ipsDelegate?.newIpComing(ips:ipsFounded)
             
         } catch {
             print("Error with request: \(error)")
@@ -91,7 +121,7 @@ class Kuru_TcpDump:NSObject  {
             
             let fetchRequest: NSFetchRequest<IpAdress> = IpAdress.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "number == %@",conection.comIp)
-            let managedContext = self.appDelegate.persistentContainer.viewContext
+           
             do {
                 let searchResults = try managedContext.fetch(fetchRequest)
                 print ("num of results = \(searchResults.count)")
@@ -109,7 +139,7 @@ class Kuru_TcpDump:NSObject  {
             
             let fetchRequest: NSFetchRequest<IpAdress> = IpAdress.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "number == %@", conection.goIp)
-            let managedContext = self.appDelegate.persistentContainer.viewContext
+            
             do {
                 let searchResults = try managedContext.fetch(fetchRequest)
                 print ("num of results = \(searchResults.count)")
@@ -143,41 +173,22 @@ class Kuru_TcpDump:NSObject  {
     //MARK: ---------------- TIMER EXTRACT LINES -------------------------
     
     func startTimerEvery(seconds:Double) {
-        timer = Timer.scheduledTimer(timeInterval: seconds, target: self, selector:#selector(timerSelector), userInfo: nil, repeats: true)
+        extractLinesTimer = Timer.scheduledTimer(timeInterval: seconds, target: self, selector:#selector(timerSelector), userInfo: nil, repeats: true)
         
     }
     
     
     @objc func timerSelector() {  //FIXME: cambiar ha swift  @objc
         
-        extractNewLines()
+       decomposeTcpLine()
     }
     
     
-    func extractNewLines() {
-        
-        var arrayData:[String] = []
-        
-        do   {
-            let data:Data = try  Data(contentsOf:URL(fileURLWithPath:"/Users/kurushetra/Desktop/netstat2.txt"))
-            let dataString:String = String(data:data, encoding:.utf8)!
-            arrayData = dataString.components(separatedBy:"\n")
-            
-            if arrayData.count >= 2 {
-                decomposeTcpLine(stringLine:arrayData[0])
-            }
-        }catch {
-            print("no hay data")
-        }
-        
-        
-        
-    }
     
     func stopTimer() {
         
-        if (timer != nil) {
-            timer.invalidate()
+        if (extractLinesTimer != nil) {
+            extractLinesTimer.invalidate()
         }
     }
     
@@ -189,16 +200,16 @@ class Kuru_TcpDump:NSObject  {
     
     func executeTcpDump()   {
         
-        task.launchPath = "/usr/sbin/tcpdump"
-        task.arguments = ["-i","en4","-n"]
-        output = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/netstat2.txt")
-        task.standardOutput = output
-        task.launch()
+        tcpDumpTask.launchPath = "/usr/sbin/tcpdump"
+        tcpDumpTask.arguments = ["-i","en4","-n"]
+        tcpDumpOutFile = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/netstat2.txt")
+        tcpDumpTask.standardOutput = tcpDumpOutFile
+        tcpDumpTask.launch()
         
     }
     
     func terminateCommand() {
-        task.terminate()
+        tcpDumpTask.terminate()
     }
     
     
@@ -208,9 +219,9 @@ class Kuru_TcpDump:NSObject  {
     //MARK: ---------------- LINES  -------------------------
     
     
-    func decomposeTcpLine(stringLine:String) {
+    func decomposeTcpLine() {
         
-        var arrayFields = stringLine.components(separatedBy:" ")
+        var arrayFields = tcpDumpFileLine.components(separatedBy:" ")
         
         if arrayFields.count <= 3 {
             removeLine()
@@ -267,10 +278,10 @@ class Kuru_TcpDump:NSObject  {
             
             if cip.characters.count < 17 {
                 
-                if ips.index(of:cip) == nil {
-                    ips.append(cip)
+                if ipsFounded.index(of:cip) == nil {
+                    ipsFounded.append(cip)
                     fetchIpLocation(ipString:cip , direction:"comming")
-                    ipsDelegate?.newIpComing(ips:ips)
+                    ipsDelegate?.newIpComing(ips:ipsFounded)
                 }else {
                     fetchCoreDataInfoForNew(conection:newConection , direction:"comming")
                 }
@@ -278,10 +289,10 @@ class Kuru_TcpDump:NSObject  {
             
             if gip.characters.count < 17 {
                 
-                if ips.index(of:gip) == nil {
-                    ips.append(gip)
+                if ipsFounded.index(of:gip) == nil {
+                    ipsFounded.append(gip)
                     fetchIpLocation(ipString:gip , direction:"going")
-                    ipsDelegate?.newIpComing(ips:ips)
+                    ipsDelegate?.newIpComing(ips:ipsFounded)
                 }else {
                     fetchCoreDataInfoForNew(conection:newConection , direction:"comming")
                 }
@@ -302,7 +313,7 @@ class Kuru_TcpDump:NSObject  {
         let url:URL = URL.init(fileURLWithPath:"/Users/kurushetra/Desktop/netstat2.txt")
         self.removeLinesFromFile(fileURL:url, numLines:1)
         print("------ line  processed and REMOVED -------")
-        print(ips)
+        print(ipsFounded)
         
     }
     
@@ -361,10 +372,10 @@ class Kuru_TcpDump:NSObject  {
                     let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments) as! [String : AnyObject]
                     
                     OperationQueue.main.addOperation({
-                        //                        self.tableView.reloadData()
-                        let managedContext = self.appDelegate.persistentContainer.viewContext
-                        let entity = NSEntityDescription.entity(forEntityName: "IpAdress", in: managedContext)!
-                        let ip = NSManagedObject(entity: entity,insertInto: managedContext) as! IpAdress
+                        
+                       
+                        let entity = NSEntityDescription.entity(forEntityName: "IpAdress", in: self.managedContext)!
+                        let ip = NSManagedObject(entity: entity,insertInto: self.managedContext) as! IpAdress
                         ip.city = json["city"] as? String
                         ip.number = ipString
                         ip.latitud = Double((json["latitude"] as? Double)!)
@@ -388,7 +399,7 @@ class Kuru_TcpDump:NSObject  {
                         }
                         
                         do {
-                            try managedContext.save()
+                            try self.managedContext.save()
                             //                                people.append(ip)
                         } catch let error as NSError {
                             print("Could not save. \(error), \(error.userInfo)")
