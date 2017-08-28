@@ -1,0 +1,186 @@
+//
+//  FileComandExtractor.swift
+//  Kuru_TcpDump-scan
+//
+//  Created by Kurushetra on 27/8/17.
+//  Copyright © 2017 Kurushetra. All rights reserved.
+//
+
+//import Cocoa
+import Foundation
+
+
+//extension String {
+//    
+//    func matchingStrings(regex: String) -> [[String]] {
+//        guard let regex = try? NSRegularExpression(pattern: regex, options: []) else { return [] }
+//        let nsString = self as NSString
+//        let results  = regex.matches(in: self, options: [], range: NSMakeRange(0, nsString.length))
+//        return results.map { result in
+//            (0..<result.numberOfRanges).map { result.rangeAt($0).location != NSNotFound
+//                ? nsString.substring(with: result.rangeAt($0))
+//                : ""
+//            }
+//        }
+//    }
+//}
+
+
+class FileComandExtractor  {
+    
+    
+    
+    
+    //MARK: ---------------- TRACE_ROUTE  -------------------------
+    func extractTraceRoute(fileUrl:URL) -> [TraceRouteNode] {
+        var fileLines:[String] = []
+        var nodes:[TraceRouteNode] = []
+        
+        fileLines = extractLinesFrom(file:fileUrl)
+        nodes =  extractIpsFromTraceRoute(lines:fileLines)
+        
+        return nodes
+    }
+    
+    
+    
+    func extractIpsFromTraceRoute(lines:[String]) -> [TraceRouteNode] {
+        
+        var completIP:[[String]] = []
+        var nodes:[TraceRouteNode] = []
+        
+        for  line in  lines {
+            
+            let  clean1 =  line.replacingOccurrences(of:" ", with:"/")
+            
+            var elementsCount = clean1.components(separatedBy:"//")
+            
+            for element in elementsCount {
+                if element.contains("/ms") {
+                    elementsCount.remove(at:elementsCount.index(of:element)!)
+                }
+                if element.characters.count <= 0 {
+                    elementsCount.remove(at:elementsCount.index(of:element)!)
+                }
+                
+            }
+            
+            if elementsCount.count == 2 {
+                completIP.append(elementsCount)
+            }
+        }
+        
+        for ip in completIP {
+            let number = ip[0].replacingOccurrences(of:"/", with: "")
+            let element = ip[1].components(separatedBy:"/")
+            let ipTmp1 = element[1].replacingOccurrences(of:"(", with:"")
+            let ip  = ipTmp1.replacingOccurrences(of:")", with:"")
+            let ips = element[0]
+            
+            
+            if ip != "*" {
+                var node:TraceRouteNode = TraceRouteNode()
+                node.ip = ip
+                node.ips = ips
+                node.number = number
+                nodes.append(node)
+            }
+        }
+//        print(nodes)
+        return nodes
+    }
+    
+    
+    
+    
+    
+    
+//    func extractIpsFromTraceRoute(lines:[String]) -> [String] {
+//        
+//        var arrayIps:[String] = []
+//        
+//        for  line in  lines {
+//            //             print(line.matchingStrings(regex:"(\\d\\d?\\d?.\\d\\d?\\d?.\\d\\d?\\d?.\\d\\d?\\d?)"))
+//            
+//            if !line.contains("*") {
+//                
+//                var  ipsA:[String]
+//                
+//                ipsA  = line.matchingStrings(regex:"(\\d\\d?\\d?.\\d\\d?\\d?.\\d\\d?\\d?.\\d\\d?\\d?)")[0]
+//                
+//                //                 arrayIps.append(ipsA[0])
+//                
+//                if ipsA[0].contains("-") {
+//                    ipsA  = line.matchingStrings(regex:"(\\d\\d?\\d?.\\d\\d?\\d?.\\d\\d?\\d?.\\d\\d?\\d?)")[1]
+//                }
+//                
+//                arrayIps.append(ipsA[0])
+//                //                 print("---------------------------------------------------------------")
+//                
+//                //                 print("---------------------------------------------------------------")
+//                
+//                
+//                
+//            }
+//        }
+//        //        print(arrayIps)
+//        //        var array:[String] = [ipsA[0]]
+//        var uniqueIps = uniqueElementsFrom(array:arrayIps)
+//        
+//        //                let uniqueUnordered = Array(Set(array))
+//        print(uniqueIps)
+//        
+//        
+//        return arrayIps
+//    }
+//    
+//    
+//    
+//    
+//    
+//    func uniqueElementsFrom(array: [String]) -> [String] {
+//        //Create an empty Set to track unique items
+//        var set = Set<String>()
+//        let result = array.filter {
+//            guard !set.contains($0) else {
+//                //If the set already contains this object, return false
+//                //so we skip it
+//                return false
+//            }
+//            //Add this item to the set since it will now be in the array
+//            set.insert($0)
+//            //Return true so that filtered array will contain this item.
+//            return true
+//        }
+//        return result
+//    }
+//    
+//    
+    
+    //MARK: ---------------- LINES EXTRACTOR  -------------------------
+    func extractLinesFrom(file:URL) -> [String] {
+        
+        var arrayLines:[String] = ["No data"]
+        var  data:Data!
+        
+        do   {
+            data = try  Data(contentsOf:file)
+            let dataString:String = String(data:data, encoding:.utf8)!
+            arrayLines = dataString.components(separatedBy:"\n")
+            
+            if arrayLines.count >= 1 { //FIXME: Cambiar ha ??
+                return arrayLines
+            }else {
+                arrayLines[0] = "No data"
+                return arrayLines
+            }
+            
+        }catch {
+            print("no hay data")
+        }
+        
+        return arrayLines
+    }
+    
+    
+}

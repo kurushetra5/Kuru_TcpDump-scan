@@ -12,4 +12,14 @@ import CoreData
 @objc(IpAdress)
 public class IpAdress: NSManagedObject {
 
+    
+    
+    
+    func isFilled() -> Bool {
+        if number != nil && city != nil && country != nil && adress != nil && longitude != nil  {
+           return true
+        }
+        return false
+    }
+    
 }
