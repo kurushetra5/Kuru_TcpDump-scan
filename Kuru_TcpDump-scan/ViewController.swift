@@ -77,6 +77,13 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     }
     
     
+    @IBAction func filterIpsInTcpDumpCommand(_ sender: NSButton) {
+        
+        tcpDump.filterInTcpDumpCommand = FilterInTcpDumpCommand(rawValue:sender.state)!
+
+    }
+    
+    
     fileprivate enum CellIdentifiers {
         static let NumberCell = "NumberCell"
         static let CountryCell = "CountryCell"
@@ -147,17 +154,18 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         
         let locationB:CLLocation = CLLocation(latitude:node.lat!, longitude:node.lon!)
         mapEngine.drawHaLine(locationA:locationA ,locationB:locationB)
-        
-        
-        
-        
-        
     }
+    
+    
+    
     
     func newIpComing(ips:[IpAdress]) {
          ipsToShow = ips
          ipsTableView.reloadData()
     }
+    
+    
+    
     
     
     func newConection(ip:IpAdress) {

@@ -24,7 +24,9 @@ enum PackagesMode:Int {
 enum ProcessedMode:Int {
     case off,on
 }
-
+enum FilterInTcpDumpCommand:Int {
+    case off,on
+}
 
 
 class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
@@ -62,17 +64,17 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     var countProcessedMode:ProcessedMode = ProcessedMode.off
     var packagesProcessed:Int = 0
     
+    var filterInTcpDumpCommand:FilterInTcpDumpCommand = FilterInTcpDumpCommand.off
+    
+    
+    
     
     func traceRouteIps(ips:[TraceRouteNode]) {
-        
         for ip in ips {
            ipLocator.fetchIpLocation(node:ip)
         }
-        
-        
-        
-        
     }
+    
     func nodeIpReady(node:TraceRouteNode) {
         
         ipsDelegate?.newNode(node:node)
@@ -315,18 +317,12 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     
     
     func executeTcpDump()   {
-        if tcpDumpTask.isRunning {
-//            print(tcpDumpTask.isRunning)
-            tcpDumpTask.terminate()
-//            sleep(3)
-//             print(tcpDumpTask.isRunning)
-//            tcpDumpTask.suspend()
-            
-//            print(tcpDumpTask.isRunning)
-//             sleep(5)
-           
+        
+        if filterInTcpDumpCommand == FilterInTcpDumpCommand.on {
+           if tcpDumpTask.isRunning {
+           tcpDumpTask.terminate()
+           }
         }
-//        sleep(5)
         tcpDumpTask =  Process()
         tcpDumpTask.launchPath = "/usr/sbin/tcpdump"
         tcpDumpTask.arguments = args
@@ -335,6 +331,8 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
         tcpDumpTask.launch()
         
     }
+    
+    
     
     
     func excludeIpFromTcpDump(ip:String) {
@@ -530,16 +528,14 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     
     func newIpWith(number:String) {
         
-        
-        sleep(5)
-        excludeIpFromTcpDump(ip:number)
-        
-        
+        if filterInTcpDumpCommand == FilterInTcpDumpCommand.on {
+           excludeIpFromTcpDump(ip:number)
+        }
+      
         let newIp:IpAdress = newIpEntity()
         newIp.number = number
         
        
-        
         if dataBaseMode == DataBaseMode.on {
             
             ipsFound.append(newIp)
