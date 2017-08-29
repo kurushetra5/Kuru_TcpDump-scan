@@ -57,12 +57,12 @@ import Foundation
     
     
     
-    func countLines(filePath:String) -> Int  {
+    func countLines(fileURL:URL) -> Int  {
         
         var resultNumber:Int!
         
         do {
-            let data:Data = try  Data(contentsOf:URL(fileURLWithPath:filePath))
+            let data:Data = try  Data(contentsOf:fileURL)
             let dataString:String = String(data:data, encoding:.utf8)!
             let array = dataString.components(separatedBy:"\n")
             
@@ -75,7 +75,6 @@ import Foundation
     
     
     func createFileAtPath(path:String) {
-        
         filemgr.createFile(atPath:path, contents:nil, attributes:nil)
     }
     

@@ -8,6 +8,8 @@
 
 import Foundation
 
+
+
 struct  Conection  {
     
     var comIp:String!

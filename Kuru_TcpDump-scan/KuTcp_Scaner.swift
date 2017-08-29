@@ -14,6 +14,15 @@ protocol  IPsDelegate {
     func newIpComing(ips:[IpAdress])
     func newConection(ip:IpAdress)
     func newNode(node:TraceRouteNode)
+    func newPackage()
+    func packageProcessed(number:Int)
+}
+
+enum PackagesMode:Int {
+    case off,on
+}
+enum ProcessedMode:Int {
+    case off,on
 }
 
 
@@ -27,10 +36,16 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     var ipsDelegate:IPsDelegate?
     var comandsManager:Comands = Comands()
     var ipLocator:IPLocator = IPLocator()
-    let tcpDumpTask =  Process()
-//    let traceRouteTask =  Process()
+    
+    
+    
+    var tcpDumpTask =  Process()
+    var args = ["-i","en4","-n" ," not (src net 192.168.8.1 and dst net 192.168.8.100) and not  (src net 192.168.8.100 and dst net 192.168.8.1) and not (src net 192.168.8.1 and dst net 239.255.255.250)"]
     var tcpDumpOutFile:FileHandle!
-//    var traceRouteOutFile:FileHandle!
+    
+    
+    
+    var isScanStoped:Bool = false
     var ipsFounded:[String] = []
     var ipsFound:[IpAdress] = []
     var extractLinesTimer:Timer!
@@ -42,6 +57,10 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     var dataBaseMode:DataBaseMode = DataBaseMode.on
     var ipsFoundOffMode:[IpAdress] = []
     
+    
+    var countPackagesMode:PackagesMode = PackagesMode.off
+    var countProcessedMode:ProcessedMode = ProcessedMode.off
+    var packagesProcessed:Int = 0
     
     
     func traceRouteIps(ips:[TraceRouteNode]) {
@@ -74,9 +93,13 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
             if arrayData.count >= 2 { //FIXME: Cambiar ha ??
                return arrayData[0]
             }else {
-               arrayData[0] = "No data"
-               return arrayData[0]
-            }
+                if isScanStoped {
+                   arrayData[0] = "No data"
+                   stopTimer()
+                   stopLocationsTimer()
+                  return arrayData[0]
+                }
+        }
 
         }catch {
             print("no hay data")
@@ -92,12 +115,16 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
         case on,off
     }
 
+    
     func dataBaseModeOff() {
         dataBaseMode = DataBaseMode.off
         ipsFoundOffMode = []
         ipsFound = []
         ipsDelegate?.newIpComing(ips:ipsFoundOffMode)
     }
+    
+    
+    
     
     
     //MARK: ---------------- INIT -------------------------
@@ -108,17 +135,21 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     }
     
     
+    
+    
+    
     //MARK: ---------------- START -------------------------
     
     func startTcpScan() {
         
-//        var location:IPLocator = IPLocator()
-//       var lon =  location.fetchIpLocation(ip:"61.232.254.39")
+        isScanStoped = false
+//        cleanDataBase()
+ 
              getIps()
-//       print(lon)
+ 
        
           executeTcpDump()
-            startTimerEvery(seconds:0.1)
+        startTimerEvery(seconds:0.1)
          startTimerLocationsEvery(seconds:1.0)
  
     }
@@ -138,6 +169,8 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
         } catch {
             // Error Handling
         }
+        ipsFound.removeAll()
+         ipsDelegate?.newIpComing(ips:ipsFound)
     }
     
     
@@ -234,6 +267,12 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     @objc func timerSelector() {  //FIXME: cambiar ha swift  @objc
         
        decomposeTcpLine()
+        
+        if countPackagesMode == PackagesMode.on {
+           ipsDelegate?.newPackage()
+        }
+
+        
     }
     
     
@@ -276,16 +315,52 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     
     
     func executeTcpDump()   {
-        
+        if tcpDumpTask.isRunning {
+//            print(tcpDumpTask.isRunning)
+            tcpDumpTask.terminate()
+//            sleep(3)
+//             print(tcpDumpTask.isRunning)
+//            tcpDumpTask.suspend()
+            
+//            print(tcpDumpTask.isRunning)
+//             sleep(5)
+           
+        }
+//        sleep(5)
+        tcpDumpTask =  Process()
         tcpDumpTask.launchPath = "/usr/sbin/tcpdump"
-        tcpDumpTask.arguments = ["-i","en4","-n"]
+        tcpDumpTask.arguments = args
         tcpDumpOutFile = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/netstat2.txt")
         tcpDumpTask.standardOutput = tcpDumpOutFile
         tcpDumpTask.launch()
         
     }
     
+    
+    func excludeIpFromTcpDump(ip:String) {
+        
+        tcpDumpTask.terminate()
+        
+        if tcpDumpTask.isRunning {
+            tcpDumpTask.terminate()
+        }
+        
+        let notIpArgs:String = "and not (src net " + ip + " and dst net " + ip + ")"
+        args.append(notIpArgs)
+        
+        if isScanStoped == false {
+            executeTcpDump()
+        }
+    }
+    
+    
+    
+    
+    
+    
     func terminateCommand() {
+        isScanStoped = true
+        
         tcpDumpTask.terminate()
     }
     
@@ -306,7 +381,7 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
         var isFound:Bool = false
         
         if arrayFields.count <= 3 {
-             print("---- count <= 3 ----")
+             print("---- cheking ----")
             removeLine()
             return
         }
@@ -316,6 +391,7 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
             removeLine()
             return //FIXME: Coger paquete y conexion y borrar linea
         }
+        
         if arrayFields[1] == "options" {
              print("---- options ----")
             removeLine()
@@ -331,7 +407,7 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
         }
 
         if arrayFields.count >= 5 {
-            print("---- count >= 5  ----")
+            print("---- Processing....  ----")
             let tmpTime = arrayFields[0]
             var arrayTime = tmpTime.components(separatedBy:".")
             let time = arrayTime[0]
@@ -345,6 +421,11 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
             var comIpArray:[String] = comingIP.components(separatedBy:".")
             
             if comIpArray.count <= 3 { //FIXME: quitar :45 del puerto y coger ip borrar linea
+                removeLine()
+                
+                if countProcessedMode == ProcessedMode.on {
+                   countProcessedPacages()
+                }
                 return
             }
             
@@ -354,6 +435,11 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
             
             var goIpArray:[String] = goingIP.components(separatedBy:".")
             if goIpArray.count <= 3 {
+                 removeLine()
+                if countProcessedMode == ProcessedMode.on {
+                    countProcessedPacages()
+                }
+
                 return
             }
             
@@ -414,6 +500,10 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
             
             removeLine()
             
+            if countProcessedMode == ProcessedMode.on {
+                countProcessedPacages()
+            }
+
             
         }
 //        }
@@ -440,10 +530,15 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     
     func newIpWith(number:String) {
         
+        
+        sleep(5)
+        excludeIpFromTcpDump(ip:number)
+        
+        
         let newIp:IpAdress = newIpEntity()
         newIp.number = number
         
-        
+       
         
         if dataBaseMode == DataBaseMode.on {
             
@@ -475,12 +570,16 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
         
 //        let url:URL = URL.init(fileURLWithPath:tcpDumpFileUrl)
         self.removeLinesFromFile(fileURL:tcpDumpFileUrl, numLines:1)
-        print("------ line  processed and REMOVED -------")
+//        print("------ line  processed and REMOVED -------")
+        
         print(ipsFounded)
         
     }
     
-    
+    func countProcessedPacages() {
+        packagesProcessed += 1
+        ipsDelegate?.packageProcessed(number:packagesProcessed)
+    }
     
     
     func removeLinesFromFile(fileURL: URL, numLines: Int) {

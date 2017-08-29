@@ -23,15 +23,20 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     @IBOutlet weak var pathForSaveDumpFile: NSTextField!
     
     
+    @IBOutlet weak var packagesCount: NSTextField!
+    @IBOutlet weak var packagesProcessed: NSTextField!
+    
     
     
     @IBAction func StartTcpDumpScan(_ sender: Any) {
          tcpDump.startTcpScan()
         
+        
     }
     
     @IBAction func StopTcpDumpScan(_ sender: Any) {
          tcpDump.terminateCommand()
+        
     }
    
     
@@ -51,6 +56,25 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         configureView()
     }
     
+    
+    @IBAction func checkPacages(_ sender:NSButton) {
+       
+        tcpDump.countPackagesMode = PackagesMode(rawValue:sender.state)!
+        
+    }
+    
+    @IBAction func checkProcessed(_ sender: NSButton) {
+ 
+        tcpDump.countProcessedMode = ProcessedMode(rawValue:sender.state)!
+    }
+    
+    @IBAction func cleanDataBase(_ sender: Any) {
+        tcpDump.cleanDataBase()
+    }
+    
+    @IBAction func cleanTcpDumpFile(_ sender: Any) {
+        filesManager.createFileAtPath(path:filesManager.tcpDumpFileUrl.relativePath)
+    }
     
     
     fileprivate enum CellIdentifiers {
@@ -76,6 +100,7 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         tcpDump.ipsDelegate = self
         mapEngine = MapRouteEngine(withMap:map)
         
+        
     }
 
     
@@ -86,6 +111,11 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         pathForSaveDumpFile.stringValue = filesManager.saveDumpFileUrl.absoluteString
     }
     
+    func updatePackagesCounts() {
+        
+      packagesCount.integerValue = filesManager.countLines(fileURL:filesManager.tcpDumpFileUrl)
+    }
+    
     override var representedObject: Any? {
         didSet {
         // Update the view, if already loaded.
@@ -93,6 +123,13 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     }
     
     
+    func newPackage() {
+        updatePackagesCounts()
+    }
+    
+    func packageProcessed(number:Int) {
+        packagesProcessed.integerValue = number
+    }
     
     
     
@@ -120,9 +157,8 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     func newIpComing(ips:[IpAdress]) {
          ipsToShow = ips
          ipsTableView.reloadData()
-        
-        
-     }
+    }
+    
     
     func newConection(ip:IpAdress) {
         
