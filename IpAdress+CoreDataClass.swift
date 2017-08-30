@@ -12,7 +12,7 @@ import CoreData
 @objc(IpAdress)
 public class IpAdress: NSManagedObject {
 
-    
+    var anotation:IpAnotation!
     
     
     func isFilled() -> Bool {

@@ -29,14 +29,17 @@ enum FilterInTcpDumpCommand:Int {
 }
 
 
-class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
+  class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
+    
+    
+    
     
     //MARK: ---------------- VARS -------------------------
     
     let appDelegate = NSApplication.shared().delegate  as! AppDelegate
     let managedContext:NSManagedObjectContext!
     var ipsDelegate:IPsDelegate?
-    var comandsManager:Comands = Comands()
+    var comandsManager:Comands = Comands.shared
     var ipLocator:IPLocator = IPLocator()
     
     
@@ -379,7 +382,7 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
         var isFound:Bool = false
         
         if arrayFields.count <= 3 {
-             print("---- cheking ----")
+             print("--------")
             removeLine()
             return
         }
@@ -400,12 +403,13 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
             removeLine()
             return //FIXME: Coger paquete y conexion y borrar linea
         }
-        if arrayFields[1] == "IP" {
-           print("---- IP ----")
-        }
+//        if arrayFields[1] == "IP" {
+//           print("---- IP ----")
+//        }
 
+        
         if arrayFields.count >= 5 {
-            print("---- Processing....  ----")
+            print("++++++++")
             let tmpTime = arrayFields[0]
             var arrayTime = tmpTime.components(separatedBy:".")
             let time = arrayTime[0]
@@ -555,6 +559,7 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     }
     
     
+    
     func  newIpEntity() -> IpAdress {
         let entity = NSEntityDescription.entity(forEntityName: "IpAdress", in: self.managedContext)!
         let ip = NSManagedObject(entity: entity,insertInto: self.managedContext) as! IpAdress
@@ -562,15 +567,11 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
     }
     
     
+    
     func removeLine() {
-        
-//        let url:URL = URL.init(fileURLWithPath:tcpDumpFileUrl)
         self.removeLinesFromFile(fileURL:tcpDumpFileUrl, numLines:1)
-//        print("------ line  processed and REMOVED -------")
-        
-        print(ipsFounded)
-        
     }
+    
     
     func countProcessedPacages() {
         packagesProcessed += 1
@@ -587,28 +588,18 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
             var pos = 0
             
             while lineNo < numLines {
-                
                 let range = data.range(of: nl, options: [], in: NSMakeRange(pos,data.length - pos))
-                
                 if range.location == NSNotFound {
                     return
                 }
                 lineNo += 1
                 pos = range.location + range.length
             }
-            
-            
             let trimmedData = data.subdata(with: NSMakeRange(pos, data.length - pos))
-            
-            
             try! trimmedData.write(to: fileURL)
-            
-            
-        } catch let error as NSError {
+            } catch let error as NSError {
             print(error.localizedDescription)
-            
-        }
-        
+            }
     }
     
     
@@ -638,12 +629,13 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
 //    /usr/local/Cellar/mtr
 //     curl ip-api.com/json/95.126.27.146
 //    "http://freegeoip.net/json/" + "\(ipString)")
+    
     func fetchIpLocation(ip:IpAdress, direction:Direction) {
         
         ipLocatorReady = false
         let ipNumber:String = ip.number!
         
-        let url = URL(string:"http://freegeoip.net/json/" + "\(ipNumber)")
+        let url = URL(string:"http://ip-api.com/json/" + "\(ipNumber)")
         URLSession.shared.dataTask(with: url!, completionHandler: {
             (data, response, error) in
             if(error != nil){
@@ -652,49 +644,57 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
                 do{
                     let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments) as! [String : AnyObject]
                     
-                    let lon:String = String(describing: json["longitude"] as! NSNumber)
-                    print(lon)
+//                    let lon:String = String(describing: json["longitude"] as! NSNumber)
+//                    print(lon)
                     
                     OperationQueue.main.addOperation({
                         
 //                       ["latitude": 37.3042, "city": Cupertino, "country_name": United States, "country_code": US, "ip": 17.130.74.5, "zip_code": 95014, "region_code": CA, "longitude": -122.0946, "metro_code": 807, "region_name": California, "time_zone": America/Los_Angeles]
                         
                         
-//                        let entity = NSEntityDescription.entity(forEntityName: "IpAdress", in: self.managedContext)!
-//                        let ip = NSManagedObject(entity: entity,insertInto: self.managedContext) as! IpAdress
-                        
                         
                         ip.city = json["city"] as? String
 //                        ip.number = ipString
-                        ip.latitud = Double((json["latitude"] as? Double)!)
-                        ip.longitude = String(describing: json["longitude"] as! NSNumber)
-                        ip.country  = json["country_name"] as? String
-                        ip.adress = json["region_name"] as? String
+                        ip.latitud = Double((json["lat"] as? Double)!)
+                        ip.longitude = String(describing: json["lon"] as! NSNumber)
+                        ip.country  = json["country"] as? String
+                        ip.adress = json["regionName"] as? String
                         
                         
+                        ip.anotation = IpAnotation()
+                        ip.anotation.title =  json["as"] as? String
+                        ip.anotation.subtitle = ip.number
+                        ip.anotation.coordinate.latitude = ip.latitud
+                        ip.anotation.coordinate.longitude = Double(ip.longitude!)!
                         
-//                        ip.city = json["city"] as? String
-//                        ip.number = ipString
-//                        ip.latitud = Double((json["latitude"] as? Double)!)
-//                        ip.longitude = String(describing: json["longitude"] as! NSNumber)
-//                        ip.country  = json["country_name"] as? String
-//                        ip.adress = json["region_name"] as? String
+                        
+//                        node.aso  = json["as"] as? String
+//                        node.city = json["city"] as? String
+//                        node.country = json["country"] as? String
+//                        node.countryCode = json["countryCode"] as? String
+//                        node.isp = json["isp"] as? String
+//                        node.lat = json["lat"] as? Double
+//                        node.lon = json["lon"] as? Double
+//                        node.org = json["org"] as? String
+//                        node.region = json["region"] as? String
+//                        node.regionName = json["regionName"] as? String
+//                        node.status = json["status"] as? String
+//                        node.timezone = json["timezone"] as? String
+//                        node.zip = json["zip"] as? String
+//
+                        
+                            self.ipsDelegate?.newIpComing(ips:self.ipsToCheck())
+                            self.ipsDelegate?.newConection(ip:ip)
+                        
+                       
+                        
+                        
+                                                
+                        self.ipLocatorReady = true
 
+ 
                         
-                        
-                        
-                        
-//                        self.ipsFound.append(ip)
-                        
-//                            self.ipsFound.append(ip)
-                             self.ipsDelegate?.newIpComing(ips:self.ipsToCheck())
-                        self.ipsDelegate?.newConection(ip:ip)
-                            
-                      self.ipLocatorReady = true
-
-//                        print(ip.city ?? "City no set")
-                        
-                        print(ip.longitude ??  "no set")
+//                        print(ip.longitude ??  "no set")
                         if direction == Direction.coming {
                             self.newConection.comIpLatitud = String(ip.latitud)
                             self.newConection.comIpLongitude = ip.longitude
@@ -745,7 +745,7 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate   {
 //        comandsManager.extractTraceRouteIps()
       }
     
-}
+   }
 
 
 

@@ -26,7 +26,9 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     @IBOutlet weak var packagesCount: NSTextField!
     @IBOutlet weak var packagesProcessed: NSTextField!
     
+    @IBOutlet weak var traceRouteIp: NSTextField!
     
+    @IBOutlet var popOverController: anotationDetailPopOverController!
     
     @IBAction func StartTcpDumpScan(_ sender: Any) {
          tcpDump.startTcpScan()
@@ -46,7 +48,8 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     @IBAction func traceRoute(_ sender: Any) {
         
-         tcpDump.traceRouteTo(ip:"151.101.0.223")
+        
+         tcpDump.traceRouteTo(ip:traceRouteIp.stringValue)
 //        61.232.254.39
     }
     
@@ -106,7 +109,8 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         configureView()
         tcpDump.ipsDelegate = self
         mapEngine = MapRouteEngine(withMap:map)
-        
+        mapEngine.popOverController = popOverController
+        mapEngine.startEngine()
         
     }
 
@@ -156,6 +160,7 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         mapEngine.drawHaLine(locationA:locationA ,locationB:locationB)
     }
     
+   
     
     
     
@@ -170,6 +175,7 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     func newConection(ip:IpAdress) {
         
+         mapEngine.addIp(anotation:ip.anotation)
                 mapEngine.currentLocation =  CLLocation(latitude:41.1754, longitude:1.2697)
         //        let locationA:CLLocation = CLLocation(latitude:ipsToShow![0].latitud, longitude:Double(ipsToShow![0].longitude!)!)
                  let locationB:CLLocation = CLLocation(latitude:(ip.latitud), longitude:Double((ip.longitude)!)!)
@@ -186,9 +192,14 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         
 //        var ipToShow:IpAdress = ipsToShow[row]
-        guard let ipToShow:IpAdress = ipsToShow?[row] else {
+        guard let ipToShow:IpAdress = ipsToShow?[row]  else {
             return nil
         }
+        
+//        if (ipsToShow?.count)! >= 1 {
+//           mapEngine.addIp(anotation:ipToShow.anotation)
+//        }
+        
         
 //        var image: NSImage?
         var text: String = "-"
@@ -219,7 +230,7 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         }
 
 
-
+       
         
         
         let cell = tableView.make(withIdentifier: cellIdentifier, owner: nil) as? NSTableCellView

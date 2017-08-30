@@ -79,7 +79,7 @@ class FileComandExtractor  {
             
             
             if ip != "*" {
-                var node:TraceRouteNode = TraceRouteNode()
+                let node:TraceRouteNode = TraceRouteNode()
                 node.ip = ip
                 node.ips = ips
                 node.number = number

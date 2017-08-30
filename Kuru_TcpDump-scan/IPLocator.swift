@@ -14,6 +14,7 @@ protocol IPLocatorDelegate {
 }
 
 
+
 class   IPLocator  {
     
     //    {"as":"AS9394 China TieTong Telecommunications Corporation","city":"Beijing","country":"China","countryCode":"CN","isp":"China TieTong","lat":39.9289,"lon":116.3883,"org":"China TieTong","query":"61.232.254.39","region":"11","regionName":"Beijing","status":"success","timezone":"Asia/Shanghai","zip":""}
