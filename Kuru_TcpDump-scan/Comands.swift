@@ -48,22 +48,25 @@ final class  Comands {
     var tcpDumpFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netstat2.txt")
     
     
+    //MARK: ---------------- TRACE_ROUTE  -------------------------
     var traceRouteIpsDelegate:TraceRouteDelegate!
     let traceRouteTask =  Process()
     var traceRouteOutFile:FileHandle!
     var traceRouteFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
 
-    
+     //MARK: ---------------- WHOIS  -------------------------
     var whoisDelegate:WhoisDelegate!
     var whoisTask =  Process()
     var whoisOutFile:FileHandle!
     var whoisFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/whois.txt")
 
-    
+     //MARK: ---------------- LOOKUP  -------------------------
     var nsLookupDelegate:LookUpDelegate!
     var nsLookupTask =  Process()
     var nsLookupOutFile:FileHandle!
     var nsLookupFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/nsLookup.txt")
+    
+    
     
     
     //MARK: ---------------- TRACE_ROUTE  -------------------------
@@ -77,20 +80,13 @@ final class  Comands {
             self.traceRouteTask.standardOutput = self.traceRouteOutFile
             
             self.traceRouteTask.launch()
-            self.traceRouteTask.waitUntilExit()
+            self.traceRouteTask.waitUntilExit() //FIXME: Cambiar ha Observer..
 
         }, completion: {
             print("Completado")
             let ips =  self.extractTraceRouteIps()
             self.traceRouteIpsDelegate?.traceRouteIps(ips:ips)
         })
-        
-        
-        
-        
-        
-        
-        
     }
     
     
@@ -197,7 +193,8 @@ final class  Comands {
     
     
     
-    //MARK: ---------------- NSLOOKUP  -------------------------
+    
+    //MARK: ---------------- LOOKUP  -------------------------
     
     func nsLookupTo(ip:String) {
         
