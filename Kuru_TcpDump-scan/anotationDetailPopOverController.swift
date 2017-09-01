@@ -19,12 +19,12 @@ class anotationDetailPopOverController: NSViewController , WhoisDelegate,LookUpD
     
     @IBAction func whois(_ sender: Any) {
         print("whois")
-        comandsManager.whoisTo(ip:"188.68.56.162")
+        comandsManager.whoisTo(ip:anotation.node.number!)
     }
     
     @IBAction func lookUp(_ sender: Any) {
         print("lookUp")
-        comandsManager.nsLookupTo(ip:"188.68.56.162")
+        comandsManager.nsLookupTo(ip:anotation.node.number!)
     }
 
     @IBAction func route(_ sender: Any) {
@@ -45,19 +45,22 @@ class anotationDetailPopOverController: NSViewController , WhoisDelegate,LookUpD
     var comandsManager:Comands = Comands.shared
     var anotation:IpAnotation!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         comandsManager.whoisDelegate = self
         comandsManager.nsLookupDelegate = self
+//        nodeDetailInfoLabel.stringValue = formatNodeInfo(anotation:anotation)
+    }
+    
+    override func viewWillAppear() {
+        super.viewWillAppear()
         nodeDetailInfoLabel.stringValue = formatNodeInfo(anotation:anotation)
     }
     
-    
     func formatNodeInfo(anotation:IpAnotation) -> String {
         
-        let result:String = anotation.title! + "-" + anotation.subtitle!
-//     let result:String = "\(anotation.title)   \(String(describing: ip.city))   \(String(describing: ip.country))   \(String(describing: ip.number))  \(ip.latitud)  + \(String(describing: ip.longitude))"
-    
+        let result:String = anotation.node.number! + " " + anotation.node.aso! + " " + anotation.node.country!
         return result
     }
     

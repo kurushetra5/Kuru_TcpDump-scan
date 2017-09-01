@@ -90,6 +90,30 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
        tcpDump.tcpDumpComand.getIps()
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //MARK:------------------ MAP_VIEW ACTIONS -----------------
+    
+    @IBAction func showNodesInMap(_ sender: NSButton) {
+        
+        if sender.state == 0 {
+            tcpDump.showNodesInMapView = NotesInMapMode.off
+           mapEngine.mapView.removeAnnotations(mapEngine.mapView.annotations)
+        } else {
+        tcpDump.showNodesInMap(mode:NotesInMapMode(rawValue: sender.state)!)
+        }
+    }
+    
+    
     fileprivate enum CellIdentifiers {
         static let NumberCell = "NumberCell"
         static let CountryCell = "CountryCell"
@@ -158,11 +182,13 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         }
         
         renderedNodes.append(node)
-        let nodeAnotation:IpAnotation = IpAnotation()
-        nodeAnotation.title = node.aso
-        nodeAnotation.subtitle = String(traceRouteNodesCount)
-        nodeAnotation.coordinate.latitude = node.latitud
-        nodeAnotation.coordinate.longitude = node.longitude
+        
+        var nodeAnotation:IpAnotation = IpAnotation()
+        nodeAnotation  = node.nodeAnotation()
+//        nodeAnotation.subtitle = String(traceRouteNodesCount)
+//        nodeAnotation.coordinate.latitude = node.latitud
+//        nodeAnotation.coordinate.longitude = node.longitude
+//        nodeAnotation.node = node
         mapEngine.addIp(anotation:nodeAnotation)
         
         
@@ -183,8 +209,9 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
          oldNode = node
     }
     
-   
-    
+    func showAnotationsInMap(anotations:[IpAnotation]) {
+        mapEngine.mapView.addAnnotations(anotations)
+    }
     
     
     func newIpComing(ips:[Node]) {

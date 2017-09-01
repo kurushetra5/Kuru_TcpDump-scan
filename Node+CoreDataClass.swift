@@ -16,7 +16,7 @@ public class Node: NSManagedObject {
     
     
     func isFilled() -> Bool {
-        if number != nil && city != nil && country != nil && aso != nil && longitude != nil  {
+        if number != nil && city != nil && country != nil && aso != nil { //FIXME: poner mas
             return true
         }
         return false
@@ -32,6 +32,18 @@ public class Node: NSManagedObject {
         }
     }
 
+    
+    func nodeAnotation() -> IpAnotation {
+        
+        let nodeAnotation:IpAnotation = IpAnotation()
+        nodeAnotation.title = self.aso
+        nodeAnotation.subtitle = self.number
+        nodeAnotation.coordinate.latitude = self.latitud
+        nodeAnotation.coordinate.longitude = self.longitude
+        nodeAnotation.node = self
+
+        return nodeAnotation
+    }
     
     
     func fromNode(node:TraceRouteNode) -> Node {

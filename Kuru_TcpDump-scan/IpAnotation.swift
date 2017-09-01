@@ -18,7 +18,7 @@ class IpAnotation:NSObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D
     var title: String?
     var subtitle: String?
-    
+    var node:Node!
     
     
     override init() {

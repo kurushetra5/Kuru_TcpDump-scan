@@ -16,9 +16,13 @@ protocol  IPsDelegate {
     func newNode(node:Node)
     func newPackage()
     func packageProcessed(number:Int)
+    func showAnotationsInMap(anotations:[IpAnotation])
 }
 
 
+enum  NotesInMapMode:Int {
+    case on,off
+}
 
   class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
     
@@ -28,7 +32,8 @@ protocol  IPsDelegate {
     enum  DataBaseMode:Int {
         case on,off
     }
-
+    
+    
     var tcpDumpComand:TcpDump = TcpDump()
     
     
@@ -46,7 +51,7 @@ protocol  IPsDelegate {
     
     var newConection:Conection = Conection()
     var filterInTcpDumpCommand:FilterInTcpDumpCommand = FilterInTcpDumpCommand.off
-    
+    var showNodesInMapView:NotesInMapMode = NotesInMapMode.off
     
     
     
@@ -123,8 +128,18 @@ protocol  IPsDelegate {
     
     
     func newIpComing(ips:[Node]) {
+        
+        if showNodesInMapView == NotesInMapMode.on {
+            var anotations:[IpAnotation] = []
+            for node in ips {
+                anotations.append(node.nodeAnotation())
+                
+            }
+            ipsDelegate?.showAnotationsInMap(anotations:anotations)
+        }
         ipsDelegate?.newIpComing(ips:ips)
     }
+    
     func newConection(ip:Node) {
         ipsDelegate?.newConection(ip:ip)
     }
@@ -158,11 +173,17 @@ protocol  IPsDelegate {
     
     
     
+    //MARK: ---------------- MAP_View Actions -------------------------
+    
+    func showNodesInMap(mode:NotesInMapMode) {
+        showNodesInMapView = NotesInMapMode.on
+        tcpDumpComand.getIps()
+            
+    }
     
     
     
-    
-   }
+}
 
 
 
