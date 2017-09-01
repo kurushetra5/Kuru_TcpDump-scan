@@ -105,8 +105,8 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     let filesManager:FilesManager = FilesManager.shared
     let tcpDump = Kuru_TcpDump()
     var ipsToShow:[Node]?
-    var oldNode:TraceRouteNode!
-    var renderedNodes:[TraceRouteNode] = []
+    var oldNode:Node!
+    var renderedNodes:[Node] = []
     var traceRouteNodesCount:Int = 1
     
     override func viewDidLoad() {
@@ -149,7 +149,7 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     
     
-    func newNode(node:TraceRouteNode) {
+    func newNode(node:Node) {
         
         for  aNode in renderedNodes {
             if aNode.isEqualTo(node:node) {
@@ -159,10 +159,10 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         
         renderedNodes.append(node)
         let nodeAnotation:IpAnotation = IpAnotation()
-        nodeAnotation.title = node.aso ?? node.isp
+        nodeAnotation.title = node.aso
         nodeAnotation.subtitle = String(traceRouteNodesCount)
-        nodeAnotation.coordinate.latitude = node.lat
-        nodeAnotation.coordinate.longitude = node.lon
+        nodeAnotation.coordinate.latitude = node.latitud
+        nodeAnotation.coordinate.longitude = node.longitude
         mapEngine.addIp(anotation:nodeAnotation)
         
         
@@ -175,10 +175,10 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
            locationA  = mapEngine.currentLocation
           oldNode = node
         }else {
-             locationA  = CLLocation(latitude:oldNode.lat!, longitude:oldNode.lon!)
+             locationA  = CLLocation(latitude:oldNode.latitud, longitude:oldNode.longitude)
         }
         
-        let locationB:CLLocation = CLLocation(latitude:node.lat!, longitude:node.lon!)
+        let locationB:CLLocation = CLLocation(latitude:node.latitud, longitude:node.longitude)
         mapEngine.drawHaLine(locationA:locationA ,locationB:locationB)
          oldNode = node
     }

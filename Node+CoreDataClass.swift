@@ -23,6 +23,17 @@ public class Node: NSManagedObject {
     }
     
     
+    func isEqualTo(node:Node) -> Bool {
+        
+        if self.latitud == node.latitud && self.longitude == node.longitude {
+            return true
+        }else {
+            return false
+        }
+    }
+
+    
+    
     func fromNode(node:TraceRouteNode) -> Node {
         self.number =  node.ip
         self.aso =  node.aso

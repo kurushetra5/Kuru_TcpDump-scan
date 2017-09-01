@@ -26,6 +26,8 @@ import Foundation
 //}
 
 
+
+
 class FileComandExtractor  {
     
     
@@ -40,6 +42,68 @@ class FileComandExtractor  {
         nodes =  extractIpsFromTraceRoute(lines:fileLines)
         
         return nodes
+    }
+    
+    
+    func nodesFromTraceRoute(lines:[String]) -> [Node] {
+        var completIP:[[String]] = []
+        var nodes:[Node] = []
+        
+        for  line in  lines {
+            
+            let  clean1 =  line.replacingOccurrences(of:" ", with:"/")
+            
+            var elementsCount = clean1.components(separatedBy:"//")
+            
+            for element in elementsCount {
+                if element.contains("/ms") {
+                    elementsCount.remove(at:elementsCount.index(of:element)!)
+                }
+                if element.characters.count <= 0 {
+                    elementsCount.remove(at:elementsCount.index(of:element)!)
+                }
+                
+            }
+            
+            if elementsCount.count == 2 {
+                completIP.append(elementsCount)
+            }
+        }
+        
+        for ip in completIP {
+            var  resultIp = ""
+            var resultIps =  ""
+            
+            let number = ip[0].replacingOccurrences(of:"/", with: "")
+            let element = ip[1].components(separatedBy:"/")
+            
+            if element.count == 3 { // trs values no puede ser
+                let ipTmp1 = element[2].replacingOccurrences(of:"(", with:"")
+                let resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
+                let resultIps = element[1]
+                
+            } else if element.count == 2 {
+                
+                let ipTmp1 = element[1].replacingOccurrences(of:"(", with:"")
+                resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
+                resultIps = element[0]
+                
+            }
+            
+            
+            
+            
+            if resultIp != "" { //FIXME: filtrar router
+                let node:Node = Node()
+                node.number = resultIp
+                node.ips = resultIps
+                node.number = number
+                nodes.append(node)
+            }
+        }
+        print(nodes)
+        return nodes
+
     }
     
     
@@ -94,6 +158,8 @@ class FileComandExtractor  {
             
             
             if resultIp != "" { //FIXME: filtrar router
+                
+                
                 let node:TraceRouteNode = TraceRouteNode()
                 node.ip = resultIp
                 node.ips = resultIps

@@ -15,7 +15,7 @@ class dataBaseManager {
 
     let appDelegate = NSApplication.shared().delegate  as! AppDelegate
     let managedContext:NSManagedObjectContext!
-    
+    var foundedNode:Node!
     
     init() {
         managedContext = self.appDelegate.persistentContainer.viewContext
@@ -30,7 +30,7 @@ class dataBaseManager {
 
     
     
-    func newIpWith(node:TraceRouteNode) {
+    func newIpWith(node:TraceRouteNode) -> Node {
         
         
         var newIp:Node = newIpEntity()
@@ -53,6 +53,7 @@ class dataBaseManager {
 //            ipsFoundOffMode.append(newIp)
 //            self.tcpDumpDelegate?.newIpComing(ips:self.ipsFoundOffMode)
 //        }
+        return newIp
     }
 
     
@@ -92,11 +93,15 @@ class dataBaseManager {
                 }
                 if searchResults.count == 1 {
                     founded = true
-                    let ipResult:Node = searchResults[0]
-                    node.lat = ipResult.latitud
-                    node.lon =  ipResult.longitude
-                    node.aso = ipResult.aso
-                    node.city = ipResult.city
+                    foundedNode = searchResults[0]
+//                    var newNode:Node = newIpEntity()
+//                    newNode.aso =
+                    
+//                    let ipResult:Node = searchResults[0]
+//                    node.lat = ipResult.latitud
+//                    node.lon =  ipResult.longitude
+//                    node.aso = ipResult.aso
+//                    node.city = ipResult.city
                 }
                 
     //                for ip in searchResults as [Node] {

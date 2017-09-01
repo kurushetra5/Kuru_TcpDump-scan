@@ -39,6 +39,8 @@ class   IPLocator  {
                     
                     OperationQueue.main.addOperation({
                         
+                        
+                        
                         node.aso  = json["as"] as? String
                         node.city = json["city"] as? String
                         node.country = json["country"] as? String
