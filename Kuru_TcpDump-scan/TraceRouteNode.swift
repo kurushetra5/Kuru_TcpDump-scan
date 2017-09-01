@@ -29,6 +29,17 @@ class  TraceRouteNode  {
     var timezone:String!
     var zip:String!
     
+    
+    func isEqualTo(node:TraceRouteNode) -> Bool {
+        
+        if self.lat == node.lat && self.lon == node.lon {
+            return true
+        }else {
+            return false
+        }
+    }
+    
+    
 //    init(aso:String) {
 //        self.aso = aso
 //        

@@ -57,6 +57,7 @@ class   IPLocator  {
                            self.locatorDelegate.nodeIpReady(node:node)
                         }
                         
+                        
 //                       print(node.lat ?? 0.0)
 //                        print(node.lon ?? 0.0)
                         

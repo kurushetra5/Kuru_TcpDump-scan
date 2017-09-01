@@ -16,10 +16,25 @@ public class IpAdress: NSManagedObject {
     
     
     func isFilled() -> Bool {
-        if number != nil && city != nil && country != nil && adress != nil && longitude != nil  {
+        if number != nil && city != nil && country != nil && aso != nil && longitude != nil  {
            return true
         }
         return false
+    }
+    
+    
+    func fromNode(node:TraceRouteNode) -> IpAdress {
+         self.number =  node.ip
+         self.aso =  node.aso
+         self.city =  node.city
+         self.country =  node.country
+         self.latitud =  node.lat
+         self.longitude =  node.lon
+          
+//         timesBlocked: Int64
+//         timesSeeIt: Int64
+//         conectionPorts: NSSet?
+        return self
     }
     
 }

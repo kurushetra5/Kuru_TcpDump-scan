@@ -18,7 +18,8 @@ protocol LookUpDelegate {
     func lookUpFinish(result:String)
 }
 
-extension DispatchQueue {
+
+extension DispatchQueue { //TODO: Cambiar de sitio
     
     static func background(delay: Double = 0.0, background: (()->Void)? = nil, completion: (() -> Void)? = nil) {
         DispatchQueue.global(qos: .background).async {
@@ -42,15 +43,12 @@ final class  Comands {
     let fileExtractor:FileComandExtractor = FileComandExtractor()
     let filesManager:FilesManager = FilesManager.shared
     
-    
-    var tcpDumpTask =  Process()
-    var tcpDumpOutFile:FileHandle!
-    var tcpDumpFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netstat2.txt")
+
     
     
     //MARK: ---------------- TRACE_ROUTE  -------------------------
     var traceRouteIpsDelegate:TraceRouteDelegate!
-    let traceRouteTask =  Process()
+    var traceRouteTask =  Process()
     var traceRouteOutFile:FileHandle!
     var traceRouteFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
 
@@ -72,8 +70,12 @@ final class  Comands {
     //MARK: ---------------- TRACE_ROUTE  -------------------------
     func traceRouteTo(ip:String) {
         
+        if traceRouteTask.isRunning {
+            terminateTraceRoute()
+        }
         
         DispatchQueue.background(delay: 0.0, background: {
+            self.traceRouteTask = Process()
             self.traceRouteTask.launchPath = "/usr/sbin/traceroute"
             self.traceRouteTask.arguments = ["-w 1" , "-m30" ,ip]
             self.traceRouteOutFile = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/traceRoute.txt")
@@ -104,25 +106,10 @@ final class  Comands {
     }
     
     
-    //MARK: ---------------- TCPDUMP -------------------------
     
     
-    func executeTcpDump()   {
-        
-        tcpDumpTask = Process()
-        tcpDumpTask.launchPath = "/usr/sbin/tcpdump"
-        tcpDumpTask.arguments = ["-i","en4","-n"]
-        tcpDumpOutFile = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/netstat2.txt")
-        tcpDumpTask.standardOutput = tcpDumpOutFile
-        tcpDumpTask.launch()
-        
-    }
     
-    func terminateCommand() {
-        tcpDumpTask.terminate()
-    }
-    
-
+   
     
     
     

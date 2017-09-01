@@ -71,22 +71,37 @@ class FileComandExtractor  {
         }
         
         for ip in completIP {
+            var  resultIp = ""
+            var resultIps =  ""
+            
             let number = ip[0].replacingOccurrences(of:"/", with: "")
             let element = ip[1].components(separatedBy:"/")
-            let ipTmp1 = element[1].replacingOccurrences(of:"(", with:"")
-            let ip  = ipTmp1.replacingOccurrences(of:")", with:"")
-            let ips = element[0]
+            
+            if element.count == 3 { // trs values no puede ser
+                 let ipTmp1 = element[2].replacingOccurrences(of:"(", with:"")
+                 let resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
+                 let resultIps = element[1]
+                
+            } else if element.count == 2 {
+                
+                let ipTmp1 = element[1].replacingOccurrences(of:"(", with:"")
+                resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
+                resultIps = element[0]
+
+            }
             
             
-            if ip != "*" {
+            
+            
+            if resultIp != "" { //FIXME: filtrar router
                 let node:TraceRouteNode = TraceRouteNode()
-                node.ip = ip
-                node.ips = ips
+                node.ip = resultIp
+                node.ips = resultIps
                 node.number = number
                 nodes.append(node)
             }
         }
-//        print(nodes)
+         print(nodes)
         return nodes
     }
     

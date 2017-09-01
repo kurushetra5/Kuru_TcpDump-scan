@@ -20,6 +20,7 @@ class IpAnotation:NSObject, MKAnnotation {
     var subtitle: String?
     
     
+    
     override init() {
         coordinate = CLLocationCoordinate2D()
         coordinate.latitude = 43.545

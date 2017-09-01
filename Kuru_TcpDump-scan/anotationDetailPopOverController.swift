@@ -15,6 +15,7 @@ class anotationDetailPopOverController: NSViewController , WhoisDelegate,LookUpD
     
     @IBOutlet var resultsComandText: NSTextView!
     
+    @IBOutlet weak var nodeDetailInfoLabel: NSTextField!
     
     @IBAction func whois(_ sender: Any) {
         print("whois")
@@ -39,15 +40,26 @@ class anotationDetailPopOverController: NSViewController , WhoisDelegate,LookUpD
     }
 
     
+    
+    
     var comandsManager:Comands = Comands.shared
+    var anotation:IpAnotation!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         comandsManager.whoisDelegate = self
         comandsManager.nsLookupDelegate = self
+        nodeDetailInfoLabel.stringValue = formatNodeInfo(anotation:anotation)
     }
     
     
+    func formatNodeInfo(anotation:IpAnotation) -> String {
+        
+        let result:String = anotation.title! + "-" + anotation.subtitle!
+//     let result:String = "\(anotation.title)   \(String(describing: ip.city))   \(String(describing: ip.country))   \(String(describing: ip.number))  \(ip.latitud)  + \(String(describing: ip.longitude))"
+    
+        return result
+    }
     
     func whoisFinish(result:String) {
         resultsComandText.string = result

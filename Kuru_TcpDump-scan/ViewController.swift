@@ -48,7 +48,7 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     @IBAction func traceRoute(_ sender: Any) {
         
-        
+        renderedNodes = []
          tcpDump.traceRouteTo(ip:traceRouteIp.stringValue)
 //        61.232.254.39
     }
@@ -62,13 +62,13 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     @IBAction func checkPacages(_ sender:NSButton) {
        
-        tcpDump.countPackagesMode = PackagesMode(rawValue:sender.state)!
+         tcpDump.countPackages(mode:sender.state)
         
     }
     
     @IBAction func checkProcessed(_ sender: NSButton) {
  
-        tcpDump.countProcessedMode = ProcessedMode(rawValue:sender.state)!
+         tcpDump.countProcessed(mode:sender.state)
     }
     
     @IBAction func cleanDataBase(_ sender: Any) {
@@ -86,6 +86,9 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
 
     }
     
+    @IBAction func showIpsDataBase(_ sender: Any) {
+       tcpDump.tcpDumpComand.getIps()
+    }
     
     fileprivate enum CellIdentifiers {
         static let NumberCell = "NumberCell"
@@ -101,8 +104,10 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     var mapEngine:MapRouteEngine!
     let filesManager:FilesManager = FilesManager.shared
     let tcpDump = Kuru_TcpDump()
-    var ipsToShow:[IpAdress]?
+    var ipsToShow:[Node]?
     var oldNode:TraceRouteNode!
+    var renderedNodes:[TraceRouteNode] = []
+    var traceRouteNodesCount:Int = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -145,6 +150,24 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     
     func newNode(node:TraceRouteNode) {
+        
+        for  aNode in renderedNodes {
+            if aNode.isEqualTo(node:node) {
+               return
+            }
+        }
+        
+        renderedNodes.append(node)
+        let nodeAnotation:IpAnotation = IpAnotation()
+        nodeAnotation.title = node.aso ?? node.isp
+        nodeAnotation.subtitle = String(traceRouteNodesCount)
+        nodeAnotation.coordinate.latitude = node.lat
+        nodeAnotation.coordinate.longitude = node.lon
+        mapEngine.addIp(anotation:nodeAnotation)
+        
+        
+        traceRouteNodesCount += 1
+        print(traceRouteNodesCount)
        let locationA:CLLocation!
         
         if oldNode == nil {
@@ -154,17 +177,17 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         }else {
              locationA  = CLLocation(latitude:oldNode.lat!, longitude:oldNode.lon!)
         }
-        oldNode = node
         
         let locationB:CLLocation = CLLocation(latitude:node.lat!, longitude:node.lon!)
         mapEngine.drawHaLine(locationA:locationA ,locationB:locationB)
+         oldNode = node
     }
     
    
     
     
     
-    func newIpComing(ips:[IpAdress]) {
+    func newIpComing(ips:[Node]) {
          ipsToShow = ips
          ipsTableView.reloadData()
     }
@@ -173,12 +196,12 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     
     
-    func newConection(ip:IpAdress) {
+    func newConection(ip:Node) {
         
          mapEngine.addIp(anotation:ip.anotation)
                 mapEngine.currentLocation =  CLLocation(latitude:41.1754, longitude:1.2697)
         //        let locationA:CLLocation = CLLocation(latitude:ipsToShow![0].latitud, longitude:Double(ipsToShow![0].longitude!)!)
-                 let locationB:CLLocation = CLLocation(latitude:(ip.latitud), longitude:Double((ip.longitude)!)!)
+                 let locationB:CLLocation = CLLocation(latitude:(ip.latitud), longitude: ip.longitude)
                 mapEngine.drawHaLine(locationA:mapEngine.currentLocation ,locationB:locationB)
 
     }
@@ -191,14 +214,11 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         
-//        var ipToShow:IpAdress = ipsToShow[row]
-        guard let ipToShow:IpAdress = ipsToShow?[row]  else {
+ 
+        guard let ipToShow:Node = ipsToShow?[row]  else {
             return nil
         }
         
-//        if (ipsToShow?.count)! >= 1 {
-//           mapEngine.addIp(anotation:ipToShow.anotation)
-//        }
         
         
 //        var image: NSImage?
@@ -213,7 +233,7 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
             text = ipToShow.country ?? "-"
         }else if tableColumn == tableView.tableColumns[2] {
             cellIdentifier = CellIdentifiers.StateCell
-            text = ipToShow.adress ?? "-"
+            text = ipToShow.aso ?? "-"
         }
         else if tableColumn == tableView.tableColumns[3] {
             cellIdentifier = CellIdentifiers.CityCell
@@ -226,12 +246,8 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         }
         else if tableColumn == tableView.tableColumns[5] {
             cellIdentifier = CellIdentifiers.LongitudeCell
-            text = ipToShow.longitude ?? "-"
+            text = String(ipToShow.longitude)
         }
-
-
-       
-        
         
         let cell = tableView.make(withIdentifier: cellIdentifier, owner: nil) as? NSTableCellView
         cell?.textField?.stringValue = text
@@ -239,6 +255,12 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         
         return cell
 
+    }
+    
+    func tableViewSelectionDidChange(_ notification: Notification) {
+        let ipSelected:Node = ipsToShow![ipsTableView.selectedRow]
+        traceRouteIp.stringValue = ipSelected.number!
+        mapEngine.focusNewIPInView(location:CLLocation(latitude:ipSelected.latitud, longitude:Double(ipSelected.longitude)))
     }
     
 }

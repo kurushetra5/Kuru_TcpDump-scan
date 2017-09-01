@@ -87,8 +87,12 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     
     
     func  focusNewIPInView(location:CLLocation) {
-        let visibleRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,1200,1200)
-        self.mapView.setRegion(self.mapView.regionThatFits(visibleRegion), animated: true)
+        let visibleRegion = MKCoordinateRegionMake(CLLocationCoordinate2DMake(location.coordinate.latitude,location.coordinate.longitude), MKCoordinateSpanMake(mapView.region.span.longitudeDelta*0.5,mapView.region.span.longitudeDelta*0.5))
+        
+//        let visibleRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,14000,14000)
+//        self.mapView.setRegion(visibleRegion, animated: true)
+        self.mapView.setRegion(visibleRegion, animated:true)
+        
     }
     
     
@@ -209,7 +213,11 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     func ipInfoPressed(sender:NSButton) {
         
         let popOver:NSPopover = NSPopover()
-         popOver.contentViewController =  popOverController
+        let vc:anotationDetailPopOverController = (popOverController as? anotationDetailPopOverController)!
+        vc.anotation = mapView.selectedAnnotations[0] as! IpAnotation
+        
+         popOver.contentViewController =  vc
+        
          popOver.animates = true
         popOver.behavior = .transient
         popOver.show(relativeTo:sender.bounds ,of:sender, preferredEdge:.maxY)
