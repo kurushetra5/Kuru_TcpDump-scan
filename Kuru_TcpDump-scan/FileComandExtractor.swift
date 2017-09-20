@@ -31,6 +31,23 @@ import Foundation
 class FileComandExtractor  {
     
     
+     //MARK: ---------------- MTR_ROUTE  -------------------------
+    
+    func extractIpsFromMTRoute(ips:String) -> [TraceRouteNode] {
+        
+        var nodes:[TraceRouteNode] = []
+        let ipsArray:[String] = ips.components(separatedBy:"\n")
+        
+        for ip in ipsArray {
+            nodes.append(TraceRouteNode(ip:ip))
+        }
+        return nodes
+    }
+    
+    
+    
+    
+    
     
     
     //MARK: ---------------- TRACE_ROUTE  -------------------------
@@ -100,8 +117,8 @@ class FileComandExtractor  {
             if resultIp != "" { //FIXME: filtrar router
                 
                 
-                let node:TraceRouteNode = TraceRouteNode()
-                node.ip = resultIp
+                let node:TraceRouteNode = TraceRouteNode(ip:resultIp)
+//                node.ip = resultIp
                 node.ips = resultIps
                 node.number = number
                 nodes.append(node)
@@ -202,6 +219,26 @@ class FileComandExtractor  {
         
         return arrayLines
     }
+    
+    
+    
+   //MARK: ---------------- MTRoute EXTRACTOR  -------------------------
+    
+    func extractMTRoute(data:String) {
+        
+        var arr:[String] = data.components(separatedBy:"\n")
+        
+        for ip in arr {
+            if ip != "???" {
+                
+            }
+        }
+        
+    }
+    
+    
+    
+    
     
     
 }

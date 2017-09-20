@@ -21,12 +21,13 @@ class IpAnotation:NSObject, MKAnnotation {
     var node:Node!
     
     
+    
     override init() {
         coordinate = CLLocationCoordinate2D()
         coordinate.latitude = 43.545
         coordinate.longitude  = 2.544
-        title = "Telefonica de España"
-        subtitle = "193.54.34.3"
+        title = "Error: NO SET"
+        subtitle = "No Filled"
         super.init()
     }
    

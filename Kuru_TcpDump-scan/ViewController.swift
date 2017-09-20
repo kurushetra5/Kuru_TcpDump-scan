@@ -11,7 +11,7 @@ import MapKit
 
 
 
-class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTableViewDelegate{
+class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewDataSource,NSTableViewDelegate{
 
     @IBOutlet weak var map: MKMapView!
     
@@ -28,17 +28,21 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     @IBOutlet weak var traceRouteIp: NSTextField!
     
+    @IBOutlet weak var fireWallStateLabel: NSTextField!
+    
+    
     @IBOutlet var popOverController: anotationDetailPopOverController!
+    
+    @IBOutlet weak var comandsTableView: NSTableView!
+    
+    
     
     @IBAction func StartTcpDumpScan(_ sender: Any) {
          tcpDump.startTcpScan()
-        
-        
     }
     
     @IBAction func StopTcpDumpScan(_ sender: Any) {
          tcpDump.terminateCommand()
-        
     }
    
     
@@ -47,11 +51,44 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     }
     
     @IBAction func traceRoute(_ sender: Any) {
-        
         renderedNodes = []
-         tcpDump.traceRouteTo(ip:traceRouteIp.stringValue)
+        tcpDump.traceRouteTo(ip:traceRouteIp.stringValue)
 //        61.232.254.39
     }
+    
+    
+    @IBAction func killConection(_ sender: NSButton) {
+        
+    }
+    
+    
+    @IBAction func netStat(_ sender: NSButton) {
+        tcpDump.comandsManager.runProcessWith(comand:tcpDump.comandsManager.netStatComand, args:tcpDump.comandsManager.netStatArgs,delegate: self)
+    }
+    
+    
+    @IBAction func whois(_ sender: NSButton) {
+        tcpDump.comandsManager.whoisTo(ip:traceRouteIp.stringValue)
+    }
+    
+    
+    
+    @IBAction func nsLookUp(_ sender: NSButton) {
+        tcpDump.comandsManager.nsLookupTo(ip:traceRouteIp.stringValue)
+    }
+    
+    
+    @IBAction func mtRoute(_ sender: NSButton) {
+        
+        tcpDump.comandsManager.runProcessWith(comand:tcpDump.comandsManager.mtrRouteComand , args:tcpDump.comandsManager.mtrRouteArgs ,delegate: self)
+    }
+    
+    
+    
+    @IBAction func startFireWall(_ sender: NSButton) {
+        
+    }
+    
     
     
     @IBAction func setPathSettingsChanges(_ sender: Any) {
@@ -60,15 +97,13 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     }
     
     
+    
     @IBAction func checkPacages(_ sender:NSButton) {
-       
-         tcpDump.countPackages(mode:sender.state)
-        
+       tcpDump.countPackages(mode:sender.state.rawValue)
     }
     
     @IBAction func checkProcessed(_ sender: NSButton) {
- 
-         tcpDump.countProcessed(mode:sender.state)
+        tcpDump.countProcessed(mode:sender.state.rawValue)
     }
     
     @IBAction func cleanDataBase(_ sender: Any) {
@@ -79,11 +114,8 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         filesManager.createFileAtPath(path:filesManager.tcpDumpFileUrl.relativePath)
     }
     
-    
     @IBAction func filterIpsInTcpDumpCommand(_ sender: NSButton) {
-        
-        tcpDump.filterInTcpDumpCommand = FilterInTcpDumpCommand(rawValue:sender.state)!
-
+        tcpDump.filterInTcpDumpCommand = FilterInTcpDumpCommand(rawValue:sender.state.rawValue)!
     }
     
     @IBAction func showIpsDataBase(_ sender: Any) {
@@ -92,9 +124,21 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     
     
+    func executeSudoComand() {
+        let sudo:SudoComand = SudoComand()
+        sudo.sudoWith(comand:"")
+    }
     
     
+    func procesFinishWith(nodes:[TraceRouteNode]) {
+        
+    }
     
+    
+    func newDataFromProcess(data:String , processName:String) {
+//        let arrayData:[String] = data.components(separatedBy:"\n")
+//         print(arrayData)
+    }
     
     
     
@@ -104,15 +148,17 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     //MARK:------------------ MAP_VIEW ACTIONS -----------------
     
     @IBAction func showNodesInMap(_ sender: NSButton) {
+//         executeSudoComand()
         
-        if sender.state == 0 {
+        if sender.state.rawValue == 0 {
             tcpDump.showNodesInMapView = NotesInMapMode.off
            mapEngine.mapView.removeAnnotations(mapEngine.mapView.annotations)
         } else {
-        tcpDump.showNodesInMap(mode:NotesInMapMode(rawValue: sender.state)!)
+        tcpDump.showNodesInMap(mode:NotesInMapMode(rawValue: sender.state.rawValue)!)
         }
     }
     
+   
     
     fileprivate enum CellIdentifiers {
         static let NumberCell = "NumberCell"
@@ -209,6 +255,7 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
          oldNode = node
     }
     
+    
     func showAnotationsInMap(anotations:[IpAnotation]) {
         mapEngine.mapView.addAnnotations(anotations)
     }
@@ -235,13 +282,20 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
     
     
     func numberOfRows(in tableView: NSTableView) -> Int {
+        
+        if tableView.identifier!.rawValue == "comands" {
+           return 3
+        }
          return ipsToShow?.count ?? 0
     }
     
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         
- 
+        if tableView.identifier!.rawValue == "comands" {
+            
+        }
+        
         guard let ipToShow:Node = ipsToShow?[row]  else {
             return nil
         }
@@ -255,34 +309,39 @@ class ViewController: NSViewController ,IPsDelegate,NSTableViewDataSource,NSTabl
         if tableColumn == ipsTableView.tableColumns[0] {
             cellIdentifier = CellIdentifiers.NumberCell
             text = ipToShow.number ?? "-error-"
-        } else if tableColumn == tableView.tableColumns[1] {
+        } else if tableColumn == ipsTableView.tableColumns[1] {
             cellIdentifier = CellIdentifiers.CountryCell
             text = ipToShow.country ?? "-"
-        }else if tableColumn == tableView.tableColumns[2] {
+        }else if tableColumn == ipsTableView.tableColumns[2] {
             cellIdentifier = CellIdentifiers.StateCell
             text = ipToShow.aso ?? "-"
         }
-        else if tableColumn == tableView.tableColumns[3] {
+        else if tableColumn == ipsTableView.tableColumns[3] {
             cellIdentifier = CellIdentifiers.CityCell
             text = ipToShow.city ?? "-"
         }
 
-        else if tableColumn == tableView.tableColumns[4] {
+        else if tableColumn == ipsTableView.tableColumns[4] {
             cellIdentifier = CellIdentifiers.LatitudCell
             text =  String(ipToShow.latitud)
         }
-        else if tableColumn == tableView.tableColumns[5] {
+        else if tableColumn == ipsTableView.tableColumns[5] {
             cellIdentifier = CellIdentifiers.LongitudeCell
             text = String(ipToShow.longitude)
         }
         
-        let cell = tableView.make(withIdentifier: cellIdentifier, owner: nil) as? NSTableCellView
+        let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: nil) as? NSTableCellView
         cell?.textField?.stringValue = text
         
+        
+        
+
         
         return cell
 
     }
+    
+    
     
     func tableViewSelectionDidChange(_ notification: Notification) {
         let ipSelected:Node = ipsToShow![ipsTableView.selectedRow]

@@ -11,11 +11,15 @@ import CoreData
 import Cocoa
 
 
+
+
+
 class dataBaseManager {
 
-    let appDelegate = NSApplication.shared().delegate  as! AppDelegate
+    let appDelegate = NSApplication.shared.delegate  as! AppDelegate
     let managedContext:NSManagedObjectContext!
     var foundedNode:Node!
+    
     
     init() {
         managedContext = self.appDelegate.persistentContainer.viewContext
@@ -28,6 +32,13 @@ class dataBaseManager {
         return ip
     }
 
+   
+    
+    
+    
+    
+    
+    
     
     
     func newIpWith(node:TraceRouteNode) -> Node {
@@ -61,7 +72,7 @@ class dataBaseManager {
     
     func isFilledThis(node:TraceRouteNode) -> Bool {
         
-        if fetchInfoFor(node:node) {
+        if fetchInfoFor(node:node).found == true {
 //            let ipNode:String = node.ip
 //            print(ipNode)
              return true
@@ -72,6 +83,39 @@ class dataBaseManager {
         //TODO: mirar si esta si esta rellenar si no false y lo localiza
        
     }
+    
+    
+    
+    func fetchInfoFor(node:TraceRouteNode) -> (found:Bool,ip:Node) {
+
+        var founded:Bool = false
+        var foundNode:Node = Node()
+        
+        let fetchRequest: NSFetchRequest<Node> = Node.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "number == %@",node.ip)
+        
+        do {
+            let searchResults = try managedContext.fetch(fetchRequest)
+            print ("num of results = \(searchResults.count)")
+            
+            if searchResults.count >= 2 {
+                print("Duplicate Ip found")
+                founded = true
+                foundNode = searchResults[0]
+            }
+            if searchResults.count == 1 {
+                founded = true
+                foundNode = searchResults[0]
+            }
+        
+        } catch {
+            print("Error with request: \(error)")
+        }
+        return (founded,foundNode)
+    }
+ 
+        
+    
     
     
     

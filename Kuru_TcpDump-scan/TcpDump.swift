@@ -14,7 +14,7 @@ import Cocoa
 protocol  TcpDumpDelegate {
     func newIpComing(ips:[Node])
     func newConection(ip:Node)
-//    func newNode(node:TraceRouteNode)
+    //    func newNode(node:TraceRouteNode)
     func newPackage()
     func packageProcessed(number:Int)
 }
@@ -33,7 +33,7 @@ enum FilterInTcpDumpCommand:Int {
 class TcpDump {
     
     
-    let appDelegate = NSApplication.shared().delegate  as! AppDelegate
+    let appDelegate = NSApplication.shared.delegate  as! AppDelegate
     let managedContext:NSManagedObjectContext!
     
     
@@ -49,16 +49,16 @@ class TcpDump {
     var tcpDumpFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netstat2.txt")
     var args = ["-i","en4","-n" ," not (src net 192.168.8.1 and dst net 192.168.8.100) and not  (src net 192.168.8.100 and dst net 192.168.8.1) and not (src net 192.168.8.1 and dst net 239.255.255.250)"]
     var isScanStoped:Bool = false
-
+    
     var extractLinesTimer:Timer!
-      var getIpLocationsTimer:Timer!
+    var getIpLocationsTimer:Timer!
     
     var newConection:Conection = Conection()
     var dataBaseMode:DataBaseMode = DataBaseMode.on
     var ipsFoundOffMode:[Node] = []
     var ipsFound:[Node] = []
     var conectionsToShow:[Conection] = []
-     var ipLocatorReady:Bool = true
+    var ipLocatorReady:Bool = true
     
     
     enum  DataBaseMode:Int {
@@ -73,9 +73,9 @@ class TcpDump {
     init() {
         managedContext = self.appDelegate.persistentContainer.viewContext
         
-//        ipLocator.locatorDelegate = self
+        //        ipLocator.locatorDelegate = self
     }
-
+    
     func startTcpScan() {
         
         isScanStoped = false
@@ -87,7 +87,7 @@ class TcpDump {
         startTimerLocationsEvery(seconds:1.0)
         
     }
-
+    
     func getIps() {
         
         //        ipsFounded = []
@@ -111,7 +111,7 @@ class TcpDump {
             print("Error with request: \(error)")
         }
     }
-
+    
     
     func dataBaseModeOff() {
         dataBaseMode = DataBaseMode.off
@@ -138,7 +138,7 @@ class TcpDump {
         ipsFound.removeAll()
         tcpDumpDelegate?.newIpComing(ips:ipsFound)
     }
-
+    
     
     
     
@@ -167,7 +167,7 @@ class TcpDump {
         isScanStoped = true
         tcpDumpTask.terminate()
     }
-
+    
     
     
     
@@ -182,7 +182,7 @@ class TcpDump {
         decomposeTcpLine()
         
         if countPackagesMode == PackagesMode.on {
-             tcpDumpDelegate?.newPackage()
+            tcpDumpDelegate?.newPackage()
         }
         
         
@@ -194,23 +194,198 @@ class TcpDump {
             extractLinesTimer.invalidate()
         }
     }
+    
+    
+    
+    
+    func isIP6(protocolName:String) -> Bool {
+        
+        var result:Bool = false
+        
+        if protocolName == "IP6" {
+            print("---- IP6 ----")
+            result = true
+        }
+        return result
+    }
+    
+    
+    
+    func isIP(protocolName:String) -> Bool {
+        
+        var result:Bool = false
+        
+        if protocolName == "IP" {
+            print("---- IP ----")
+            result = true
+        }
+        return result
+    }
+    
+    
+    func isARP(protocolName:String) -> Bool {
+        
+        var result:Bool = false
+        
+        if protocolName == "ARP," {
+            print("---- ARP ----")
+            result = true
+        }
+        return result
+    }
+    
+    func isOptions(protocolName:String) -> Bool {
+        
+        var result:Bool = false
+        
+        if protocolName == "options" {
+            print("---- options ----")
+            result = true
+        }
+        return result
+    }
+    
+    
+    func isWrong(line:[String]) -> Bool {
+        
+        var result:Bool = false
+        
+        if line.count <= 3 {
+            print("---- Wrong Line ----")
+            result = true
+        }
+        return result
+    }
+    
+    func isOK(line:[String]) -> Bool {
+        
+        var result:Bool = false
+        
+        if line.count >= 5 {
+            print("---- Ok Line ----")
+            result = true
+        }
+        return result
+    }
+    
+    
+    func dateFrom(line:String) -> String {
+        var arrayTime = line.components(separatedBy:".")
+        let time = arrayTime[0]
+        return time
+    }
+    
+    func ipFrom(line:String) -> String {
+        
+        let caracter:CharacterSet = CharacterSet.init(charactersIn:":")
+        var IpArray:[String] = line.components(separatedBy:".")
+        
+        if IpArray.count <= 3 { //FIXME: quitar :45 del puerto y coger ip borrar linea
+            removeLine()
+            
+            if countProcessedMode == ProcessedMode.on {
+                countProcessedPacages()
+            }
+//            return
+        }
+        let ip:String = IpArray[0] + "." + IpArray[1] + "." + IpArray[2] + "." + IpArray[3]
+        let resultIp =  ip.trimmingCharacters(in:caracter)
 
+        return resultIp
+    }
+    
+    
+    
+    func isIPFoundNew(ip:String) -> Bool {
+        
+        var isFound:Bool = false
+
+        if ip != "192.168.8.1" && ip != "192.168.8.100" {
+            
+            if ip.characters.count <= 17 {
+                
+                for newIp in ipsToCheck() {
+                    if newIp.number == ip {
+                        isFound = true
+                    }
+                }
+                
+//                if isFound == false {
+//                    newIpWith(number:ip)
+//                }
+            }
+            
+        }
+        return isFound
+    }
+    
+    
+    func countProcessedIfNeed() {
+        
+        if countProcessedMode == ProcessedMode.on {
+            countProcessedPacages()
+        }
+    }
+    
+    
     
     //MARK: ---------------- LINES  -------------------------
     
     
     func decomposeTcpLine() {
         
-        //        if ipLocatorReady == true {
-        
-        var arrayFields = tcpDumpFileLine.components(separatedBy:" ")
         var isFound:Bool = false
+        var arrayFields = tcpDumpFileLine.components(separatedBy:" ")
+        
+        if isWrong(line:arrayFields)  == true {
+             removeLine()
+             countProcessedIfNeed()
+            return
+        }
+        if isARP(protocolName:arrayFields[1]) == true {
+//            removeLine()
+//            countProcessedIfNeed()
+        }
+        if isIP6(protocolName:arrayFields[1]) == true {
+//            removeLine()
+//            countProcessedIfNeed()
+        }
+        if isOptions(protocolName:arrayFields[1]) == true {
+//            removeLine()
+//            countProcessedIfNeed()
+        }
+        if isOK(line:arrayFields) == true {
+            
+            if isIP(protocolName:arrayFields[1]) == true {
+                let time = dateFrom(line:arrayFields[0])
+                let comingIP:String = ipFrom(line:arrayFields[2])
+                let goingIP:String = ipFrom(line:arrayFields[4])
+                
+                if isIPFoundNew(ip:comingIP) == true {
+                   newIpWith(number:comingIP)
+                }
+                if isIPFoundNew(ip:goingIP) == true {
+                   newIpWith(number:goingIP)
+                }
+               
+            }
+            
+        }
+        
+        countProcessedIfNeed()
+        removeLine()
+        
+       
+        
+        
+        
         
         if arrayFields.count <= 3 {
             print("--------")
             removeLine()
             return
         }
+        
         
         if arrayFields[1] == "ARP," {
             print("---- ARP ----")
@@ -233,20 +408,25 @@ class TcpDump {
         //        }
         
         
+        
+        
         if arrayFields.count >= 5 {
             print("++++++++")
             let tmpTime = arrayFields[0]
             var arrayTime = tmpTime.components(separatedBy:".")
             let time = arrayTime[0]
             
+            
+            
             let comingIP:String = arrayFields[2]
             let goingIP:String = arrayFields[4]
             
             
-            
             let caracter:CharacterSet = CharacterSet.init(charactersIn:":")
-            var comIpArray:[String] = comingIP.components(separatedBy:".")
             
+            
+            
+            var comIpArray:[String] = comingIP.components(separatedBy:".")
             if comIpArray.count <= 3 { //FIXME: quitar :45 del puerto y coger ip borrar linea
                 removeLine()
                 
@@ -255,9 +435,11 @@ class TcpDump {
                 }
                 return
             }
-            
             let ipComing:String = comIpArray[0] + "." + comIpArray[1] + "." + comIpArray[2] + "." + comIpArray[3]
             let cip =  ipComing.trimmingCharacters(in:caracter)
+            
+            
+            
             
             
             var goIpArray:[String] = goingIP.components(separatedBy:".")
@@ -272,6 +454,13 @@ class TcpDump {
             
             let ipGoing:String = goIpArray[0] + "." + goIpArray[1] + "." + goIpArray[2] + "." + goIpArray[3]
             let gip =  ipGoing.trimmingCharacters(in:caracter)
+            
+            
+            
+            
+            
+            
+            
             
             newConection.comIp = cip
             newConection.goIp = gip
@@ -299,6 +488,9 @@ class TcpDump {
                 }
                 
             }
+            
+            
+            
             
             isFound = false
             
@@ -336,7 +528,7 @@ class TcpDump {
         //        }
     }
     
-
+    
     
     
     var  tcpDumpFileLine:String {
@@ -366,7 +558,7 @@ class TcpDump {
         return arrayData[0]
         
     }
-
+    
     
     func stopLocationsTimer() {
         
@@ -374,13 +566,13 @@ class TcpDump {
             getIpLocationsTimer.invalidate()
         }
     }
-
+    
     
     
     func removeLine() {
         self.removeLinesFromFile(fileURL:tcpDumpFileUrl, numLines:1)
     }
-
+    
     func removeLinesFromFile(fileURL: URL, numLines: Int) {
         
         do {
@@ -408,7 +600,7 @@ class TcpDump {
         packagesProcessed += 1
         tcpDumpDelegate?.packageProcessed(number:packagesProcessed)
     }
-
+    
     
     func ipsToCheck() -> [Node] {
         
@@ -423,7 +615,7 @@ class TcpDump {
         
         return ipsToCheck
     }
-
+    
     
     
     
@@ -440,7 +632,7 @@ class TcpDump {
         if dataBaseMode == DataBaseMode.on {
             
             ipsFound.append(newIp)
-             self.tcpDumpDelegate?.newIpComing(ips:self.ipsFound)
+            self.tcpDumpDelegate?.newIpComing(ips:self.ipsFound)
             
             do {
                 try self.managedContext.save()
@@ -454,6 +646,8 @@ class TcpDump {
             self.tcpDumpDelegate?.newIpComing(ips:self.ipsFoundOffMode)
         }
     }
+    
+    
     
     
     
@@ -473,12 +667,17 @@ class TcpDump {
         }
     }
     
+    
+    
+    
+    
     func  newIpEntity() -> Node {
         let entity = NSEntityDescription.entity(forEntityName: "Node", in: self.managedContext)!
         let ip = NSManagedObject(entity: entity,insertInto: self.managedContext) as! Node
         return ip
     }
-
+    
+    
     
     
     //MARK: ---------------- TIMER GET LOCATIONS -------------------------
@@ -495,9 +694,9 @@ class TcpDump {
     }
     
     
-
     
-       //MARK: ---------------- LOCATION  -------------------------
+    
+    //MARK: ---------------- LOCATION  -------------------------
     
     func  completeIPs() {
         
@@ -618,6 +817,6 @@ class TcpDump {
         newConection = Conection()
         print(conectionsToShow)
     }
-
-
+    
+    
 }

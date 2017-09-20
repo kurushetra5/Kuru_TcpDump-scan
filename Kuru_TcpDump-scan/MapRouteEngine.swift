@@ -210,7 +210,7 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
         
     }
     
-    func ipInfoPressed(sender:NSButton) {
+    @objc func ipInfoPressed(sender:NSButton) {
         
         let popOver:NSPopover = NSPopover()
         let vc:anotationDetailPopOverController = (popOverController as? anotationDetailPopOverController)!
@@ -236,22 +236,39 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     }
     
     
+    
+    
     //MARK: ---------------- Map View ------------------  Delegates
     
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
-        var annotationView:MKAnnotationView!
+//        var annotationView:MKAnnotationView!
         
         if annotation is MKUserLocation {
             return nil
         }
-        if annotation is IpAnotation {
-            annotationView = IpAnotation.ipAnotationFor(map:mapView, annotation:annotation)
+        
+        var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: "Pin")
+        if annotationView == nil{
+            annotationView = CustomAnotation(annotation: annotation, reuseIdentifier: "Pin")
+            
             let button:NSButton = NSButton(title:"Details", target: self, action:#selector(ipInfoPressed))
-            annotationView.rightCalloutAccessoryView = button
-            annotationView.canShowCallout = true
+            annotationView?.rightCalloutAccessoryView = button
+            annotationView?.canShowCallout = true
+
+//            annotationView?.canShowCallout = false
+        }else{
+            annotationView?.annotation = annotation
         }
+        annotationView?.image = NSImage(named: NSImage.Name(rawValue: "ServerA"))
+        
+//        if annotation is IpAnotation {
+//            annotationView = IpAnotation.ipAnotationFor(map:mapView, annotation:annotation)
+//            let button:NSButton = NSButton(title:"Details", target: self, action:#selector(ipInfoPressed))
+//            annotationView.rightCalloutAccessoryView = button
+//            annotationView.canShowCallout = true
+//        }
         return annotationView
     }
     

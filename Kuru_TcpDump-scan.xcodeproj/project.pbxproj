@@ -18,15 +18,17 @@
 		613B13301F4F338500C5747C /* Conection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613B132F1F4F338500C5747C /* Conection.swift */; };
 		6169AD421F49E63E0016B252 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6169AD411F49E63E0016B252 /* AppDelegate.swift */; };
 		6169AD441F49E63E0016B252 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6169AD431F49E63E0016B252 /* ViewController.swift */; };
-		6169AD491F49E63E0016B252 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6169AD481F49E63E0016B252 /* Assets.xcassets */; };
 		6169AD4C1F49E63E0016B252 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6169AD4A1F49E63E0016B252 /* Main.storyboard */; };
 		6169AD541F49E6ED0016B252 /* KuTcp_Scaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6169AD531F49E6ED0016B252 /* KuTcp_Scaner.swift */; };
+		616A14FE1F5A1FF5001B15A2 /* SudoComand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616A14FD1F5A1FF5001B15A2 /* SudoComand.swift */; };
 		6193F08F1F59E6720026C254 /* Kuru_NetHunter.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6193F08D1F59E6720026C254 /* Kuru_NetHunter.xcdatamodeld */; };
 		6193F0921F59E7D50026C254 /* Node+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6193F0901F59E7D50026C254 /* Node+CoreDataClass.swift */; };
 		6193F0931F59E7D50026C254 /* Node+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6193F0911F59E7D50026C254 /* Node+CoreDataProperties.swift */; };
 		61A2C9601F578E5B00772D94 /* dataBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A2C95F1F578E5B00772D94 /* dataBaseManager.swift */; };
 		61B954DE1F562F530061A3BC /* IpAnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B954DD1F562F530061A3BC /* IpAnotation.swift */; };
 		61C4B80A1F574A3100917528 /* TcpDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C4B8091F574A3100917528 /* TcpDump.swift */; };
+		61CE6FD41F5B4D86007404C5 /* CustomAnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CE6FD31F5B4D86007404C5 /* CustomAnotation.swift */; };
+		61E694BF1F5CB0F200A2AD8D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E694BE1F5CB0F200A2AD8D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,16 +45,18 @@
 		6169AD3E1F49E63E0016B252 /* Kuru_TcpDump-scan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kuru_TcpDump-scan.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6169AD411F49E63E0016B252 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6169AD431F49E63E0016B252 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		6169AD481F49E63E0016B252 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6169AD4B1F49E63E0016B252 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6169AD4D1F49E63E0016B252 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6169AD531F49E6ED0016B252 /* KuTcp_Scaner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = KuTcp_Scaner.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		616A14FD1F5A1FF5001B15A2 /* SudoComand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SudoComand.swift; sourceTree = "<group>"; };
 		6193F08E1F59E6720026C254 /* Kuru_NetHunter.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Kuru_NetHunter.xcdatamodel; sourceTree = "<group>"; };
 		6193F0901F59E7D50026C254 /* Node+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Node+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6193F0911F59E7D50026C254 /* Node+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Node+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		61A2C95F1F578E5B00772D94 /* dataBaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = dataBaseManager.swift; path = "Kuru_TcpDump-scan/dataBaseManager.swift"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		61B954DD1F562F530061A3BC /* IpAnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IpAnotation.swift; sourceTree = "<group>"; };
 		61C4B8091F574A3100917528 /* TcpDump.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = TcpDump.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		61CE6FD31F5B4D86007404C5 /* CustomAnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnotation.swift; sourceTree = "<group>"; };
+		61E694BE1F5CB0F200A2AD8D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,16 +74,16 @@
 			isa = PBXGroup;
 			children = (
 				61A2C95F1F578E5B00772D94 /* dataBaseManager.swift */,
+				6193F0911F59E7D50026C254 /* Node+CoreDataProperties.swift */,
+				6193F0901F59E7D50026C254 /* Node+CoreDataClass.swift */,
 			);
 			name = CoreData;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		6169AD351F49E63D0016B252 = {
 			isa = PBXGroup;
 			children = (
-				6193F0901F59E7D50026C254 /* Node+CoreDataClass.swift */,
-				6193F0911F59E7D50026C254 /* Node+CoreDataProperties.swift */,
-				616706E71F4EED0700F76988 /* CoreData */,
 				6169AD401F49E63E0016B252 /* Kuru_TcpDump-scan */,
 				6169AD3F1F49E63E0016B252 /* Products */,
 			);
@@ -96,14 +100,14 @@
 		6169AD401F49E63E0016B252 /* Kuru_TcpDump-scan */ = {
 			isa = PBXGroup;
 			children = (
-				61C4B8081F5749FC00917528 /* Comands */,
-				61B954531F56248E0061A3BC /* Map */,
 				6169AD411F49E63E0016B252 /* AppDelegate.swift */,
 				6169AD431F49E63E0016B252 /* ViewController.swift */,
 				6169AD531F49E6ED0016B252 /* KuTcp_Scaner.swift */,
-				611FA1691F548B350081928C /* FilesManager.swift */,
 				61158B711F5396F800BA02DC /* IPLocator.swift */,
 				613B132F1F4F338500C5747C /* Conection.swift */,
+				61B954531F56248E0061A3BC /* Map */,
+				61C4B8081F5749FC00917528 /* Comands */,
+				616706E71F4EED0700F76988 /* CoreData */,
 				61A2C95E1F578C7D00772D94 /* Suported */,
 			);
 			path = "Kuru_TcpDump-scan";
@@ -112,7 +116,7 @@
 		61A2C95E1F578C7D00772D94 /* Suported */ = {
 			isa = PBXGroup;
 			children = (
-				6169AD481F49E63E0016B252 /* Assets.xcassets */,
+				61E694BE1F5CB0F200A2AD8D /* Assets.xcassets */,
 				6169AD4A1F49E63E0016B252 /* Main.storyboard */,
 				6169AD4D1F49E63E0016B252 /* Info.plist */,
 				612993771F4D9DAC0098A1ED /* Python_Curl.py */,
@@ -128,6 +132,7 @@
 				61B954DD1F562F530061A3BC /* IpAnotation.swift */,
 				610EEBDE1F56EE8600DCD96F /* anotationDetailPopOverController.swift */,
 				610EEBDF1F56EE8600DCD96F /* anotationDetailPopOverController.xib */,
+				61CE6FD31F5B4D86007404C5 /* CustomAnotation.swift */,
 			);
 			name = Map;
 			sourceTree = "<group>";
@@ -139,6 +144,8 @@
 				612AB8981F53035A00FC4CF4 /* Comands.swift */,
 				61158B6F1F5385F400BA02DC /* TraceRouteNode.swift */,
 				612AB89A1F5305D900FC4CF4 /* FileComandExtractor.swift */,
+				616A14FD1F5A1FF5001B15A2 /* SudoComand.swift */,
+				611FA1691F548B350081928C /* FilesManager.swift */,
 			);
 			name = Comands;
 			sourceTree = "<group>";
@@ -170,12 +177,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Kurushetra;
 				TargetAttributes = {
 					6169AD3D1F49E63D0016B252 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = TFF2HTL4NS;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -209,7 +217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				610EEBE11F56EE8600DCD96F /* anotationDetailPopOverController.xib in Resources */,
-				6169AD491F49E63E0016B252 /* Assets.xcassets in Resources */,
+				61E694BF1F5CB0F200A2AD8D /* Assets.xcassets in Resources */,
 				6169AD4C1F49E63E0016B252 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,7 +236,9 @@
 				61158B721F5396F800BA02DC /* IPLocator.swift in Sources */,
 				6169AD421F49E63E0016B252 /* AppDelegate.swift in Sources */,
 				61A2C9601F578E5B00772D94 /* dataBaseManager.swift in Sources */,
+				61CE6FD41F5B4D86007404C5 /* CustomAnotation.swift in Sources */,
 				612AB8991F53035A00FC4CF4 /* Comands.swift in Sources */,
+				616A14FE1F5A1FF5001B15A2 /* SudoComand.swift in Sources */,
 				6103A6891F50E8F60051E9F0 /* MapRouteEngine.swift in Sources */,
 				6193F0931F59E7D50026C254 /* Node+CoreDataProperties.swift in Sources */,
 				61158B701F5385F400BA02DC /* TraceRouteNode.swift in Sources */,
@@ -259,13 +269,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -273,7 +286,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -310,13 +327,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -324,7 +344,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -360,7 +384,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = "Talaiot.Kuru-TcpDump-scan";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -375,7 +400,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = "Talaiot.Kuru-TcpDump-scan";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

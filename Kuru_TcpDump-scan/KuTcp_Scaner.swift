@@ -42,12 +42,12 @@ enum  NotesInMapMode:Int {
     
     //MARK: ---------------- VARS -------------------------
     
-    let appDelegate = NSApplication.shared().delegate  as! AppDelegate
+    let appDelegate = NSApplication.shared.delegate  as! AppDelegate
     let managedContext:NSManagedObjectContext!
     var ipsDelegate:IPsDelegate?
     var comandsManager:Comands = Comands.shared
     var ipLocator:IPLocator = IPLocator()
-     let dataBase:dataBaseManager = dataBaseManager()
+    let dataBase:dataBaseManager = dataBaseManager()
     
     var newConection:Conection = Conection()
     var filterInTcpDumpCommand:FilterInTcpDumpCommand = FilterInTcpDumpCommand.off

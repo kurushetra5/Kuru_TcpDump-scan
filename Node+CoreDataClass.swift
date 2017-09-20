@@ -15,12 +15,15 @@ public class Node: NSManagedObject {
     var anotation:IpAnotation!
     
     
+    
+    
     func isFilled() -> Bool {
         if number != nil && city != nil && country != nil && aso != nil { //FIXME: poner mas
             return true
         }
         return false
     }
+    
     
     
     func isEqualTo(node:Node) -> Bool {
