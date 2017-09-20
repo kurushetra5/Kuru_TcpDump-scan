@@ -22,7 +22,7 @@ struct  Conection  {
     
     
     init() {
-        
+        //
     }
     
     
