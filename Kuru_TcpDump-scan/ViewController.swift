@@ -13,6 +13,7 @@ import MapKit
 
 class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkingDelegate,NSTableViewDataSource,NSTableViewDelegate ,NSTabViewDelegate{
 
+    //MARK:--------------------------------------- OUTLETS ---------------------------------------
     @IBOutlet weak var map: MKMapView!
     
     
@@ -35,11 +36,17 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     @IBOutlet weak var comandsTableView: NSTableView!
     
+    @IBOutlet weak var fireWallTableView: NSTableView!
+    
     @IBOutlet weak var stateRuning: NSImageView!
     @IBOutlet weak var comandRuningLabel: NSTextField!
     
     @IBOutlet weak var blockIpText: NSTextField!
     
+    @IBOutlet weak var fireWallStartStop: NSButton!
+    
+    
+    //MARK:--------------------------------------- ACTIONS ---------------------------------------
     @IBAction func StartTcpDumpScan(_ sender: Any) {
          tcpDump.startTcpScan()
     }
@@ -93,6 +100,11 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     @IBAction func startFireWall(_ sender: NSButton) {
         
+       if sender.state == .on {
+           tcpDump.comandsManager.runComand(type:ComandType.fireWallStart, ip:nil, delegate:self)
+        }else {
+           tcpDump.comandsManager.runComand(type:ComandType.fireWallStop, ip:nil, delegate:self)
+        }
     }
     
     
@@ -129,9 +141,10 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     }
     
     @IBAction func blockIp(_ sender: Any) {
-        if isIpSelected() {
-            tcpDump.comandsManager.runComand(type:ComandType.addFireWallBadHosts, ip:blockIpText.stringValue, delegate:self)
-        }
+        //if isIpSelected() {
+            //tcpDump.comandsManager.runComand(type:ComandType.addFireWallBadHosts, ip:blockIpText.stringValue, delegate:self)
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallBadHosts, ip:nil, delegate:self)
+        //}
     }
     
     @IBAction func unBlockIp(_ sender: Any) {
@@ -141,13 +154,83 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     }
     
     
+    @IBAction func showNodesInMap(_ sender: NSButton) {
+        //         executeSudoComand()
+        if sender.state.rawValue == 0 {
+            tcpDump.showNodesInMapView = NotesInMapMode.off
+            mapEngine.mapView.removeAnnotations(mapEngine.mapView.annotations)
+        } else {
+            tcpDump.showNodesInMap(mode:NotesInMapMode(rawValue: sender.state.rawValue)!)
+        }
+    }
+    
+    
+    
+    //MARK:--------------------------------------- VARS ---------------------------------------
+    
+    fileprivate enum CellIdentifiers {
+        static let NumberCell = "NumberCell"
+        static let CountryCell = "CountryCell"
+        static let StateCell = "StateCell"
+        static let CityCell = "CityCell"
+        static let LatitudCell = "LatitudCell"
+        static let LongitudeCell = "LongitudeCell"
+        
+    }
+    
+    
+    var mapEngine:MapRouteEngine!
+    let filesManager:FilesManager = FilesManager.shared
+    let tcpDump = Kuru_TcpDump()
+    var ipsToShow:[Node]?
+    var comandToShow:[TraceRouteNode] = []
+    var oldNode:Node!
+    var renderedNodes:[Node] = []
+    var traceRouteNodesCount:Int = 1
+    var selectedIp:String!
+    var blockedIps:[String] = []
+    
+    
+    
+    //MARK:--------------------------------------- FUNC ---------------------------------------
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureView()
+        tcpDump.ipsDelegate = self
+        mapEngine = MapRouteEngine(withMap:map)
+        mapEngine.popOverController = popOverController
+        mapEngine.startEngine()
+        
+    }
+    
+    override var representedObject: Any? {
+        didSet {
+            // Update the view, if already loaded.
+        }
+    }
+    
+    
+    
+    func configureView() {
+        
+        pathForTcpDumpFile.stringValue =  filesManager.tcpDumpFileUrl.absoluteString
+        pathForTraceRouteFile.stringValue =  filesManager.traceRouteFileUrl.absoluteString
+        pathForSaveDumpFile.stringValue = filesManager.saveDumpFileUrl.absoluteString
+        comandRuningLabel.stringValue =  ""
+        stateRuning.alphaValue = 0.5
+    }
+    
+    
+    
+    
     
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
         
-      // let id:String =  tabView.selectedTabViewItem?.identifier as! String
-        if tabView.selectedTabViewItem?.identifier! as! String == "fireWall" {
+       if tabView.selectedTabViewItem?.identifier! as! String == "fireWall" {
             print("Si")
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
+        tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
         } else {
             print("No")
         }
@@ -175,12 +258,32 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         if processName == ComandType.fireWallState.rawValue {
             fireWallStateLabel.stringValue = data
+            if data.contains("Enabled") {
+                fireWallStartStop.title = "Stop"
+                fireWallStartStop.state = .on
+            }else {
+                fireWallStartStop.title = "Start"
+                fireWallStartStop.state = .off
+            }
         }
         if processName == ComandType.fireWallBadHosts.rawValue {
              print(data)
+            blockedIps.append(data)
+            fireWallTableView.reloadData()
         }
         if processName == ComandType.addFireWallBadHosts.rawValue {
             print(data)
+        }
+        if processName == ComandType.deleteFireWallBadHosts.rawValue {
+            print(data)
+        }
+        if processName == ComandType.fireWallStart.rawValue {
+            print(data)
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
+        }
+        if processName == ComandType.fireWallStop.rawValue {
+            print(data)
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
         }
     }
     
@@ -211,63 +314,6 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     
-    
-    //MARK:------------------ MAP_VIEW ACTIONS -----------------
-    
-    @IBAction func showNodesInMap(_ sender: NSButton) {
-//         executeSudoComand()
-        if sender.state.rawValue == 0 {
-            tcpDump.showNodesInMapView = NotesInMapMode.off
-           mapEngine.mapView.removeAnnotations(mapEngine.mapView.annotations)
-        } else {
-        tcpDump.showNodesInMap(mode:NotesInMapMode(rawValue: sender.state.rawValue)!)
-        }
-    }
-    
-   
-    
-    fileprivate enum CellIdentifiers {
-        static let NumberCell = "NumberCell"
-        static let CountryCell = "CountryCell"
-        static let StateCell = "StateCell"
-        static let CityCell = "CityCell"
-        static let LatitudCell = "LatitudCell"
-        static let LongitudeCell = "LongitudeCell"
-        
-    }
-    
-    
-    var mapEngine:MapRouteEngine!
-    let filesManager:FilesManager = FilesManager.shared
-    let tcpDump = Kuru_TcpDump()
-    var ipsToShow:[Node]?
-    var comandToShow:[TraceRouteNode] = []
-    var oldNode:Node!
-    var renderedNodes:[Node] = []
-    var traceRouteNodesCount:Int = 1
-    var selectedIp:String!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureView()
-        tcpDump.ipsDelegate = self
-        mapEngine = MapRouteEngine(withMap:map)
-        mapEngine.popOverController = popOverController
-        mapEngine.startEngine()
-        
-    }
-
-    
-    func configureView() {
-        
-        pathForTcpDumpFile.stringValue =  filesManager.tcpDumpFileUrl.absoluteString
-        pathForTraceRouteFile.stringValue =  filesManager.traceRouteFileUrl.absoluteString
-        pathForSaveDumpFile.stringValue = filesManager.saveDumpFileUrl.absoluteString
-        comandRuningLabel.stringValue =  ""
-        stateRuning.alphaValue = 0.5
-    }
-    
-    
     func commandIsWorking(comandType:ComandType) {
         animateComandWork()
         comandRuningLabel.stringValue = comandType.rawValue
@@ -293,11 +339,6 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
       packagesCount.integerValue = filesManager.countLines(fileURL:filesManager.tcpDumpFileUrl)
     }
     
-    override var representedObject: Any? {
-        didSet {
-        // Update the view, if already loaded.
-        }
-    }
     
     
     func newPackage() {
@@ -377,11 +418,30 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         if tableView.identifier!.rawValue == "comands" {
             return comandToShow.count
         }
+        if tableView.identifier!.rawValue == "fireWall" {
+            return blockedIps.count
+        }
          return ipsToShow?.count ?? 0
     }
     
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        
+        if tableView.identifier!.rawValue == "fireWall" {
+            
+            let ip:String = blockedIps[row]
+            var text: String = "-"
+            var cellIdentifier: String = ""
+            
+            if tableColumn == fireWallTableView.tableColumns[0] {
+                cellIdentifier = "IpBlocked"
+                text = ip
+            }
+            let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: nil) as? NSTableCellView
+            cell?.textField?.stringValue = text
+            return cell
+        }
+        
         
         if tableView.identifier!.rawValue == "comands" {
              let comands:TraceRouteNode = comandToShow[row]

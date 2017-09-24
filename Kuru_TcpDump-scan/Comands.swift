@@ -60,7 +60,7 @@ protocol ComandIp:Comand  {
 
 
 enum ComandType:String {
-    case tcpDump,traceRoute,mtRoute,whois,nsLookup,blockIp,netStat,fireWallState,fireWallBadHosts,addFireWallBadHosts,deleteFireWallBadHosts
+    case tcpDump,traceRoute,mtRoute,whois,nsLookup,blockIp,netStat,fireWallState,fireWallBadHosts,addFireWallBadHosts,deleteFireWallBadHosts,fireWallStop,fireWallStart
 }
 
 
@@ -143,6 +143,19 @@ struct NetStat:Comand  {
 }
 
 
+struct FireWallStart:Comand  {
+    var taskPath:String =  "/bin/sh"
+    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl -e -f  /etc/pf.conf"]
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
+}
+
+struct FireWallStop:Comand  {
+    var taskPath:String =  "/bin/sh"
+    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S  pfctl -d"]
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
+}
+
+
 struct FireWallState:Comand  {
     var taskPath:String =  "/bin/sh"
     var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl  -s info | grep Status"]
@@ -152,7 +165,7 @@ struct FireWallState:Comand  {
 
 struct FireWallBadHosts:Comand  {
     var taskPath:String =  "/bin/sh"
-    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl -t -T badhosts show"]
+    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl -t badhosts -T show"]
     var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
 }
 
@@ -366,6 +379,12 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             run(comand:AddFireWallBadHosts(withIp:ip), delegate:delegate)
         case .deleteFireWallBadHosts:
             run(comand:DeleteFireWallBadHosts(withIp:ip), delegate:delegate)
+        case .fireWallStop:
+            run(comand:FireWallStop(), delegate:delegate)
+        case .fireWallStart:
+            run(comand:FireWallStart(), delegate:delegate)
+        case .fireWallBadHosts:
+            run(comand:FireWallBadHosts(), delegate:delegate)
         default:
             print("")
         }
@@ -498,28 +517,25 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             
             if self.comandType == ComandType.fireWallState  || self.comandType == ComandType.fireWallBadHosts    {
                 self.processDelegate.newDataFromProcess(data:self.arrayResult[0], processName:self.comandType!.rawValue)
+                
             } else if self.comandType == ComandType.addFireWallBadHosts || self.comandType == ComandType.deleteFireWallBadHosts {
-                self.processDelegate.newDataFromProcess(data:"Done", processName:self.comandType!.rawValue)
-            }else {
+                self.processDelegate.newDataFromProcess(data:"Add/Delete", processName:self.comandType!.rawValue)
+                
+            }else if self.comandType == ComandType.fireWallStart || self.comandType == ComandType.fireWallStop  {
+                self.processDelegate.newDataFromProcess(data:"Start/Stop", processName:self.comandType!.rawValue)
+                
+                
+            } else {
+                let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
             
-//            self.ipLocator.locatorDelegate = self
-            
-            let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
-            
-            for node in nodes {
-                node.nodeFilledDelegate = self
-                node.fillNodeWithData()
-//                if self.dataBase.fetchInfoFor(node:node).found == true {
-//                    node.fillWithCoreDataNode(node:self.dataBase.fetchInfoFor(node:node).ip)
-//                } else {
-//                    self.ipLocator.fetchIpLocation(node:node)
-//                }
+               for node in nodes {
+                   node.nodeFilledDelegate = self
+                   node.fillNodeWithData()
+                
+                }
             }
-            }
-//            self.processDelegate?.procesFinishWith(nodes:self.ipsLocatorFounded)
-        
-//            var arr:[String] = self.arrayResult[0].components(separatedBy:"\n")
-//            print(self.arrayResult[0])
+         //
+            
         })
         
      }
