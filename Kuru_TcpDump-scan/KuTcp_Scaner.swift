@@ -24,7 +24,11 @@ enum  NotesInMapMode:Int {
     case on,off
 }
 
-  class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
+
+
+
+
+class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
     
     enum  Direction:Int {
         case coming,going

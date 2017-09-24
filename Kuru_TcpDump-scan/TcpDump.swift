@@ -17,7 +17,9 @@ protocol  TcpDumpDelegate {
     //    func newNode(node:TraceRouteNode)
     func newPackage()
     func packageProcessed(number:Int)
+    
 }
+
 
 enum PackagesMode:Int {
     case off,on
@@ -28,6 +30,7 @@ enum ProcessedMode:Int {
 enum FilterInTcpDumpCommand:Int {
     case off,on
 }
+
 
 
 class TcpDump {
@@ -357,7 +360,7 @@ class TcpDump {
         if isOK(line:arrayFields) == true {
             
             if isIP(protocolName:arrayFields[1]) == true {
-                let time = dateFrom(line:arrayFields[0])
+                _ = dateFrom(line:arrayFields[0])
                 let comingIP:String = ipFrom(line:arrayFields[2])
                 let goingIP:String = ipFrom(line:arrayFields[4])
                 
@@ -571,6 +574,7 @@ class TcpDump {
     
     func removeLine() {
         self.removeLinesFromFile(fileURL:tcpDumpFileUrl, numLines:1)
+        
     }
     
     func removeLinesFromFile(fileURL: URL, numLines: Int) {
@@ -810,6 +814,8 @@ class TcpDump {
             }
         }).resume()
     }
+    
+    
     
     func newConectionReadyToShow() {
         

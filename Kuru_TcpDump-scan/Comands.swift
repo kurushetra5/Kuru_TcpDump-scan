@@ -8,10 +8,10 @@
 
 import Foundation
 
-protocol  TraceRouteDelegate {
+protocol TraceRouteDelegate {
     func traceRouteIps(ips:[TraceRouteNode])
 }
-protocol  WhoisDelegate {
+protocol WhoisDelegate {
     func whoisFinish(result:String)
 }
 protocol LookUpDelegate {
@@ -25,6 +25,11 @@ protocol ProcessDelegate {
     func procesFinishWith(nodes:[TraceRouteNode])
     func newDataFromProcess(data:String , processName:String)
 }
+protocol ComandWorkingDelegate {
+    func commandIsWorking(comandType:ComandType)
+}
+
+
 
 extension DispatchQueue { //TODO: Cambiar de sitio
     
@@ -41,8 +46,101 @@ extension DispatchQueue { //TODO: Cambiar de sitio
     
 }
 
+protocol Comand  {
+    var taskPath:String{get set}
+    var taskArgs:[String]{get set}
+    var fileUrl:URL{get set}
+}
+
+protocol ComandIp:Comand  {
+    var ip:String{get set}
+    init(withIp:String)
+    mutating func addIp()
+}
 
 
+enum ComandType:String {
+    case tcpDump,traceRoute,mtRoute,whois,nsLookup,blockIp,netStat,fireWallState
+}
+
+
+struct TraceRoute:ComandIp {
+    var ip:String = ""
+    var taskPath:String =  "/usr/sbin/traceroute"
+    var taskArgs:[String] = ["-w 1" , "-m30" ,"www.google.com"]
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
+    
+     init(withIp:String) {
+         self.ip = withIp
+        addIp()
+     }
+    
+    mutating func addIp() {
+        self.taskArgs[2] = self.ip
+    }
+}
+
+
+struct NsLookup:ComandIp {
+    var ip:String = ""
+    var taskPath:String =  "/usr/bin/nslookup"
+    var taskArgs:[String] = []
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
+    
+    init(withIp:String) {
+        self.ip = withIp
+        addIp()
+    }
+    
+    mutating func addIp() {
+        self.taskArgs = [self.ip]
+    }
+}
+
+
+struct Whois:ComandIp {
+    var ip:String = ""
+    var taskPath:String =  "/usr/sbin/traceroute"
+    var taskArgs:[String] = []
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
+    
+    init(withIp:String) {
+        self.ip = withIp
+        addIp()
+    }
+    
+    mutating func addIp() {
+        self.taskArgs = [self.ip]
+    }
+}
+
+
+struct MtRoute:ComandIp {
+    
+    var ip:String = ""
+    var taskPath:String =  "/bin/sh"
+    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S  ./mtr -rw -n ??? | awk '{print $2}'"]
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
+    
+    init(withIp:String) {
+        self.ip = withIp
+        addIp()
+    }
+    
+    mutating func addIp() {
+        let comand:String = taskArgs[1]
+        let comandWithIp:String = comand.replacingOccurrences(of:"???", with:self.ip)
+        self.taskArgs[1] = comandWithIp
+        
+    }
+}
+
+
+struct NetStat:Comand  {
+    var taskPath:String =  "/bin/sh"
+    var taskArgs:[String] = ["-c" , "netstat -an  | grep ESTABLISHED"]
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt")
+}
 
 
 
@@ -58,12 +156,15 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     let filesManager:FilesManager = FilesManager.shared
     let dataBase:dataBaseManager = dataBaseManager()
     let ipLocator:IPLocator = IPLocator()
-
+    var comandType:ComandType!
     var ipsLocatorFounded:[TraceRouteNode] = []
     
     //MARK: ---------------- PROCESS WITH COMAND  -------------------------
     var processDelegate:ProcessDelegate!
+    var comandWorkingDelegate:ComandWorkingDelegate!
 //    var processName:String!
+    
+    
     
      //MARK: ---------------- MTROUTE -------------------------
     var mtrRouteComand:String = "/bin/sh"
@@ -118,6 +219,24 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
  
     
+    var comandWorkingTimer:Timer!
+    
+    func startTimerEvery(seconds:Double) {
+        comandWorkingTimer = Timer.scheduledTimer(timeInterval: seconds, target: self, selector:#selector(timerComandWorking), userInfo: nil, repeats: true)
+        
+    }
+    
+    @objc func timerComandWorking() {  //FIXME: cambiar ha swift  @objc
+        comandWorkingDelegate?.commandIsWorking(comandType:comandType)
+    }
+    
+    func stopComandWorkingTimer() {
+        
+        if (comandWorkingTimer != nil) {
+            comandWorkingTimer.invalidate()
+        }
+    }
+    
     
     
     //MARK: ---------------- PFCTL -------------------------
@@ -155,8 +274,77 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     }
     
     func filled(node:TraceRouteNode) {
-        processDelegate?.procesFinishWith(nodes:[node])
+        processDelegate?.procesFinishWith(nodes:[node]) //FIXME: pasar un node solo
     }
+    
+    
+    
+    
+    func runComand(type:ComandType, ip:String!, delegate:ProcessDelegate) {
+        
+       comandType = type
+        
+        if type is ComandIp  {
+            if ip == nil {
+              print("runComand : Ip Es NILL")
+                return
+            }
+        }
+        
+        switch type {
+        case .netStat:
+            run(comand:NetStat(), delegate:delegate)
+        case .traceRoute:
+             run(comand:TraceRoute(withIp:ip), delegate:delegate)
+        case .whois:
+            run(comand:Whois(withIp:ip), delegate:delegate)
+        case .nsLookup:
+            run(comand:NsLookup(withIp:ip), delegate:delegate)
+        case .mtRoute:
+            run(comand:MtRoute(withIp:ip), delegate:delegate)
+        default:
+            print("")
+        }
+        comandWorkingDelegate = delegate as?  ComandWorkingDelegate
+        startTimerEvery(seconds:0.5)
+    }
+    
+    
+    
+    
+    
+    
+    func run(comand:Comand, delegate:ProcessDelegate) {
+        
+        
+        filesManager.changeToWorkingPath(newPath:"/usr/local/sbin/")//FIXME: cambiarlo segun comando
+        
+        processDelegate = delegate
+        ipsLocatorFounded = []
+        
+        let task = Process()
+        task.launchPath = comand.taskPath
+        task.arguments = comand.taskArgs
+    
+        
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        let fh = pipe.fileHandleForReading
+        fh.waitForDataInBackgroundAndNotify()
+        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(receivedData), name: NSNotification.Name.NSFileHandleDataAvailable, object: nil)
+        
+        task.terminationHandler = {task -> Void in
+            print("acabado")
+            
+            
+            self.stopComandWorkingTimer()
+            self.printResults()
+        }
+        task.launch()
+    }
+    
     
     
     func netStat() {
@@ -283,7 +471,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             arrayResult.append(string!)
                     
                     OperationQueue.main.addOperation({
-                        self.processDelegate.newDataFromProcess(data:string!, processName:"")
+                        //self.processDelegate.newDataFromProcess(data:string!, processName:"")
                      })
               fh.waitForDataInBackgroundAndNotify()
          }
@@ -314,8 +502,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
 
         }, completion: {
             print("Completado")
-            let ips =  self.extractTraceRouteIps()
-            self.traceRouteIpsDelegate?.traceRouteIps(ips:ips)
+            self.traceRouteIpsDelegate?.traceRouteIps(ips:self.extractTraceRouteIps())
         })
     }
     
@@ -326,11 +513,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     
     func extractTraceRouteIps() -> [TraceRouteNode] {
-        var ips:[TraceRouteNode] = []
-        ips = fileExtractor.extractTraceRoute(fileUrl:traceRouteFileUrl)
-        
-        return ips
-        
+        return fileExtractor.extractTraceRoute(fileUrl:traceRouteFileUrl)
     }
     
     

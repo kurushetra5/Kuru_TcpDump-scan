@@ -11,7 +11,7 @@ import MapKit
 
 
 
-class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewDataSource,NSTableViewDelegate{
+class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkingDelegate,NSTableViewDataSource,NSTableViewDelegate{
 
     @IBOutlet weak var map: MKMapView!
     
@@ -35,6 +35,8 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewD
     
     @IBOutlet weak var comandsTableView: NSTableView!
     
+    @IBOutlet weak var stateRuning: NSImageView!
+    @IBOutlet weak var comandRuningLabel: NSTextField!
     
     
     @IBAction func StartTcpDumpScan(_ sender: Any) {
@@ -80,7 +82,10 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewD
     
     @IBAction func mtRoute(_ sender: NSButton) {
         
-        tcpDump.comandsManager.runProcessWith(comand:tcpDump.comandsManager.mtrRouteComand , args:tcpDump.comandsManager.mtrRouteArgs ,delegate: self)
+        if isIpSelected() {
+         tcpDump.comandsManager.runComand(type:ComandType.mtRoute, ip:traceRouteIp.stringValue, delegate:self)
+        }
+        //tcpDump.comandsManager.runProcessWith(comand:tcpDump.comandsManager.mtrRouteComand , args:tcpDump.comandsManager.mtrRouteArgs ,delegate: self)
     }
     
     
@@ -130,17 +135,28 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewD
     }
     
     
+    
     func procesFinishWith(nodes:[TraceRouteNode]) {
-        
+        comandToShow.append(nodes[0])
+        comandsTableView.reloadData()
     }
     
     
-    func newDataFromProcess(data:String , processName:String) {
+    func newDataFromProcess(data:String , processName:String) { //FIXME: quitar delegado
 //        let arrayData:[String] = data.components(separatedBy:"\n")
 //         print(arrayData)
     }
     
     
+    func isIpSelected() -> Bool {
+        
+        if traceRouteIp.stringValue.isEmpty {
+            print("IP no selected")
+           return false //TODO: Alerta
+        }else {
+            return true
+        }
+    }
     
     
     
@@ -149,7 +165,6 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewD
     
     @IBAction func showNodesInMap(_ sender: NSButton) {
 //         executeSudoComand()
-        
         if sender.state.rawValue == 0 {
             tcpDump.showNodesInMapView = NotesInMapMode.off
            mapEngine.mapView.removeAnnotations(mapEngine.mapView.annotations)
@@ -175,9 +190,11 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewD
     let filesManager:FilesManager = FilesManager.shared
     let tcpDump = Kuru_TcpDump()
     var ipsToShow:[Node]?
+    var comandToShow:[TraceRouteNode] = []
     var oldNode:Node!
     var renderedNodes:[Node] = []
     var traceRouteNodesCount:Int = 1
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -196,6 +213,27 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewD
         pathForTraceRouteFile.stringValue =  filesManager.traceRouteFileUrl.absoluteString
         pathForSaveDumpFile.stringValue = filesManager.saveDumpFileUrl.absoluteString
     }
+    
+    
+    func commandIsWorking(comandType:ComandType) {
+        animateComandWork()
+        comandRuningLabel.stringValue = comandType.rawValue
+    }
+    
+    func animateComandWork() {
+        
+        if stateRuning.animator().alphaValue == 1 {
+            NSAnimationContext.current.duration = 0.4
+            stateRuning.animator().alphaValue = 0
+        } else {
+            NSAnimationContext.current.duration = 0.4
+            stateRuning.animator().alphaValue = 1
+        }
+    }
+    
+    
+  
+    
     
     func updatePackagesCounts() {
         
@@ -284,7 +322,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewD
     func numberOfRows(in tableView: NSTableView) -> Int {
         
         if tableView.identifier!.rawValue == "comands" {
-           return 3
+            return comandToShow.count
         }
          return ipsToShow?.count ?? 0
     }
@@ -293,8 +331,25 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewD
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         
         if tableView.identifier!.rawValue == "comands" {
+             let comands:TraceRouteNode = comandToShow[row]
+            var text: String = "-"
+            var cellIdentifier: String = ""
             
+            if tableColumn == comandsTableView.tableColumns[0] {
+                cellIdentifier = "NumberCell"
+                text = comands.ip ?? "-error-"
+            } else if tableColumn == comandsTableView.tableColumns[1] {
+                cellIdentifier = "CountryCell"
+                text = comands.country ?? "-"
+            }
+            let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: nil) as? NSTableCellView
+            cell?.textField?.stringValue = text
+            return cell
         }
+        
+        
+        
+        
         
         guard let ipToShow:Node = ipsToShow?[row]  else {
             return nil
@@ -344,9 +399,23 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,NSTableViewD
     
     
     func tableViewSelectionDidChange(_ notification: Notification) {
-        let ipSelected:Node = ipsToShow![ipsTableView.selectedRow]
-        traceRouteIp.stringValue = ipSelected.number!
-        mapEngine.focusNewIPInView(location:CLLocation(latitude:ipSelected.latitud, longitude:Double(ipSelected.longitude)))
+        
+        if comandsTableView.selectedRow >= 0 {
+            let ipSelected:TraceRouteNode = comandToShow[comandsTableView.selectedRow]
+            traceRouteIp.stringValue = ipSelected.ip!
+        }
+        
+        
+        if ipsTableView.selectedRow >= 0 {
+            
+            let ipSelected:Node = ipsToShow![ipsTableView.selectedRow]
+            traceRouteIp.stringValue = ipSelected.number!
+            
+            mapEngine.focusNewIPInView(location:CLLocation(latitude:ipSelected.latitud, longitude:Double(ipSelected.longitude)))
+        }
+        
+        
+        
     }
     
 }

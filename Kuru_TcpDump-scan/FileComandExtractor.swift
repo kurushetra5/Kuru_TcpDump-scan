@@ -39,14 +39,37 @@ class FileComandExtractor  {
         let ipsArray:[String] = ips.components(separatedBy:"\n")
         
         for ip in ipsArray {
-            nodes.append(TraceRouteNode(ip:ip))
+            if isIpNumber(ip:ip) {
+               nodes.append(TraceRouteNode(ip:ip))
+            } else {
+                print("ERROR: NO IP NUMBER...")
+            }
+            
         }
         return nodes
     }
     
     
     
-    
+    func isIpNumber(ip:String) -> Bool {
+        
+        var isIp:Bool = true
+        let array:[String] = ip.components(separatedBy:".")
+        
+        if array.count == 4 {
+            let number1  = Int(array[0])
+            let number2  = Int(array[1])
+            let number3  = Int(array[2])
+            let number4  = Int(array[3])
+            
+            if number1 == nil || number2 == nil  || number3 == nil || number4 == nil {
+                isIp = false
+            }
+        } else {
+           isIp = false
+        }
+         return isIp
+    }
     
     
     
@@ -111,7 +134,8 @@ class FileComandExtractor  {
 
             }
             
-            
+            //let myString1 = "556"
+            //let myInt1 = Int(myString1)
             
             
             if resultIp != "" { //FIXME: filtrar router
@@ -226,7 +250,7 @@ class FileComandExtractor  {
     
     func extractMTRoute(data:String) {
         
-        var arr:[String] = data.components(separatedBy:"\n")
+        let arr:[String] = data.components(separatedBy:"\n")
         
         for ip in arr {
             if ip != "???" {

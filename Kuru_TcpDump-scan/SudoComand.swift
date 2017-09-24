@@ -44,7 +44,7 @@ class SudoComand  {
         sudoTask.terminate()
         do   {
             let data = try  Data(contentsOf:sudoFileUrl)
-            let dataString:String = String(data:data, encoding:.utf8)!
+            let _:String = String(data:data, encoding:.utf8)!
 //            sudoDelegate.whoisFinish(result:dataString)
         }catch {
             print("ERROR: whois file not read it..")

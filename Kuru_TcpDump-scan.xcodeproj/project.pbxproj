@@ -16,6 +16,7 @@
 		612AB8991F53035A00FC4CF4 /* Comands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612AB8981F53035A00FC4CF4 /* Comands.swift */; };
 		612AB89B1F5305D900FC4CF4 /* FileComandExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612AB89A1F5305D900FC4CF4 /* FileComandExtractor.swift */; };
 		613B13301F4F338500C5747C /* Conection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613B132F1F4F338500C5747C /* Conection.swift */; };
+		615329901F74842200B3BBFA /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6153298F1F74842200B3BBFA /* MapKit.framework */; };
 		6169AD421F49E63E0016B252 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6169AD411F49E63E0016B252 /* AppDelegate.swift */; };
 		6169AD441F49E63E0016B252 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6169AD431F49E63E0016B252 /* ViewController.swift */; };
 		6169AD4C1F49E63E0016B252 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6169AD4A1F49E63E0016B252 /* Main.storyboard */; };
@@ -42,6 +43,7 @@
 		612AB8981F53035A00FC4CF4 /* Comands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comands.swift; sourceTree = "<group>"; };
 		612AB89A1F5305D900FC4CF4 /* FileComandExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileComandExtractor.swift; sourceTree = "<group>"; };
 		613B132F1F4F338500C5747C /* Conection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Conection.swift; sourceTree = "<group>"; };
+		6153298F1F74842200B3BBFA /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		6169AD3E1F49E63E0016B252 /* Kuru_TcpDump-scan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kuru_TcpDump-scan.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6169AD411F49E63E0016B252 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6169AD431F49E63E0016B252 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -64,12 +66,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				615329901F74842200B3BBFA /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6153298E1F74842100B3BBFA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6153298F1F74842200B3BBFA /* MapKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		616706E71F4EED0700F76988 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -86,6 +97,7 @@
 			children = (
 				6169AD401F49E63E0016B252 /* Kuru_TcpDump-scan */,
 				6169AD3F1F49E63E0016B252 /* Products */,
+				6153298E1F74842100B3BBFA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -316,9 +328,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -367,8 +381,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

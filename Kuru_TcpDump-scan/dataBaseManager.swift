@@ -86,7 +86,7 @@ class dataBaseManager {
     
     
     
-    func fetchInfoFor(node:TraceRouteNode) -> (found:Bool,ip:Node) {
+    func fetchInfoFor(node:TraceRouteNode) -> (found:Bool,ip:Node) { //FIXME: Sobra ip
 
         var founded:Bool = false
         var foundNode:Node = Node()
@@ -101,11 +101,13 @@ class dataBaseManager {
             if searchResults.count >= 2 {
                 print("Duplicate Ip found")
                 founded = true
-                foundNode = searchResults[0]
+                foundNode = searchResults[0]//FIXME: Sobra
+                foundedNode = searchResults[0]
             }
             if searchResults.count == 1 {
                 founded = true
-                foundNode = searchResults[0]
+                foundNode = searchResults[0]//FIXME: Sobra
+                foundedNode = searchResults[0]
             }
         
         } catch {
