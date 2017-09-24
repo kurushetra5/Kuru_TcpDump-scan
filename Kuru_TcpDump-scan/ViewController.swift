@@ -11,7 +11,7 @@ import MapKit
 
 
 
-class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkingDelegate,NSTableViewDataSource,NSTableViewDelegate{
+class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkingDelegate,NSTableViewDataSource,NSTableViewDelegate ,NSTabViewDelegate{
 
     @IBOutlet weak var map: MKMapView!
     
@@ -125,6 +125,19 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     @IBAction func showIpsDataBase(_ sender: Any) {
        tcpDump.tcpDumpComand.getIps()
+    }
+    
+    
+    func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
+        
+      // let id:String =  tabView.selectedTabViewItem?.identifier as! String
+        if tabView.selectedTabViewItem?.identifier! as! String == "fireWall" {
+            print("Si")
+        } else {
+            print("No")
+        }
+        
+        
     }
     
     
