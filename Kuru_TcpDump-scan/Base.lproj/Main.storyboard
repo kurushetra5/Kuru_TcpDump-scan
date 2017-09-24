@@ -705,7 +705,7 @@
                                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JKF-ra-pos">
                                                 <rect key="frame" x="1441" y="0.0" width="32" height="32"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="ServerA" id="d36-xQ-0ai"/>
+                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="radar" id="d36-xQ-0ai"/>
                                             </imageView>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Rb-rM-QiP">
                                                 <rect key="frame" x="1358" y="7" width="88" height="17"/>
@@ -1634,10 +1634,10 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <customObject id="mCd-wE-0bM" customClass="anotationDetailPopOverController" customModule="Kuru_TcpDump_scan" customModuleProvider="target"/>
             </objects>
-            <point key="canvasLocation" x="1114.5" y="-702"/>
+            <point key="canvasLocation" x="1160" y="-741"/>
         </scene>
     </scenes>
     <resources>
-        <image name="ServerA" width="40" height="40"/>
+        <image name="radar" width="32" height="32"/>
     </resources>
 </document>

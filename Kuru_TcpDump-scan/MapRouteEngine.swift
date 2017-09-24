@@ -76,8 +76,7 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     
     func startEngine() {
         
-        let anotation:IpAnotation = IpAnotation()
-        addIp(anotation:anotation)
+        
     }
     
     

@@ -148,10 +148,23 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     }
     
     
+    func alert(error: String, text: String) -> Bool {
+        let alert = NSAlert()
+        alert.icon =  NSImage.init(named:.network)
+        alert.messageText = error
+        alert.informativeText = text
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        return alert.runModal() == .alertFirstButtonReturn
+    }
+    
+  
+    
     func isIpSelected() -> Bool {
         
         if traceRouteIp.stringValue.isEmpty {
             print("IP no selected")
+          _ =  alert(error: "No hay ninguna IP seleccionada", text: "Selecciona una")
            return false //TODO: Alerta
         }else {
             return true
@@ -212,6 +225,8 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         pathForTcpDumpFile.stringValue =  filesManager.tcpDumpFileUrl.absoluteString
         pathForTraceRouteFile.stringValue =  filesManager.traceRouteFileUrl.absoluteString
         pathForSaveDumpFile.stringValue = filesManager.saveDumpFileUrl.absoluteString
+        comandRuningLabel.stringValue =  ""
+        stateRuning.alphaValue = 0.5
     }
     
     
