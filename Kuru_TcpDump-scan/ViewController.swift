@@ -133,6 +133,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
       // let id:String =  tabView.selectedTabViewItem?.identifier as! String
         if tabView.selectedTabViewItem?.identifier! as! String == "fireWall" {
             print("Si")
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
         } else {
             print("No")
         }
@@ -155,10 +156,14 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     }
     
     
-    func newDataFromProcess(data:String , processName:String) { //FIXME: quitar delegado
-//        let arrayData:[String] = data.components(separatedBy:"\n")
-//         print(arrayData)
+    func newDataFromProcess(data:String , processName:String) {
+        
+        if processName == ComandType.fireWallState.rawValue {
+            fireWallStateLabel.stringValue = data
+        }
+ 
     }
+    
     
     
     func alert(error: String, text: String) -> Bool {

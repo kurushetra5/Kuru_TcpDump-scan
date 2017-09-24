@@ -139,10 +139,15 @@ struct MtRoute:ComandIp {
 struct NetStat:Comand  {
     var taskPath:String =  "/bin/sh"
     var taskArgs:[String] = ["-c" , "netstat -an  | grep ESTABLISHED"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt")
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
 }
 
 
+struct FireWallState:Comand  {
+    var taskPath:String =  "/bin/sh"
+    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl  -s info | grep Status"]
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
+}
 
 
 
@@ -220,6 +225,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
  
     
     var comandWorkingTimer:Timer!
+    var arrayResult:[String] = []
     
     func startTimerEvery(seconds:Double) {
         comandWorkingTimer = Timer.scheduledTimer(timeInterval: seconds, target: self, selector:#selector(timerComandWorking), userInfo: nil, repeats: true)
@@ -267,6 +273,9 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     //MARK: ---------------- MTROUTE -------------------------
 //    echo nomeacuerdo8737 | sudo -S  ./mtr -rw -n  google.com |  awk '{print $2}'
 // traceroute www.google.com | awk '{print $2,  $3}' 
+   
+    
+    
     
     
     func nodeIpReady(node:TraceRouteNode) {
@@ -283,6 +292,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     func runComand(type:ComandType, ip:String!, delegate:ProcessDelegate) {
         
        comandType = type
+       arrayResult = []
         
         if type is ComandIp  {
             if ip == nil {
@@ -302,6 +312,8 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             run(comand:NsLookup(withIp:ip), delegate:delegate)
         case .mtRoute:
             run(comand:MtRoute(withIp:ip), delegate:delegate)
+        case .fireWallState:
+            run(comand:FireWallState(), delegate:delegate)
         default:
             print("")
         }
@@ -432,6 +444,10 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         
         OperationQueue.main.addOperation({
             
+            if self.comandType == ComandType.fireWallState {
+                self.processDelegate.newDataFromProcess(data:self.arrayResult[0], processName:self.comandType!.rawValue)
+            } else {
+            
 //            self.ipLocator.locatorDelegate = self
             
             let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
@@ -445,18 +461,18 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
 //                    self.ipLocator.fetchIpLocation(node:node)
 //                }
             }
-
+            }
 //            self.processDelegate?.procesFinishWith(nodes:self.ipsLocatorFounded)
             
 //            var arr:[String] = self.arrayResult[0].components(separatedBy:"\n")
 //            print(self.arrayResult[0])
         })
-
+        
      }
     
     
     
-    var arrayResult:[String] = []
+    
     
     @objc func receivedData(notif : NSNotification) {
        
