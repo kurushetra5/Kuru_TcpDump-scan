@@ -1570,6 +1570,46 @@
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
                                                                 </textField>
+                                                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SBn-eI-1Ao">
+                                                                    <rect key="frame" x="57" y="138" width="96" height="22"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="47G-qp-tmz">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bRc-87-qZ4">
+                                                                    <rect key="frame" x="0.0" y="141" width="57" height="17"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Block Ip:" id="bxv-sU-VL5">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LdT-Kf-2q5">
+                                                                    <rect key="frame" x="155" y="131" width="74" height="32"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                                    <buttonCell key="cell" type="push" title="Block" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EYa-Ex-bV9">
+                                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                        <font key="font" metaFont="system"/>
+                                                                    </buttonCell>
+                                                                    <connections>
+                                                                        <action selector="blockIp:" target="XfG-lQ-9wD" id="Emt-7g-b4q"/>
+                                                                    </connections>
+                                                                </button>
+                                                                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pce-Z7-FQs">
+                                                                    <rect key="frame" x="221" y="131" width="91" height="32"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                                    <buttonCell key="cell" type="push" title="Unblock" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3yL-wf-dRl">
+                                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                        <font key="font" metaFont="system"/>
+                                                                    </buttonCell>
+                                                                    <connections>
+                                                                        <action selector="unBlockIp:" target="XfG-lQ-9wD" id="Q7A-aK-NC3"/>
+                                                                    </connections>
+                                                                </button>
                                                             </subviews>
                                                         </view>
                                                     </tabViewItem>
@@ -1605,6 +1645,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="blockIpText" destination="SBn-eI-1Ao" id="a92-xV-6Yz"/>
                         <outlet property="comandRuningLabel" destination="0Rb-rM-QiP" id="W7B-4g-qvA"/>
                         <outlet property="comandsTableView" destination="X6z-yF-HVj" id="tft-0G-r4H"/>
                         <outlet property="fireWallStateLabel" destination="4cg-tJ-2MX" id="T4m-Db-huu"/>
@@ -1623,7 +1664,7 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <customObject id="mCd-wE-0bM" customClass="anotationDetailPopOverController" customModule="Kuru_TcpDump_scan" customModuleProvider="target"/>
             </objects>
-            <point key="canvasLocation" x="1052" y="-723"/>
+            <point key="canvasLocation" x="1051.5" y="-723"/>
         </scene>
     </scenes>
     <resources>

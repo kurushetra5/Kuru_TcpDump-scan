@@ -60,7 +60,7 @@ protocol ComandIp:Comand  {
 
 
 enum ComandType:String {
-    case tcpDump,traceRoute,mtRoute,whois,nsLookup,blockIp,netStat,fireWallState
+    case tcpDump,traceRoute,mtRoute,whois,nsLookup,blockIp,netStat,fireWallState,fireWallBadHosts,addFireWallBadHosts,deleteFireWallBadHosts
 }
 
 
@@ -149,6 +149,54 @@ struct FireWallState:Comand  {
     var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
 }
 
+
+struct FireWallBadHosts:Comand  {
+    var taskPath:String =  "/bin/sh"
+    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl -t -T badhosts show"]
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
+}
+
+
+struct AddFireWallBadHosts:ComandIp  {
+    
+    var ip:String = ""
+    var taskPath:String =  "/bin/sh"
+    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl  -t badhosts -T add ???"]
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
+    
+    init(withIp:String) {
+        self.ip = withIp
+        addIp()
+    }
+    
+    mutating func addIp() {
+        let comand:String = taskArgs[1]
+        let comandWithIp:String = comand.replacingOccurrences(of:"???", with:self.ip)
+        self.taskArgs[1] = comandWithIp
+        
+    }
+}
+
+
+struct DeleteFireWallBadHosts:ComandIp  {
+    
+    var ip:String = ""
+    var taskPath:String =  "/bin/sh"
+    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl  -t badhosts -T delete ???"]
+    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
+    
+    init(withIp:String) {
+        self.ip = withIp
+        addIp()
+    }
+    
+    mutating func addIp() {
+        let comand:String = taskArgs[1]
+        let comandWithIp:String = comand.replacingOccurrences(of:"???", with:self.ip)
+        self.taskArgs[1] = comandWithIp
+        
+    }
+}
 
 
 
@@ -265,7 +313,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
 //     sudo  pfctl -si
 //      sudo  pfctl -sn
 //    sudo   pfctl -t badhosts -T add 17.188.166.20
-    
+   // sudo   pfctl -t badhosts -T delete 17.188.166.20
     
     
     
@@ -314,6 +362,10 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             run(comand:MtRoute(withIp:ip), delegate:delegate)
         case .fireWallState:
             run(comand:FireWallState(), delegate:delegate)
+        case .addFireWallBadHosts:
+            run(comand:AddFireWallBadHosts(withIp:ip), delegate:delegate)
+        case .deleteFireWallBadHosts:
+            run(comand:DeleteFireWallBadHosts(withIp:ip), delegate:delegate)
         default:
             print("")
         }
@@ -444,9 +496,11 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         
         OperationQueue.main.addOperation({
             
-            if self.comandType == ComandType.fireWallState {
+            if self.comandType == ComandType.fireWallState  || self.comandType == ComandType.fireWallBadHosts    {
                 self.processDelegate.newDataFromProcess(data:self.arrayResult[0], processName:self.comandType!.rawValue)
-            } else {
+            } else if self.comandType == ComandType.addFireWallBadHosts || self.comandType == ComandType.deleteFireWallBadHosts {
+                self.processDelegate.newDataFromProcess(data:"Done", processName:self.comandType!.rawValue)
+            }else {
             
 //            self.ipLocator.locatorDelegate = self
             
@@ -463,7 +517,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             }
             }
 //            self.processDelegate?.procesFinishWith(nodes:self.ipsLocatorFounded)
-            
+        
 //            var arr:[String] = self.arrayResult[0].components(separatedBy:"\n")
 //            print(self.arrayResult[0])
         })
@@ -486,9 +540,9 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             let string =  String(data: data, encoding: String.Encoding(rawValue: String.Encoding.ascii.rawValue))
             arrayResult.append(string!)
                     
-                    OperationQueue.main.addOperation({
+                    //OperationQueue.main.addOperation({
                         //self.processDelegate.newDataFromProcess(data:string!, processName:"")
-                     })
+                     //})
               fh.waitForDataInBackgroundAndNotify()
          }
     }

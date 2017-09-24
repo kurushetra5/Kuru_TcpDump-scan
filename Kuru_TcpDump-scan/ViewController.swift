@@ -38,6 +38,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     @IBOutlet weak var stateRuning: NSImageView!
     @IBOutlet weak var comandRuningLabel: NSTextField!
     
+    @IBOutlet weak var blockIpText: NSTextField!
     
     @IBAction func StartTcpDumpScan(_ sender: Any) {
          tcpDump.startTcpScan()
@@ -127,6 +128,19 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
        tcpDump.tcpDumpComand.getIps()
     }
     
+    @IBAction func blockIp(_ sender: Any) {
+        if isIpSelected() {
+            tcpDump.comandsManager.runComand(type:ComandType.addFireWallBadHosts, ip:blockIpText.stringValue, delegate:self)
+        }
+    }
+    
+    @IBAction func unBlockIp(_ sender: Any) {
+        if isIpSelected() {
+           tcpDump.comandsManager.runComand(type:ComandType.deleteFireWallBadHosts, ip:blockIpText.stringValue, delegate:self)
+        }
+    }
+    
+    
     
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
         
@@ -156,12 +170,18 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     }
     
     
+    
     func newDataFromProcess(data:String , processName:String) {
         
         if processName == ComandType.fireWallState.rawValue {
             fireWallStateLabel.stringValue = data
         }
- 
+        if processName == ComandType.fireWallBadHosts.rawValue {
+             print(data)
+        }
+        if processName == ComandType.addFireWallBadHosts.rawValue {
+            print(data)
+        }
     }
     
     
@@ -180,7 +200,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     func isIpSelected() -> Bool {
         
-        if traceRouteIp.stringValue.isEmpty {
+        if selectedIp == nil {
             print("IP no selected")
           _ =  alert(error: "No hay ninguna IP seleccionada", text: "Selecciona una")
            return false //TODO: Alerta
@@ -225,7 +245,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     var oldNode:Node!
     var renderedNodes:[Node] = []
     var traceRouteNodesCount:Int = 1
-    
+    var selectedIp:String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -436,14 +456,16 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         if comandsTableView.selectedRow >= 0 {
             let ipSelected:TraceRouteNode = comandToShow[comandsTableView.selectedRow]
             traceRouteIp.stringValue = ipSelected.ip!
+            selectedIp = ipSelected.ip!
         }
         
         
         if ipsTableView.selectedRow >= 0 {
             
             let ipSelected:Node = ipsToShow![ipsTableView.selectedRow]
+            selectedIp = ipSelected.number!
             traceRouteIp.stringValue = ipSelected.number!
-            
+            blockIpText.stringValue = ipSelected.number!
             mapEngine.focusNewIPInView(location:CLLocation(latitude:ipSelected.latitud, longitude:Double(ipSelected.longitude)))
         }
         
