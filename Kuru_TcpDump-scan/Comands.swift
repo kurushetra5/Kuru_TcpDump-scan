@@ -24,7 +24,11 @@ protocol NetStatDelegate {
 protocol ProcessDelegate {
     func procesFinishWith(nodes:[TraceRouteNode])
     func newDataFromProcess(data:String , processName:String)
+    func procesFinishWith(node:Node, processName:String)
+    func procesFinishWith(node:TraceRouteNode, processName:String)
+    func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int)
 }
+
 protocol ComandWorkingDelegate {
     func commandIsWorking(comandType:ComandType)
 }
@@ -70,10 +74,10 @@ struct TraceRoute:ComandIp {
     var taskArgs:[String] = ["-w 1" , "-m30" ,"www.google.com"]
     var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
     
-     init(withIp:String) {
-         self.ip = withIp
+    init(withIp:String) {
+        self.ip = withIp
         addIp()
-     }
+    }
     
     mutating func addIp() {
         self.taskArgs[2] = self.ip
@@ -216,7 +220,7 @@ struct DeleteFireWallBadHosts:ComandIp  {
 final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     private init(){}
-      static let shared = Comands()
+    static let shared = Comands()
     
     let fileExtractor:FileComandExtractor = FileComandExtractor()
     let filesManager:FilesManager = FilesManager.shared
@@ -228,14 +232,14 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     //MARK: ---------------- PROCESS WITH COMAND  -------------------------
     var processDelegate:ProcessDelegate!
     var comandWorkingDelegate:ComandWorkingDelegate!
-//    var processName:String!
+    //    var processName:String!
     
     
     
-     //MARK: ---------------- MTROUTE -------------------------
+    //MARK: ---------------- MTROUTE -------------------------
     var mtrRouteComand:String = "/bin/sh"
     var mtrRouteArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S  ./mtr -rw -n www.google.com | awk '{print $2}'"]
-//    , "| awk '{print $2}'"]
+    //    , "| awk '{print $2}'"]
     
     
     
@@ -246,21 +250,21 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     var traceRouteTask =  Process()
     var traceRouteOutFile:FileHandle!
     var traceRouteFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
-
     
-     //MARK: ---------------- WHOIS  -------------------------
+    
+    //MARK: ---------------- WHOIS  -------------------------
     var whoisDelegate:WhoisDelegate!
     var whoisTask =  Process()
     var whoisOutFile:FileHandle!
     var whoisFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/whois.txt")
-
-     //MARK: ---------------- LOOKUP  -------------------------
+    
+    //MARK: ---------------- LOOKUP  -------------------------
     var nsLookupDelegate:LookUpDelegate!
     var nsLookupTask =  Process()
     var nsLookupOutFile:FileHandle!
     var nsLookupFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/nsLookup.txt")
     
-
+    
     
     
     
@@ -272,7 +276,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     var netStatFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt")
     var netStatComand:String = "/bin/sh"
     var netStatArgs:[String] = ["-c" , "netstat -an  | grep ESTABLISHED"]
-//    netstat   -an   | grep ESTABLISHED | awk '{print $5}'
+    //    netstat   -an   | grep ESTABLISHED | awk '{print $5}'
     
     
     
@@ -281,12 +285,13 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     //MARK: ---------------- TCPKILL  -------------------------
     var tcpKillComand:String = "/bin/sh"
     var tcpKillArgs:[String] = ["-c","echo nomeacuerdo8737  | sudo -S tcpkill -i en4  host"]
-//sudo   tcpkill -i en4  host 216.58.210.170
+    //sudo   tcpkill -i en4  host 216.58.210.170
     
- 
+    
     
     var comandWorkingTimer:Timer!
     var arrayResult:[String] = []
+    var nodeInUse:Node!
     
     func startTimerEvery(seconds:Double) {
         comandWorkingTimer = Timer.scheduledTimer(timeInterval: seconds, target: self, selector:#selector(timerComandWorking), userInfo: nil, repeats: true)
@@ -307,34 +312,34 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     
     //MARK: ---------------- PFCTL -------------------------
-//    20  echo nomeacuerdo8737 | sudo -S   sudo pfctl -s info
-//    21  echo nomeacuerdo8737 | sudo -S   pfctl -a com.apple -s rules
-//    22  echo nomeacuerdo8737 | sudo -S   pfctl -a com.apple/250.ApplicationFirewall -s rules
-//    23  echo nomeacuerdo8737 | sudo -S   pfctl -a  'com.apple/*' -sr
-//    24  echo nomeacuerdo8737 | sudo -S   pfctl -a  "com.apple/*" -sr
-//    25  echo nomeacuerdo8737 | sudo -S   pfctl -v -s Anchors
-//    26  echo nomeacuerdo8737 | sudo -S   pfctl -a com.apple/200.AirDrop  -s rules
-//    27  echo nomeacuerdo8737 | sudo -S   pfctl -a com.apple/200.AirDrop/Bonjour  -s rules
-//    28  echo nomeacuerdo8737 | sudo -S   pfctl -s References
-
-//    sudo  pfctl -d
-//    sudo ifconfig pflog0 create
-//     sudo tcpdump -n -e -ttt -i pflog0
-//     sudo  pfctl -e -f  /etc/pf.conf
-//    sudo   pfctl -t  -T badhosts  show 
-//       sudo  pfctl -ss
-//     sudo  pfctl -si
-//      sudo  pfctl -sn
-//    sudo   pfctl -t badhosts -T add 17.188.166.20
-   // sudo   pfctl -t badhosts -T delete 17.188.166.20
+    //    20  echo nomeacuerdo8737 | sudo -S   sudo pfctl -s info
+    //    21  echo nomeacuerdo8737 | sudo -S   pfctl -a com.apple -s rules
+    //    22  echo nomeacuerdo8737 | sudo -S   pfctl -a com.apple/250.ApplicationFirewall -s rules
+    //    23  echo nomeacuerdo8737 | sudo -S   pfctl -a  'com.apple/*' -sr
+    //    24  echo nomeacuerdo8737 | sudo -S   pfctl -a  "com.apple/*" -sr
+    //    25  echo nomeacuerdo8737 | sudo -S   pfctl -v -s Anchors
+    //    26  echo nomeacuerdo8737 | sudo -S   pfctl -a com.apple/200.AirDrop  -s rules
+    //    27  echo nomeacuerdo8737 | sudo -S   pfctl -a com.apple/200.AirDrop/Bonjour  -s rules
+    //    28  echo nomeacuerdo8737 | sudo -S   pfctl -s References
+    
+    //    sudo  pfctl -d
+    //    sudo ifconfig pflog0 create
+    //     sudo tcpdump -n -e -ttt -i pflog0
+    //     sudo  pfctl -e -f  /etc/pf.conf
+    //    sudo   pfctl -t  -T badhosts  show
+    //       sudo  pfctl -ss
+    //     sudo  pfctl -si
+    //      sudo  pfctl -sn
+    //    sudo   pfctl -t badhosts -T add 17.188.166.20
+    // sudo   pfctl -t badhosts -T delete 17.188.166.20
     
     
     
     
     //MARK: ---------------- MTROUTE -------------------------
-//    echo nomeacuerdo8737 | sudo -S  ./mtr -rw -n  google.com |  awk '{print $2}'
-// traceroute www.google.com | awk '{print $2,  $3}' 
-   
+    //    echo nomeacuerdo8737 | sudo -S  ./mtr -rw -n  google.com |  awk '{print $2}'
+    // traceroute www.google.com | awk '{print $2,  $3}'
+    
     
     
     
@@ -343,21 +348,30 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         ipsLocatorFounded.append(node)
     }
     
+    func filled(node:TraceRouteNode, amountIps:Int) {
+        processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue, amountNodes:amountIps)
+    }
+    
     func filled(node:TraceRouteNode) {
         processDelegate?.procesFinishWith(nodes:[node]) //FIXME: pasar un node solo
+        processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue)
     }
     
     
+    func runComand(type:ComandType, node:Node, delegate:ProcessDelegate) {
+        nodeInUse = node
+        runComand(type:type, ip:node.number, delegate:delegate)
+    }
     
     
     func runComand(type:ComandType, ip:String!, delegate:ProcessDelegate) {
         
-       comandType = type
-       arrayResult = []
+        comandType = type
+        arrayResult = []
         
         if type is ComandIp  {
             if ip == nil {
-              print("runComand : Ip Es NILL")
+                print("runComand : Ip Es NILL")
                 return
             }
         }
@@ -366,7 +380,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         case .netStat:
             run(comand:NetStat(), delegate:delegate)
         case .traceRoute:
-             run(comand:TraceRoute(withIp:ip), delegate:delegate)
+            run(comand:TraceRoute(withIp:ip), delegate:delegate)
         case .whois:
             run(comand:Whois(withIp:ip), delegate:delegate)
         case .nsLookup:
@@ -408,7 +422,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         let task = Process()
         task.launchPath = comand.taskPath
         task.arguments = comand.taskArgs
-    
+        
         
         let pipe = Pipe()
         task.standardOutput = pipe
@@ -423,10 +437,90 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             
             
             self.stopComandWorkingTimer()
-            self.printResults()
+            self.processResults()
         }
         task.launch()
     }
+    
+    
+    
+    
+    
+    
+    func  processResults()  {
+        
+        OperationQueue.main.addOperation({ //FIXME: hacerlo con case.
+            
+            if self.comandType == ComandType.fireWallState      { //FIXME: habeces no hay data
+                if self.arrayResult.count >= 1 {
+                   self.processDelegate.newDataFromProcess(data:self.arrayResult[0], processName:self.comandType!.rawValue)
+                }
+                
+                
+            } else if  self.comandType == ComandType.deleteFireWallBadHosts {
+                self.processDelegate.procesFinishWith(node:self.nodeInUse, processName:self.comandType!.rawValue)
+                
+            }else if self.comandType == ComandType.fireWallStart || self.comandType == ComandType.fireWallStop  {
+                self.processDelegate.newDataFromProcess(data:"Start/Stop", processName:self.comandType!.rawValue)
+                
+            }else if  self.comandType == ComandType.fireWallBadHosts  {
+                if self.arrayResult.count >= 1 {
+                    let ips = self.fileExtractor.extractBadHostsIps(ips:self.arrayResult[0])
+                    let countIps:Int = ips.count
+                    
+                    for ip in ips {
+                        let node:TraceRouteNode = TraceRouteNode(ip:ip)
+                        node.nodeFilledDelegate = self
+                        node.fillNodeWithData(amountIps:countIps)
+                    }
+                    print(ips)
+                }else if self.arrayResult.count == 0 {
+                     self.processDelegate.newDataFromProcess(data:"0", processName:self.comandType!.rawValue)
+                }
+            }else if  self.comandType == ComandType.addFireWallBadHosts  {
+                self.processDelegate.procesFinishWith(node:self.nodeInUse, processName:self.comandType!.rawValue)
+                
+            }else {
+                let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
+                
+                for node in nodes {
+                    node.nodeFilledDelegate = self
+                    node.fillNodeWithData()
+                    
+                }
+            }
+          
+            
+        })
+        
+    }
+    
+    
+    
+    
+    
+    @objc func receivedData(notif : NSNotification) {
+        
+        let fh:FileHandle = notif.object as! FileHandle
+        
+        let data = fh.availableData
+        if data.count > 1 {
+            
+            
+            
+            let string =  String(data: data, encoding: String.Encoding(rawValue: String.Encoding.ascii.rawValue))
+            arrayResult.append(string!)
+            
+            //OperationQueue.main.addOperation({
+            //self.processDelegate.newDataFromProcess(data:string!, processName:"")
+            //})
+            fh.waitForDataInBackgroundAndNotify()
+        }
+    }
+    
+    
+    
+    
     
     
     
@@ -445,11 +539,11 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             self.netStatTask.standardOutput = self.netStatOutFile
             
             self.netStatTask.launch()
-//             self.netStatTask.waitUntilExit() //FIXME: Cambiar ha Observer..
-        
+            //             self.netStatTask.waitUntilExit() //FIXME: Cambiar ha Observer..
+            
         }, completion: {
             print("Completado")
-//            let ips =  self.extractTraceRouteIps()
+            //            let ips =  self.extractTraceRouteIps()
             self.netStatDelegate?.netStatFinish(result:"finish")
         })
     }
@@ -457,7 +551,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     func terminateNetStat() {
         netStatTask.terminate()
     }
-
+    
     
     
     
@@ -466,13 +560,13 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         var theArgs:String!
         
         if name == "mtRoute" {
-           theArgs = mtrRouteArgs[0] + mtrRouteArgs[1] + ip + mtrRouteArgs[2]
-           runProcessWith(comand:mtrRouteComand, args:[theArgs] , delegate:delegate)
+            theArgs = mtrRouteArgs[0] + mtrRouteArgs[1] + ip + mtrRouteArgs[2]
+            runProcessWith(comand:mtrRouteComand, args:[theArgs] , delegate:delegate)
         }
         
- 
+        
     }
-
+    
     
     
     
@@ -488,7 +582,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         let task = Process()
         task.launchPath = comand
         task.arguments = args
-//        | awk '{print $3,  $5}'
+        //        | awk '{print $3,  $5}'
         
         let pipe = Pipe()
         task.standardOutput = pipe
@@ -498,72 +592,18 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(receivedData), name: NSNotification.Name.NSFileHandleDataAvailable, object: nil)
         
-       task.terminationHandler = {task -> Void in
+        task.terminationHandler = {task -> Void in
             print("acabado")
-        
-        
-        
-           self.printResults()
+            
+            
+            
+            self.processResults()
         }
         task.launch()
     }
     
     
     
-    func  printResults()  {
-        
-        
-        OperationQueue.main.addOperation({
-            
-            if self.comandType == ComandType.fireWallState  || self.comandType == ComandType.fireWallBadHosts    {
-                self.processDelegate.newDataFromProcess(data:self.arrayResult[0], processName:self.comandType!.rawValue)
-                
-            } else if self.comandType == ComandType.addFireWallBadHosts || self.comandType == ComandType.deleteFireWallBadHosts {
-                self.processDelegate.newDataFromProcess(data:"Add/Delete", processName:self.comandType!.rawValue)
-                
-            }else if self.comandType == ComandType.fireWallStart || self.comandType == ComandType.fireWallStop  {
-                self.processDelegate.newDataFromProcess(data:"Start/Stop", processName:self.comandType!.rawValue)
-                
-                
-            } else {
-                let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
-            
-               for node in nodes {
-                   node.nodeFilledDelegate = self
-                   node.fillNodeWithData()
-                
-                }
-            }
-         //
-            
-        })
-        
-     }
-    
-    
-    
-    
-    
-    @objc func receivedData(notif : NSNotification) {
-       
-        let fh:FileHandle = notif.object as! FileHandle
-       
-        let data = fh.availableData
-                if data.count > 1 {
-            
-           
-           
-            let string =  String(data: data, encoding: String.Encoding(rawValue: String.Encoding.ascii.rawValue))
-            arrayResult.append(string!)
-                    
-                    //OperationQueue.main.addOperation({
-                        //self.processDelegate.newDataFromProcess(data:string!, processName:"")
-                     //})
-              fh.waitForDataInBackgroundAndNotify()
-         }
-    }
-    
-   
     
     
     
@@ -585,7 +625,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             
             self.traceRouteTask.launch()
             self.traceRouteTask.waitUntilExit() //FIXME: Cambiar ha Observer..
-
+            
         }, completion: {
             print("Completado")
             self.traceRouteIpsDelegate?.traceRouteIps(ips:self.extractTraceRouteIps())
@@ -606,7 +646,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     
     
-   
+    
     
     
     
@@ -616,34 +656,34 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     //MARK: ---------------- WHOIS  -------------------------
     
-//    -A      Use the Asia/Pacific Network Information Center (APNIC) database.  It contains network numbers used in East Asia, Australia, New Zealand, and the
-//    Pacific islands.
+    //    -A      Use the Asia/Pacific Network Information Center (APNIC) database.  It contains network numbers used in East Asia, Australia, New Zealand, and the
+    //    Pacific islands.
     
-//    -a      Use the American Registry for Internet Numbers (ARIN) database.
-//    -b      Use the Network Abuse Clearinghouse database.
-//    -d      Use the US Department of Defense database.  It contains points of contact for subdomains of .MIL.
-//    
-//    -g      Use the US non-military federal government database, which contains points of contact for subdomains of .GOV.
-//    -c country-code
-//    This is the equivalent of using the -h option with an argument of "country-code.whois-servers.net".
-//
-//     -I      Use the Internet Assigned Numbers Authority (IANA) database.  It contains network information for top-level domains.
+    //    -a      Use the American Registry for Internet Numbers (ARIN) database.
+    //    -b      Use the Network Abuse Clearinghouse database.
+    //    -d      Use the US Department of Defense database.  It contains points of contact for subdomains of .MIL.
+    //
+    //    -g      Use the US non-military federal government database, which contains points of contact for subdomains of .GOV.
+    //    -c country-code
+    //    This is the equivalent of using the -h option with an argument of "country-code.whois-servers.net".
+    //
+    //     -I      Use the Internet Assigned Numbers Authority (IANA) database.  It contains network information for top-level domains.
     
-//    -i      Use the Network Solutions Registry for Internet Numbers (whois.networksolutions.com) database.  It contains network numbers and domain contact infor-
-//    mation for most of .COM, .NET, .ORG and .EDU domains.
-
-//    -l      Use the Latin American and Caribbean IP address Regional Registry (LACNIC) database.  It contains network numbers used in much of Latin America and
-//    the Caribbean.
-//    
-//    -m      Use the Route Arbiter Database (RADB) database.  It contains route policy specifications for a large number of operators' networks.
-//
-//    -Q      Do a quick lookup.  This means that whois will not attempt to lookup the name in the authoritative whois server (if one is listed).  This option has
-//    no effect when combined with any other options.
-//    
-//    -R      Use the Russia Network Information Center (RIPN) database.  It contains network numbers and domain contact information for subdomains of .RU.  This
-//    option is deprecated; use the -c option with an argument of "RU" instead.
-//    
-//    -r      Use the R'eseaux IP Europ'eens (RIPE) database.  It contains network numbers and domain contact information for Europe.
+    //    -i      Use the Network Solutions Registry for Internet Numbers (whois.networksolutions.com) database.  It contains network numbers and domain contact infor-
+    //    mation for most of .COM, .NET, .ORG and .EDU domains.
+    
+    //    -l      Use the Latin American and Caribbean IP address Regional Registry (LACNIC) database.  It contains network numbers used in much of Latin America and
+    //    the Caribbean.
+    //
+    //    -m      Use the Route Arbiter Database (RADB) database.  It contains route policy specifications for a large number of operators' networks.
+    //
+    //    -Q      Do a quick lookup.  This means that whois will not attempt to lookup the name in the authoritative whois server (if one is listed).  This option has
+    //    no effect when combined with any other options.
+    //
+    //    -R      Use the Russia Network Information Center (RIPN) database.  It contains network numbers and domain contact information for subdomains of .RU.  This
+    //    option is deprecated; use the -c option with an argument of "RU" instead.
+    //
+    //    -r      Use the R'eseaux IP Europ'eens (RIPE) database.  It contains network numbers and domain contact information for Europe.
     
     
     func whoisTo(ip:String) {
@@ -665,11 +705,11 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         print("whois finish")
         whoisTask.terminate()
         do   {
-           let data = try  Data(contentsOf:whoisFileUrl)
+            let data = try  Data(contentsOf:whoisFileUrl)
             let dataString:String = String(data:data, encoding:.utf8)!
             whoisDelegate.whoisFinish(result:dataString)
         }catch {
-          print("ERROR: whois file not read it..")
+            print("ERROR: whois file not read it..")
         }
         
     }
@@ -690,7 +730,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         nsLookupTask.standardOutput = nsLookupOutFile
         NotificationCenter.default.addObserver(self, selector:#selector(lookUpFinish), name:Process.didTerminateNotification, object:nil)
         nsLookupTask.launch()
-
+        
     }
     
     @objc func lookUpFinish() {
@@ -706,6 +746,6 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         }
         
     }
-
+    
     
 }

@@ -1615,7 +1615,7 @@
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                                                     <clipView key="contentView" ambiguous="YES" id="F1r-cx-owl">
                                                                         <rect key="frame" x="1" y="0.0" width="301" height="135"/>
-                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                        <autoresizingMask key="autoresizingMask"/>
                                                                         <subviews>
                                                                             <tableView identifier="fireWall" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="t2o-f1-1Tw" viewBased="YES" id="xey-FS-4Tt">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="301" height="112"/>

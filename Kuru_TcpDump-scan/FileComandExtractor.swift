@@ -31,6 +31,26 @@ import Foundation
 class FileComandExtractor  {
     
     
+    //MARK: ---------------- FIREWALL State  -------------------------
+    
+    func extractBadHostsIps(ips:String) -> [String] {
+       
+        var results:[String] = []
+        
+        let ipsOk = ips.replacingOccurrences(of:" ", with:"")
+        var lines:[String] = []
+        lines = ipsOk.components(separatedBy:"\n")
+        
+        for  ip in  lines {
+            if isIpNumber(ip:ip) {
+                results.append(ip)
+            }
+        }
+        return results
+    }
+    
+    
+    
      //MARK: ---------------- MTR_ROUTE  -------------------------
     
     func extractIpsFromMTRoute(ips:String) -> [TraceRouteNode] {

@@ -10,6 +10,7 @@ import Foundation
 
 protocol NodeFilledDelegate {
     func filled(node:TraceRouteNode)
+    func filled(node:TraceRouteNode, amountIps:Int)
 }
 
 
@@ -37,8 +38,8 @@ class  TraceRouteNode:IPLocatorDelegate  {
     var timezone:String!
     var zip:String!
     var isFilledOk:Bool = false
-    
-    
+    var amountIpsToCheck:Int!
+    var withAmountTarget:Bool = false
     
     
     init(ip:String) {
@@ -60,8 +61,19 @@ class  TraceRouteNode:IPLocatorDelegate  {
     }
     
     
+    func fillNodeWithData(amountIps:Int) {
+        withAmountTarget = true
+        amountIpsToCheck = amountIps
+        fillNode()
+    }
     
     func fillNodeWithData() {
+        withAmountTarget = false
+        fillNode()
+    }
+    
+    
+    func fillNode() {
         
         if dataBase.isFilledThis(node:self) {
             print("Node is Founded in DataBase")
@@ -91,7 +103,10 @@ class  TraceRouteNode:IPLocatorDelegate  {
 //        self.timezone = node.timezone
         self.zip = node.zip
         isFilledOk = true
-        nodeFilledDelegate?.filled(node:self)
+        
+        callDelegates()
+        
+        
     }
     
     
@@ -113,9 +128,19 @@ class  TraceRouteNode:IPLocatorDelegate  {
         self.zip = node.zip
         isFilledOk = true
         
-        nodeFilledDelegate?.filled(node:self)
+        callDelegates()
+        
     }
     
     
+    
+    func callDelegates() {
+        
+        if withAmountTarget == true {
+            nodeFilledDelegate?.filled(node:self, amountIps:amountIpsToCheck)
+        }else {
+            nodeFilledDelegate?.filled(node:self)
+        }
+    }
     
 }
