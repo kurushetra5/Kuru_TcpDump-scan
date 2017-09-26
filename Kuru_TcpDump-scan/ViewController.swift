@@ -142,23 +142,20 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     @IBAction func blockIp(_ sender: Any) {
         
-         if isIpSelected() {
+//         if isIpSelected() {
+            nodeSelectedForFireWall()
            tcpDump.comandsManager.runComand(type:ComandType.addFireWallBadHosts, node:selectedNode, delegate:self)
           
             
-        }
+//        }
     }
     
     @IBAction func unBlockIp(_ sender: Any) {
-        if isIpSelected() {
-            for node  in  ipsToShow! {
-                if node.number == blockIpText.stringValue {
-                    selectedNode = node
-                }
-            }
+//        if isIpSelected() {
+            nodeSelectedForFireWall()
            tcpDump.comandsManager.runComand(type:ComandType.deleteFireWallBadHosts, node:selectedNode, delegate:self)
           
-        }
+//        }
     }
     
     
@@ -232,99 +229,17 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         stateRuning.alphaValue = 0.5
     }
     
-    
-    
-    
-    
-    
-     //MARK:--------------------------------------- COMANDS delegates ---------------------------------------
-    
-    func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) {
+    func nodeSelectedForFireWall()  {
         
-        switch processName {
-        case ComandType.fireWallBadHosts.rawValue:
-            blockedFireWallNodes.append(node)
-            
-            if amountNodes == blockedFireWallNodes.count {
-                fireWallTableView.reloadData()
+        for node  in  ipsToShow! {
+            if node.number == blockIpText.stringValue {
+                selectedNode = node
             }
-            
-        default:
-            print("Error: procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) ")
         }
     }
-    
-    
-    
-    func procesFinishWith(nodes:[TraceRouteNode]) {
-        comandToShow.append(nodes[0])
-        comandsTableView.reloadData()
-    }
-    
-    
-    func procesFinish(processName:String) {
-        switch processName {
-        case ComandType.fireWallStart.rawValue:
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
-            
-        case ComandType.fireWallStop.rawValue:
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
-            
-        case ComandType.addFireWallBadHosts.rawValue:
-            blockedFireWallNodes = []
-            updateBadHostsTableView()
-            
-        case ComandType.deleteFireWallBadHosts.rawValue:
-            blockedFireWallNodes = []
-            updateBadHostsTableView()
-        default:
-            print("Error: procesFinish(processName:String)")
-        }
-    }
-    
-    
-    
-    
-    
-    func newDataFromProcess(data:String , processName:String) {
         
-        switch processName {
-        case ComandType.fireWallState.rawValue:
-            fireWallStateLabel.stringValue = data
-            if data.contains("Enabled") {
-                fireWallStartStop.title = "Stop"
-                fireWallStartStop.state = .on
-            }else {
-                fireWallStartStop.title = "Start"
-                fireWallStartStop.state = .off
-            }
-            updateBadHostsTableView()
-        case ComandType.fireWallBadHosts.rawValue:
-            blockedFireWallNodes = []
-            fireWallTableView.reloadData()
-        default:
-            print("Error: newDataFromProcess(data:String , processName:String)")
-        }
- 
-    }
     
     
-    func updateBadHostsTableView() {
-        tcpDump.comandsManager.runComand(type:ComandType.fireWallBadHosts,ip:nil, delegate:self)
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-     //MARK:--------------------------------------- Controller func ---------------------------------------
     func executeSudoComand() {
         let sudo:SudoComand = SudoComand()
         sudo.sudoWith(comand:"")
@@ -452,6 +367,85 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     
+    //MARK:--------------------------------------- COMANDS delegates ---------------------------------------
+    
+    func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) {
+        
+        switch processName {
+        case ComandType.fireWallBadHosts.rawValue:
+            blockedFireWallNodes.append(node)
+            
+            if amountNodes == blockedFireWallNodes.count {
+                fireWallTableView.reloadData()
+            }
+            
+        default:
+            print("Error: procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) ")
+        }
+    }
+    
+    
+    
+    func procesFinishWith(nodes:[TraceRouteNode]) {
+        comandToShow.append(nodes[0])
+        comandsTableView.reloadData()
+    }
+    
+    
+    func procesFinish(processName:String) {
+        switch processName {
+        case ComandType.fireWallStart.rawValue:
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
+            
+        case ComandType.fireWallStop.rawValue:
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
+            
+        case ComandType.addFireWallBadHosts.rawValue:
+            blockedFireWallNodes = []
+            updateBadHostsTableView()
+            
+        case ComandType.deleteFireWallBadHosts.rawValue:
+            blockedFireWallNodes = []
+            updateBadHostsTableView()
+        default:
+            print("Error: procesFinish(processName:String)")
+        }
+    }
+    
+    
+    
+    
+    
+    func newDataFromProcess(data:String , processName:String) {
+        
+        switch processName {
+        case ComandType.fireWallState.rawValue:
+            fireWallStateLabel.stringValue = data
+            if data.contains("Enabled") {
+                fireWallStartStop.title = "Stop"
+                fireWallStartStop.state = .on
+            }else {
+                fireWallStartStop.title = "Start"
+                fireWallStartStop.state = .off
+            }
+            updateBadHostsTableView()
+        case ComandType.fireWallBadHosts.rawValue:
+            blockedFireWallNodes = []
+            fireWallTableView.reloadData()
+        default:
+            print("Error: newDataFromProcess(data:String , processName:String)")
+        }
+        
+    }
+    
+    
+    func updateBadHostsTableView() {
+        tcpDump.comandsManager.runComand(type:ComandType.fireWallBadHosts,ip:nil, delegate:self)
+    }
+    
+    
+    
+    
       //MARK:--------------------------------------- TABLE_VIEW Delegate ---------------------------------------
     
     func numberOfRows(in tableView: NSTableView) -> Int {
@@ -566,17 +560,17 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             let ipSelected:TraceRouteNode = comandToShow[comandsTableView.selectedRow]
             traceRouteIp.stringValue = ipSelected.ip!
             selectedIp = ipSelected.ip!
-              return
+//              return
         }
         
         if fireWallTableView.selectedRow >= 0 {
             let ipSelected:TraceRouteNode = blockedFireWallNodes[fireWallTableView.selectedRow]
             blockIpText.stringValue = ipSelected.ip!//TODO: arreglar esto node traceroutenode
             
-            fireWallTableView.deselectAll(nil)
+             fireWallTableView.deselectAll(nil)
             
 //            selectedIp = ipSelected.ip!
-            return
+//            return
         }
         
         
@@ -585,11 +579,11 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             let ipSelected:Node = ipsToShow![ipsTableView.selectedRow]
             selectedIp = ipSelected.number!
             selectedNode = ipSelected
-           ipsTableView.deselectAll(nil)
+            ipsTableView.deselectAll(nil)
             traceRouteIp.stringValue = ipSelected.number!
             blockIpText.stringValue = ipSelected.number!
             mapEngine.focusNewIPInView(location:CLLocation(latitude:ipSelected.latitud, longitude:Double(ipSelected.longitude)))
-              return
+//              return
         }
         
         
