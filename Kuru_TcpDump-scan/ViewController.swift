@@ -141,17 +141,23 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     }
     
     @IBAction func blockIp(_ sender: Any) {
-        if isIpSelected() {
-            tcpDump.comandsManager.runComand(type:ComandType.addFireWallBadHosts, node:selectedNode, delegate:self)
-            //updateBadHostsTableView()
+        
+         if isIpSelected() {
+           tcpDump.comandsManager.runComand(type:ComandType.addFireWallBadHosts, node:selectedNode, delegate:self)
+          
             
-         }
+        }
     }
     
     @IBAction func unBlockIp(_ sender: Any) {
         if isIpSelected() {
+            for node  in  ipsToShow! {
+                if node.number == blockIpText.stringValue {
+                    selectedNode = node
+                }
+            }
            tcpDump.comandsManager.runComand(type:ComandType.deleteFireWallBadHosts, node:selectedNode, delegate:self)
-          //updateBadHostsTableView()
+          
         }
     }
     
@@ -194,6 +200,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     var blockedNodes:[Node] = []
     var blockedFireWallNodes:[TraceRouteNode] = []
     var selectedNode:Node!
+    var selectedTraceRouteNode:TraceRouteNode!
     
     //MARK:--------------------------------------- FUNC ---------------------------------------
     
@@ -471,6 +478,14 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
                 cellIdentifier = "IpBlocked"
                 text = ip.ip
             }
+            if tableColumn == fireWallTableView.tableColumns[1] {
+                cellIdentifier = "country"
+                text = ip.country
+            }
+            if tableColumn == fireWallTableView.tableColumns[2] {
+                cellIdentifier = "date"
+                 text = "date"
+            }
             let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: nil) as? NSTableCellView
             cell?.textField?.stringValue = text
             return cell
@@ -551,6 +566,17 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             let ipSelected:TraceRouteNode = comandToShow[comandsTableView.selectedRow]
             traceRouteIp.stringValue = ipSelected.ip!
             selectedIp = ipSelected.ip!
+              return
+        }
+        
+        if fireWallTableView.selectedRow >= 0 {
+            let ipSelected:TraceRouteNode = blockedFireWallNodes[fireWallTableView.selectedRow]
+            blockIpText.stringValue = ipSelected.ip!//TODO: arreglar esto node traceroutenode
+            
+            fireWallTableView.deselectAll(nil)
+            
+//            selectedIp = ipSelected.ip!
+            return
         }
         
         
@@ -559,14 +585,19 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             let ipSelected:Node = ipsToShow![ipsTableView.selectedRow]
             selectedIp = ipSelected.number!
             selectedNode = ipSelected
+           ipsTableView.deselectAll(nil)
             traceRouteIp.stringValue = ipSelected.number!
             blockIpText.stringValue = ipSelected.number!
             mapEngine.focusNewIPInView(location:CLLocation(latitude:ipSelected.latitud, longitude:Double(ipSelected.longitude)))
+              return
         }
         
         
         
     }
+    
+    
+    
     
     //MARK:--------------------------------------- TAB_VIEW Delegate ---------------------------------------
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {

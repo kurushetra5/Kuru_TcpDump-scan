@@ -111,6 +111,7 @@ class  TraceRouteNode:IPLocatorDelegate  {
     
     
     
+    
     func nodeIpReady(node:TraceRouteNode) {
         
         self.aso  = node.aso
