@@ -443,27 +443,23 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     }
     
     
-    
-    
-    
-    
     func  processResults()  {
         
-        OperationQueue.main.addOperation({ //FIXME: hacerlo con case.
+        OperationQueue.main.addOperation({
             
-            if self.comandType == ComandType.fireWallState      { //FIXME: habeces no hay data
+            switch self.comandType {
+                
+            case  .fireWallState:
                 if self.arrayResult.count >= 1 {
-                   self.processDelegate.newDataFromProcess(data:self.arrayResult[0], processName:self.comandType!.rawValue)
+                    self.processDelegate.newDataFromProcess(data:self.arrayResult[0], processName:self.comandType!.rawValue)
                 }
-                
-                
-            } else if  self.comandType == ComandType.deleteFireWallBadHosts {
+            case  .deleteFireWallBadHosts:
                 self.processDelegate.procesFinish(processName:self.comandType!.rawValue)
-                
-            }else if self.comandType == ComandType.fireWallStart || self.comandType == ComandType.fireWallStop  {
+            case  .fireWallStart:
                 self.processDelegate.procesFinish(processName:self.comandType!.rawValue)
-                
-            }else if  self.comandType == ComandType.fireWallBadHosts  {
+            case  .fireWallStop:
+                self.processDelegate.procesFinish(processName:self.comandType!.rawValue)
+            case  .fireWallBadHosts:
                 if self.arrayResult.count >= 1 {
                     let ips = self.fileExtractor.extractBadHostsIps(ips:self.arrayResult[0])
                     let countIps:Int = ips.count
@@ -475,12 +471,11 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
                     }
                     print(ips)
                 }else if self.arrayResult.count == 0 {
-                     self.processDelegate.newDataFromProcess(data:"0", processName:self.comandType!.rawValue)
+                    self.processDelegate.newDataFromProcess(data:"0", processName:self.comandType!.rawValue)
                 }
-            }else if  self.comandType == ComandType.addFireWallBadHosts  {
+            case .addFireWallBadHosts:
                 self.processDelegate.procesFinish(processName:self.comandType!.rawValue)
-                
-            }else {
+            default:
                 let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
                 
                 for node in nodes {
@@ -489,8 +484,6 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
                     
                 }
             }
-          
-            
         })
         
     }

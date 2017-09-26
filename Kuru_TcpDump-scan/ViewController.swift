@@ -234,39 +234,44 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) {
         
-        if processName == ComandType.fireWallBadHosts.rawValue {
+        switch processName {
+        case ComandType.fireWallBadHosts.rawValue:
             blockedFireWallNodes.append(node)
             
             if amountNodes == blockedFireWallNodes.count {
                 fireWallTableView.reloadData()
             }
             
+        default:
+            print("Error: procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) ")
         }
     }
+    
+    
     
     func procesFinishWith(nodes:[TraceRouteNode]) {
         comandToShow.append(nodes[0])
         comandsTableView.reloadData()
     }
     
+    
     func procesFinish(processName:String) {
-        
- 
-        if processName == ComandType.fireWallStart.rawValue {
-           tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
-        }
-        if processName == ComandType.fireWallStop.rawValue {
-           tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
-        }
-        if processName == ComandType.addFireWallBadHosts.rawValue {
+        switch processName {
+        case ComandType.fireWallStart.rawValue:
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
             
-            blockedFireWallNodes = []
-            updateBadHostsTableView()
-        }
-        if processName == ComandType.deleteFireWallBadHosts.rawValue {
+        case ComandType.fireWallStop.rawValue:
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
+            
+        case ComandType.addFireWallBadHosts.rawValue:
             blockedFireWallNodes = []
             updateBadHostsTableView()
             
+        case ComandType.deleteFireWallBadHosts.rawValue:
+            blockedFireWallNodes = []
+            updateBadHostsTableView()
+        default:
+            print("Error: procesFinish(processName:String)")
         }
     }
     
@@ -276,7 +281,8 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     func newDataFromProcess(data:String , processName:String) {
         
-        if processName == ComandType.fireWallState.rawValue {
+        switch processName {
+        case ComandType.fireWallState.rawValue:
             fireWallStateLabel.stringValue = data
             if data.contains("Enabled") {
                 fireWallStartStop.title = "Stop"
@@ -286,11 +292,13 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
                 fireWallStartStop.state = .off
             }
             updateBadHostsTableView()
-        }
-        if processName == ComandType.fireWallBadHosts.rawValue {
+        case ComandType.fireWallBadHosts.rawValue:
             blockedFireWallNodes = []
-         fireWallTableView.reloadData()
+            fireWallTableView.reloadData()
+        default:
+            print("Error: newDataFromProcess(data:String , processName:String)")
         }
+ 
     }
     
     
