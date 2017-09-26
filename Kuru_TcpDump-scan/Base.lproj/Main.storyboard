@@ -708,7 +708,7 @@
                                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="radar" id="d36-xQ-0ai"/>
                                             </imageView>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Rb-rM-QiP">
-                                                <rect key="frame" x="1358" y="7" width="88" height="17"/>
+                                                <rect key="frame" x="1348" y="7" width="88" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="mtroute" id="efI-Nj-T2q">
                                                     <font key="font" metaFont="system"/>
@@ -1045,23 +1045,23 @@
                                                                     </connections>
                                                                 </button>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pGI-SZ-yWI">
-                                                                    <rect key="frame" x="637" y="123" width="67" height="17"/>
-                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="12445455" id="XMc-vy-PqL">
+                                                                    <rect key="frame" x="633" y="123" width="71" height="17"/>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="12445455" id="XMc-vy-PqL">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="I1D-py-hAB">
-                                                                    <rect key="frame" x="644" y="104" width="60" height="17"/>
-                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="2336776" id="x9e-Fx-mjq">
+                                                                    <rect key="frame" x="640" y="104" width="64" height="17"/>
+                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="2336776" id="x9e-Fx-mjq">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="6hw-2R-huO">
-                                                                    <rect key="frame" x="547" y="122" width="81" height="18"/>
+                                                                    <rect key="frame" x="543" y="122" width="81" height="18"/>
                                                                     <buttonCell key="cell" type="check" title="Packages" bezelStyle="regularSquare" imagePosition="left" inset="2" id="mC1-M2-qcB">
                                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                         <font key="font" metaFont="system"/>
@@ -1071,7 +1071,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="ooa-v7-IpH">
-                                                                    <rect key="frame" x="547" y="103" width="86" height="18"/>
+                                                                    <rect key="frame" x="543" y="103" width="86" height="18"/>
                                                                     <buttonCell key="cell" type="check" title="Processed" bezelStyle="regularSquare" imagePosition="left" inset="2" id="3TZ-Yt-ddp">
                                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                         <font key="font" metaFont="system"/>
@@ -1767,7 +1767,7 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <customObject id="mCd-wE-0bM" customClass="anotationDetailPopOverController" customModule="Kuru_TcpDump_scan" customModuleProvider="target"/>
             </objects>
-            <point key="canvasLocation" x="1516" y="-792"/>
+            <point key="canvasLocation" x="1450" y="-834"/>
         </scene>
     </scenes>
     <resources>

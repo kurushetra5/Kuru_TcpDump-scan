@@ -22,12 +22,12 @@ protocol NetStatDelegate {
 }
 
 protocol ProcessDelegate {
+    func procesFinish(processName:String)
     func procesFinishWith(nodes:[TraceRouteNode])
-    func newDataFromProcess(data:String , processName:String)
-    func procesFinishWith(node:Node, processName:String)
-    func procesFinishWith(node:TraceRouteNode, processName:String)
     func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int)
+    func newDataFromProcess(data:String , processName:String)
 }
+
 
 protocol ComandWorkingDelegate {
     func commandIsWorking(comandType:ComandType)
@@ -354,7 +354,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     func filled(node:TraceRouteNode) {
         processDelegate?.procesFinishWith(nodes:[node]) //FIXME: pasar un node solo
-        processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue)
+//        processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue)
     }
     
     
@@ -458,10 +458,10 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
                 
                 
             } else if  self.comandType == ComandType.deleteFireWallBadHosts {
-                self.processDelegate.procesFinishWith(node:self.nodeInUse, processName:self.comandType!.rawValue)
+                self.processDelegate.procesFinish(processName:self.comandType!.rawValue)
                 
             }else if self.comandType == ComandType.fireWallStart || self.comandType == ComandType.fireWallStop  {
-                self.processDelegate.newDataFromProcess(data:"Start/Stop", processName:self.comandType!.rawValue)
+                self.processDelegate.procesFinish(processName:self.comandType!.rawValue)
                 
             }else if  self.comandType == ComandType.fireWallBadHosts  {
                 if self.arrayResult.count >= 1 {
@@ -478,7 +478,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
                      self.processDelegate.newDataFromProcess(data:"0", processName:self.comandType!.rawValue)
                 }
             }else if  self.comandType == ComandType.addFireWallBadHosts  {
-                self.processDelegate.procesFinishWith(node:self.nodeInUse, processName:self.comandType!.rawValue)
+                self.processDelegate.procesFinish(processName:self.comandType!.rawValue)
                 
             }else {
                 let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
