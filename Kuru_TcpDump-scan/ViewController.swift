@@ -238,52 +238,20 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             blockedFireWallNodes.append(node)
             
             if amountNodes == blockedFireWallNodes.count {
-                //updateBadHostsTableView()
                 fireWallTableView.reloadData()
             }
             
         }
     }
     
-    
-//    func procesFinishWith(node:TraceRouteNode, processName:String) { //FIXME: Sobra ?????
-//
-//        if processName == ComandType.fireWallBadHosts.rawValue {
-//            blockedFireWallNodes.append(node)
-//            fireWallTableView.reloadData()
-//        }
-//    }
-//
-    
     func procesFinishWith(nodes:[TraceRouteNode]) {
         comandToShow.append(nodes[0])
         comandsTableView.reloadData()
     }
     
-    
-    
-//    func procesFinishWith(node:Node, processName:String) { //FIXME: no necesita node ...
-//
-//        if processName == ComandType.addFireWallBadHosts.rawValue {
-//
-//            blockedFireWallNodes = []
-//             updateBadHostsTableView()
-//        }
-//        if processName == ComandType.deleteFireWallBadHosts.rawValue {
-//               blockedFireWallNodes = []
-//             updateBadHostsTableView()
-//
-//         }
-//    }
-    
-    
-    
     func procesFinish(processName:String) {
         
-//        if processName == ComandType.fireWallBadHosts.rawValue {
-//            blockedFireWallNodes = []
-//            fireWallTableView.reloadData()
-//        }
+ 
         if processName == ComandType.fireWallStart.rawValue {
            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
         }
@@ -319,25 +287,9 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             }
             updateBadHostsTableView()
         }
-        if processName == ComandType.fireWallBadHosts.rawValue { //FIXME:no necesita node ... cambiar arriba
-            //print(data)
-            //blockedIps.append(data)
+        if processName == ComandType.fireWallBadHosts.rawValue {
             blockedFireWallNodes = []
-            fireWallTableView.reloadData()
-        }
-//        if processName == ComandType.addFireWallBadHosts.rawValue { //FIXME:sobra
-//            print(data)
-//        }
-//        if processName == ComandType.deleteFireWallBadHosts.rawValue { //FIXME:sobra
-//            print(data)
-//        }
-        if processName == ComandType.fireWallStart.rawValue {
-            print(data)
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self) //FIXME:no necesita node ... cambiar arriba
-        }
-        if processName == ComandType.fireWallStop.rawValue {
-            print(data)
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self) //FIXME:no necesita node ... cambiar arriba
+         fireWallTableView.reloadData()
         }
     }
     
