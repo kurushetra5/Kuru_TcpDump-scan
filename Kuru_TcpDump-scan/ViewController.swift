@@ -12,7 +12,7 @@ import MapKit
 
 
 class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkingDelegate,NSTableViewDataSource,NSTableViewDelegate ,NSTabViewDelegate{
-
+    
     //MARK:--------------------------------------- OUTLETS ---------------------------------------
     @IBOutlet weak var map: MKMapView!
     
@@ -44,26 +44,28 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     @IBOutlet weak var blockIpText: NSTextField!
     
     @IBOutlet weak var fireWallStartStop: NSButton!
+    @IBOutlet weak var blockIpButton: NSButton!
     
+    @IBOutlet weak var unBlockIpButton: NSButton!
     
     //MARK:--------------------------------------- ACTIONS ---------------------------------------
     @IBAction func StartTcpDumpScan(_ sender: Any) {
-         tcpDump.startTcpScan()
+        tcpDump.startTcpScan()
     }
     
     @IBAction func StopTcpDumpScan(_ sender: Any) {
-         tcpDump.terminateCommand()
+        tcpDump.terminateCommand()
     }
-   
+    
     
     @IBAction func freeScan(_ sender: Any) {
-         tcpDump.dataBaseModeOff()
+        tcpDump.dataBaseModeOff()
     }
     
     @IBAction func traceRoute(_ sender: Any) {
         renderedNodes = []
         tcpDump.traceRouteTo(ip:traceRouteIp.stringValue)
-//        61.232.254.39
+        //        61.232.254.39
     }
     
     
@@ -91,7 +93,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     @IBAction func mtRoute(_ sender: NSButton) {
         
         if isIpSelected() {
-         tcpDump.comandsManager.runComand(type:ComandType.mtRoute, ip:traceRouteIp.stringValue, delegate:self)
+            tcpDump.comandsManager.runComand(type:ComandType.mtRoute, ip:traceRouteIp.stringValue, delegate:self)
         }
         //tcpDump.comandsManager.runProcessWith(comand:tcpDump.comandsManager.mtrRouteComand , args:tcpDump.comandsManager.mtrRouteArgs ,delegate: self)
     }
@@ -100,10 +102,10 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     @IBAction func startFireWall(_ sender: NSButton) {
         
-       if sender.state == .on {
-           tcpDump.comandsManager.runComand(type:ComandType.fireWallStart, ip:nil, delegate:self)
+        if sender.state == .on {
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallStart, ip:nil, delegate:self)
         }else {
-           tcpDump.comandsManager.runComand(type:ComandType.fireWallStop, ip:nil, delegate:self)
+            tcpDump.comandsManager.runComand(type:ComandType.fireWallStop, ip:nil, delegate:self)
         }
     }
     
@@ -117,7 +119,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     @IBAction func checkPacages(_ sender:NSButton) {
-       tcpDump.countPackages(mode:sender.state.rawValue)
+        tcpDump.countPackages(mode:sender.state.rawValue)
     }
     
     @IBAction func checkProcessed(_ sender: NSButton) {
@@ -137,30 +139,23 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     }
     
     @IBAction func showIpsDataBase(_ sender: Any) {
-       tcpDump.tcpDumpComand.getIps()
+        tcpDump.tcpDumpComand.getIps()
     }
     
     @IBAction func blockIp(_ sender: Any) {
+        nodeSelectedForFireWall()
+        tcpDump.comandsManager.runComand(type:ComandType.addFireWallBadHosts, node:selectedNode, delegate:self)
         
-//         if isIpSelected() {
-            nodeSelectedForFireWall()
-           tcpDump.comandsManager.runComand(type:ComandType.addFireWallBadHosts, node:selectedNode, delegate:self)
-          
-            
-//        }
     }
     
     @IBAction func unBlockIp(_ sender: Any) {
-//        if isIpSelected() {
-            nodeSelectedForFireWall()
-           tcpDump.comandsManager.runComand(type:ComandType.deleteFireWallBadHosts, node:selectedNode, delegate:self)
-          
-//        }
+        nodeSelectedForFireWall()
+        tcpDump.comandsManager.runComand(type:ComandType.deleteFireWallBadHosts, node:selectedNode, delegate:self)
     }
     
     
     @IBAction func showNodesInMap(_ sender: NSButton) {
-        //         executeSudoComand()
+        
         if sender.state.rawValue == 0 {
             tcpDump.showNodesInMapView = NotesInMapMode.off
             mapEngine.mapView.removeAnnotations(mapEngine.mapView.annotations)
@@ -218,16 +213,16 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         }
     }
     
-    
-    
+   
     func configureView() {
-        
         pathForTcpDumpFile.stringValue =  filesManager.tcpDumpFileUrl.absoluteString
         pathForTraceRouteFile.stringValue =  filesManager.traceRouteFileUrl.absoluteString
         pathForSaveDumpFile.stringValue = filesManager.saveDumpFileUrl.absoluteString
         comandRuningLabel.stringValue =  ""
         stateRuning.alphaValue = 0.5
     }
+    
+    
     
     func nodeSelectedForFireWall()  {
         
@@ -237,7 +232,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             }
         }
     }
-        
+    
     
     
     func executeSudoComand() {
@@ -255,14 +250,14 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         return alert.runModal() == .alertFirstButtonReturn
     }
     
-  
+    
     
     func isIpSelected() -> Bool {
         
         if selectedNode == nil {
             print("IP no selected")
-          _ =  alert(error: "No hay ninguna IP seleccionada", text: "Selecciona una")
-           return false
+            _ =  alert(error: "No hay ninguna IP seleccionada", text: "Selecciona una")
+            return false
         }else {
             return true
         }
@@ -288,12 +283,12 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     }
     
     
-  
+    
     
     
     func updatePackagesCounts() {
         
-      packagesCount.integerValue = filesManager.countLines(fileURL:filesManager.tcpDumpFileUrl)
+        packagesCount.integerValue = filesManager.countLines(fileURL:filesManager.tcpDumpFileUrl)
     }
     
     
@@ -312,7 +307,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         for  aNode in renderedNodes {
             if aNode.isEqualTo(node:node) {
-               return
+                return
             }
         }
         
@@ -320,28 +315,28 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         var nodeAnotation:IpAnotation = IpAnotation()
         nodeAnotation  = node.nodeAnotation()
-//        nodeAnotation.subtitle = String(traceRouteNodesCount)
-//        nodeAnotation.coordinate.latitude = node.latitud
-//        nodeAnotation.coordinate.longitude = node.longitude
-//        nodeAnotation.node = node
+        //        nodeAnotation.subtitle = String(traceRouteNodesCount)
+        //        nodeAnotation.coordinate.latitude = node.latitud
+        //        nodeAnotation.coordinate.longitude = node.longitude
+        //        nodeAnotation.node = node
         mapEngine.addIp(anotation:nodeAnotation)
         
         
         traceRouteNodesCount += 1
         print(traceRouteNodesCount)
-       let locationA:CLLocation!
+        let locationA:CLLocation!
         
         if oldNode == nil {
-           mapEngine.currentLocation =  CLLocation(latitude:41.1754, longitude:1.2697)
-           locationA  = mapEngine.currentLocation
-          oldNode = node
+            mapEngine.currentLocation =  CLLocation(latitude:41.1754, longitude:1.2697)
+            locationA  = mapEngine.currentLocation
+            oldNode = node
         }else {
-             locationA  = CLLocation(latitude:oldNode.latitud, longitude:oldNode.longitude)
+            locationA  = CLLocation(latitude:oldNode.latitud, longitude:oldNode.longitude)
         }
         
         let locationB:CLLocation = CLLocation(latitude:node.latitud, longitude:node.longitude)
         mapEngine.drawHaLine(locationA:locationA ,locationB:locationB)
-         oldNode = node
+        oldNode = node
     }
     
     
@@ -351,18 +346,18 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     func newIpComing(ips:[Node]) {
-         ipsToShow = ips
-         ipsTableView.reloadData()
+        ipsToShow = ips
+        ipsTableView.reloadData()
     }
     
     func newConection(ip:Node) {
         
-         mapEngine.addIp(anotation:ip.anotation)
-                mapEngine.currentLocation =  CLLocation(latitude:41.1754, longitude:1.2697)
+        mapEngine.addIp(anotation:ip.anotation)
+        mapEngine.currentLocation =  CLLocation(latitude:41.1754, longitude:1.2697)
         //        let locationA:CLLocation = CLLocation(latitude:ipsToShow![0].latitud, longitude:Double(ipsToShow![0].longitude!)!)
-                 let locationB:CLLocation = CLLocation(latitude:(ip.latitud), longitude: ip.longitude)
-                mapEngine.drawHaLine(locationA:mapEngine.currentLocation ,locationB:locationB)
-
+        let locationB:CLLocation = CLLocation(latitude:(ip.latitud), longitude: ip.longitude)
+        mapEngine.drawHaLine(locationA:mapEngine.currentLocation ,locationB:locationB)
+        
     }
     
     
@@ -373,7 +368,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         switch processName {
         case ComandType.fireWallBadHosts.rawValue:
-            blockedFireWallNodes.append(node)
+             blockedFireWallNodes.append(node)
             
             if amountNodes == blockedFireWallNodes.count {
                 fireWallTableView.reloadData()
@@ -429,6 +424,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
                 fireWallStartStop.state = .off
             }
             updateBadHostsTableView()
+            
         case ComandType.fireWallBadHosts.rawValue:
             blockedFireWallNodes = []
             fireWallTableView.reloadData()
@@ -446,7 +442,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     
-      //MARK:--------------------------------------- TABLE_VIEW Delegate ---------------------------------------
+    //MARK:--------------------------------------- TABLE_VIEW Delegate ---------------------------------------
     
     func numberOfRows(in tableView: NSTableView) -> Int {
         
@@ -456,7 +452,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         if tableView.identifier!.rawValue == "fireWall" {
             return blockedFireWallNodes.count
         }
-         return ipsToShow?.count ?? 0
+        return ipsToShow?.count ?? 0
     }
     
     
@@ -478,7 +474,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             }
             if tableColumn == fireWallTableView.tableColumns[2] {
                 cellIdentifier = "date"
-                 text = "date"
+                text = "date"
             }
             let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: nil) as? NSTableCellView
             cell?.textField?.stringValue = text
@@ -487,7 +483,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         
         if tableView.identifier!.rawValue == "comands" {
-             let comands:TraceRouteNode = comandToShow[row]
+            let comands:TraceRouteNode = comandToShow[row]
             var text: String = "-"
             var cellIdentifier: String = ""
             
@@ -513,7 +509,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         
         
-//        var image: NSImage?
+        //        var image: NSImage?
         var text: String = "-"
         var cellIdentifier: String = ""
         
@@ -531,7 +527,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             cellIdentifier = CellIdentifiers.CityCell
             text = ipToShow.city ?? "-"
         }
-
+            
         else if tableColumn == ipsTableView.tableColumns[4] {
             cellIdentifier = CellIdentifiers.LatitudCell
             text =  String(ipToShow.latitud)
@@ -546,10 +542,10 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         
         
-
+        
         
         return cell
-
+        
     }
     
     
@@ -560,17 +556,17 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             let ipSelected:TraceRouteNode = comandToShow[comandsTableView.selectedRow]
             traceRouteIp.stringValue = ipSelected.ip!
             selectedIp = ipSelected.ip!
-//              return
+            //              return
         }
         
         if fireWallTableView.selectedRow >= 0 {
             let ipSelected:TraceRouteNode = blockedFireWallNodes[fireWallTableView.selectedRow]
             blockIpText.stringValue = ipSelected.ip!//TODO: arreglar esto node traceroutenode
+            fireWallTableView.deselectAll(nil)
             
-             fireWallTableView.deselectAll(nil)
+             containsIP(ip:ipSelected.ip!)
+            return
             
-//            selectedIp = ipSelected.ip!
-//            return
         }
         
         
@@ -582,12 +578,32 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             ipsTableView.deselectAll(nil)
             traceRouteIp.stringValue = ipSelected.number!
             blockIpText.stringValue = ipSelected.number!
+            containsIP(ip:ipSelected.number!)
+            
+ 
             mapEngine.focusNewIPInView(location:CLLocation(latitude:ipSelected.latitud, longitude:Double(ipSelected.longitude)))
-//              return
+         return
         }
         
         
         
+    }
+    
+    
+    
+    func containsIP(ip:String)  {
+        
+       for node in blockedFireWallNodes {
+            if node.ip ==  ip {
+                blockIpButton.isEnabled = false
+                unBlockIpButton.isEnabled = true
+                return
+            }else {
+                blockIpButton.isEnabled = true
+                unBlockIpButton.isEnabled = false
+            }
+        }
+     
     }
     
     

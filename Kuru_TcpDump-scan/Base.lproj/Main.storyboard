@@ -1615,7 +1615,7 @@
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                                                     <clipView key="contentView" ambiguous="YES" id="F1r-cx-owl">
                                                                         <rect key="frame" x="1" y="0.0" width="301" height="135"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
+                                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                         <subviews>
                                                                             <tableView identifier="fireWall" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="p3h-5m-EBR" viewBased="YES" id="xey-FS-4Tt">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="307" height="112"/>
@@ -1732,7 +1732,7 @@
                                                                         </subviews>
                                                                     </clipView>
                                                                     <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="cQN-q4-aTH">
-                                                                        <rect key="frame" x="1" y="7" width="0.0" height="16"/>
+                                                                        <rect key="frame" x="1" y="119" width="301" height="16"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                     </scroller>
                                                                     <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="UTL-j2-3fc">
@@ -1779,6 +1779,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="blockIpButton" destination="LdT-Kf-2q5" id="Ry4-jP-J2d"/>
                         <outlet property="blockIpText" destination="SBn-eI-1Ao" id="a92-xV-6Yz"/>
                         <outlet property="comandRuningLabel" destination="0Rb-rM-QiP" id="W7B-4g-qvA"/>
                         <outlet property="comandsTableView" destination="X6z-yF-HVj" id="tft-0G-r4H"/>
@@ -1795,6 +1796,7 @@
                         <outlet property="popOverController" destination="mCd-wE-0bM" id="lJx-U8-ZLa"/>
                         <outlet property="stateRuning" destination="JKF-ra-pos" id="ZsA-lS-ujB"/>
                         <outlet property="traceRouteIp" destination="pB7-dg-phn" id="Wma-hl-pax"/>
+                        <outlet property="unBlockIpButton" destination="pce-Z7-FQs" id="qBJ-5V-hIt"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
