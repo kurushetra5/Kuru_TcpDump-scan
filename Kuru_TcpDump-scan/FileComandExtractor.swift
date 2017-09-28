@@ -26,8 +26,70 @@ import Foundation
 //}
 
 
+
+
 class FileComandExtractor  {
     
+    
+    //MARK: ---------------- FIREWALL State  -------------------------
+    
+    func extractBadHostsIps(ips:String) -> [String] {
+       
+        var results:[String] = []
+        
+        let ipsOk = ips.replacingOccurrences(of:" ", with:"")
+        var lines:[String] = []
+        lines = ipsOk.components(separatedBy:"\n")
+        
+        for  ip in  lines {
+            if isIpNumber(ip:ip) {
+                results.append(ip)
+            }
+        }
+        return results
+    }
+    
+    
+    
+     //MARK: ---------------- MTR_ROUTE  -------------------------
+    
+    func extractIpsFromMTRoute(ips:String) -> [TraceRouteNode] {
+        
+        var nodes:[TraceRouteNode] = []
+        let ipsArray:[String] = ips.components(separatedBy:"\n")
+        
+        for ip in ipsArray {
+            if isIpNumber(ip:ip) {
+               nodes.append(TraceRouteNode(ip:ip))
+            } else {
+                print("ERROR: NO IP NUMBER...")
+            }
+            
+        }
+        return nodes
+    }
+    
+    
+    
+    func isIpNumber(ip:String) -> Bool {
+        
+        var isIp:Bool = true
+        let array:[String] = ip.components(separatedBy:".")
+        
+        if array.count == 4 {
+            let number1  = Int(array[0])
+            let number2  = Int(array[1])
+            let number3  = Int(array[2])
+            let number4  = Int(array[3])
+            
+            if number1 == nil || number2 == nil  || number3 == nil || number4 == nil {
+                isIp = false
+            }
+        } else {
+           isIp = false
+        }
+         return isIp
+    }
     
     
     
@@ -41,6 +103,8 @@ class FileComandExtractor  {
         
         return nodes
     }
+    
+    
     
     
     
@@ -71,22 +135,40 @@ class FileComandExtractor  {
         }
         
         for ip in completIP {
+            var  resultIp = ""
+            var resultIps =  ""
+            
             let number = ip[0].replacingOccurrences(of:"/", with: "")
             let element = ip[1].components(separatedBy:"/")
-            let ipTmp1 = element[1].replacingOccurrences(of:"(", with:"")
-            let ip  = ipTmp1.replacingOccurrences(of:")", with:"")
-            let ips = element[0]
+            
+            if element.count == 3 { // trs values no puede ser
+                 let ipTmp1 = element[2].replacingOccurrences(of:"(", with:"")
+                   resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
+                   resultIps = element[1]
+                
+            } else if element.count == 2 {
+                
+                let ipTmp1 = element[1].replacingOccurrences(of:"(", with:"")
+                resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
+                resultIps = element[0]
+
+            }
+            
+            //let myString1 = "556"
+            //let myInt1 = Int(myString1)
             
             
-            if ip != "*" {
-                var node:TraceRouteNode = TraceRouteNode()
-                node.ip = ip
-                node.ips = ips
+            if resultIp != "" { //FIXME: filtrar router
+                
+                
+                let node:TraceRouteNode = TraceRouteNode(ip:resultIp)
+//                node.ip = resultIp
+                node.ips = resultIps
                 node.number = number
                 nodes.append(node)
             }
         }
-//        print(nodes)
+         print(nodes)
         return nodes
     }
     
@@ -181,6 +263,26 @@ class FileComandExtractor  {
         
         return arrayLines
     }
+    
+    
+    
+   //MARK: ---------------- MTRoute EXTRACTOR  -------------------------
+    
+    func extractMTRoute(data:String) {
+        
+        let arr:[String] = data.components(separatedBy:"\n")
+        
+        for ip in arr {
+            if ip != "???" {
+                
+            }
+        }
+        
+    }
+    
+    
+    
+    
     
     
 }

@@ -36,7 +36,7 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
    
      var currentLocation:CLLocation!
     
-    
+    var popOverController:NSViewController!
     
     
     //MARK: ---------------- INIT  -------------------------- INIT
@@ -76,18 +76,21 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     
     func startEngine() {
         
-       
         
     }
     
     
+    func addIp(anotation:IpAnotation)  {
+        mapView.addAnnotation(anotation)
+    }
     
     
-    
-    func  focusAllRouteInView() {
+    func  focusNewIPInView(location:CLLocation) {
+        let visibleRegion = MKCoordinateRegionMake(CLLocationCoordinate2DMake(location.coordinate.latitude,location.coordinate.longitude), MKCoordinateSpanMake(mapView.region.span.longitudeDelta*0.5,mapView.region.span.longitudeDelta*0.5))
         
-        let visibleRegion = MKCoordinateRegionMakeWithDistance(currentLocation.coordinate,1200,1200)
-        self.mapView.setRegion(self.mapView.regionThatFits(visibleRegion), animated: true)
+//        let visibleRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,14000,14000)
+//        self.mapView.setRegion(visibleRegion, animated: true)
+        self.mapView.setRegion(visibleRegion, animated:true)
         
     }
     
@@ -99,9 +102,6 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     
     
     func drawCrossedLine(fromPoint:CLLocation,toPoint:CLLocation) {
-        
-        
-        
         let line:MKPolyline = MKPolyline(coordinates:[fromPoint.coordinate,toPoint.coordinate] , count:2)
         self.mapView.add(line, level: MKOverlayLevel.aboveRoads)
         
@@ -111,11 +111,9 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     
     
     func drawHaLine(locationA:CLLocation,locationB:CLLocation) {
-        
+//        focusNewIPInView(location:locationB)
         let line:MKPolyline = MKPolyline(coordinates:[locationA.coordinate,locationB.coordinate] , count:2)
         self.mapView.add(line, level: MKOverlayLevel.aboveRoads)
-        
-        
     }
     
     
@@ -123,11 +121,6 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     
     
     func drawVisitedLine( fromPoint:CLLocation,toPoint:CLLocation) {
-        
-        
-       
-        
-        
         let sourceLocation = fromPoint.coordinate
         let destinationLocation = toPoint.coordinate
         
@@ -171,9 +164,6 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     
     
     func drawLine(fromPoint:CLLocation,toPoint:CLLocation) {
-        
-       
-        
         let sourceLocation = fromPoint.coordinate
         let destinationLocation = toPoint.coordinate
         
@@ -219,11 +209,30 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
         
     }
     
+    @objc func ipInfoPressed(sender:NSButton) {
+        
+        let popOver:NSPopover = NSPopover()
+        let vc:anotationDetailPopOverController = (popOverController as? anotationDetailPopOverController)!
+        vc.anotation = mapView.selectedAnnotations[0] as! IpAnotation
+        
+         popOver.contentViewController =  vc
+        
+         popOver.animates = true
+        popOver.behavior = .transient
+        popOver.show(relativeTo:sender.bounds ,of:sender, preferredEdge:.maxY)
+        removeRoutes()
+        
+    }
     
     
+    func removeAnotations() {
+        mapView.removeAnnotations(mapView.annotations)
+    }
+
     
-    
-    
+    func removeRoutes() {
+        mapView.removeOverlays(mapView.overlays)
+    }
     
     
     
@@ -231,30 +240,37 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
     //MARK: ---------------- Map View ------------------  Delegates
     
     
-    
-    
-    
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        
+//        var annotationView:MKAnnotationView!
         
         if annotation is MKUserLocation {
             return nil
         }
         
-        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: "customCallout")
-        
-        if annotationView == nil {
-//            annotationView = PersonWishListAnnotationView(annotation: annotation, reuseIdentifier: "customCallout")
-//            (annotationView as! PersonWishListAnnotationView).personDetailDelegate = self
+        var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: "Pin")
+        if annotationView == nil{
+            annotationView = CustomAnotation(annotation: annotation, reuseIdentifier: "Pin")
             
-        } else {
-            annotationView!.annotation = annotation
+            let button:NSButton = NSButton(title:"Details", target: self, action:#selector(ipInfoPressed))
+            annotationView?.rightCalloutAccessoryView = button
+            annotationView?.canShowCallout = true
+
+//            annotationView?.canShowCallout = false
+        }else{
+            annotationView?.annotation = annotation
         }
+        annotationView?.image = NSImage(named: NSImage.Name(rawValue: "ServerA"))
         
+//        if annotation is IpAnotation {
+//            annotationView = IpAnotation.ipAnotationFor(map:mapView, annotation:annotation)
+//            let button:NSButton = NSButton(title:"Details", target: self, action:#selector(ipInfoPressed))
+//            annotationView.rightCalloutAccessoryView = button
+//            annotationView.canShowCallout = true
+//        }
         return annotationView
-        
-        
-        
     }
+    
     
     
     
@@ -265,7 +281,7 @@ class MapRouteEngine: NSObject ,MKMapViewDelegate  {
         //        let visibleRegion = MKCoordinateRegionMakeWithDistance( (view.annotation?.coordinate)!, 500, 500)
         //        self.mapView.setRegion(self.mapView.regionThatFits(visibleRegion), animated: true)
         
-        self.mapView.setCenter((view.annotation?.coordinate)! , animated: true)
+//        self.mapView.setCenter((view.annotation?.coordinate)! , animated: true)
         
         
         

@@ -14,10 +14,13 @@ protocol IPLocatorDelegate {
 }
 
 
+
 class   IPLocator  {
     
     //    {"as":"AS9394 China TieTong Telecommunications Corporation","city":"Beijing","country":"China","countryCode":"CN","isp":"China TieTong","lat":39.9289,"lon":116.3883,"org":"China TieTong","query":"61.232.254.39","region":"11","regionName":"Beijing","status":"success","timezone":"Asia/Shanghai","zip":""}
     var locatorDelegate:IPLocatorDelegate!
+    
+    
     
     func fetchIpLocation(node:TraceRouteNode) {
         
@@ -29,6 +32,7 @@ class   IPLocator  {
             (data, response, error) in
             if(error != nil){
                 print(error ?? "Error in fetchIpLocation")
+                //TODO: delegate message error
             }else{
                 do{
                     let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments) as! [String : AnyObject]
@@ -37,6 +41,8 @@ class   IPLocator  {
                     //                    print(lon)
                     
                     OperationQueue.main.addOperation({
+                        
+                        
                         
                         node.aso  = json["as"] as? String
                         node.city = json["city"] as? String
@@ -55,6 +61,7 @@ class   IPLocator  {
                         if node.lat != nil && node.lon != nil {
                            self.locatorDelegate.nodeIpReady(node:node)
                         }
+                        
                         
 //                       print(node.lat ?? 0.0)
 //                        print(node.lon ?? 0.0)
