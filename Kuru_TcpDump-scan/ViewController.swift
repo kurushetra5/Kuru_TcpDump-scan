@@ -139,7 +139,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     var mapEngine:MapRouteEngine!
     let filesManager:FilesManager = FilesManager.shared
     let appController = AppController()
-    var ipsToShow:[Node]?
+    var ipsToShow:[Node] = []
     var comandToShow:[TraceRouteNode] = []
     var oldNode:Node!
     var renderedNodes:[Node] = []
@@ -186,7 +186,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     func nodeSelectedForFireWall()  {
         
-        for node  in  ipsToShow! {
+        for node  in  ipsToShow {
             if node.number == blockIpText.stringValue {
                 selectedNode = node
             }
@@ -307,6 +307,40 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     //MARK:--------------------------------------- COMANDS delegates ---------------------------------------
+    func procesFinishWith(node:Node, processName:String) {
+        
+        switch processName {
+        case ComandType.fireWallBadHosts.rawValue:
+             blockedNodes.append(node)
+             fireWallTableView.reloadData()
+            
+        default:
+            print("Error:procesFinishWith(node:Node, processName:String, amountNodes:Int) ")
+        }
+    }
+    
+    
+    func procesFinishWith(node:Node) {
+        ipsToShow.append(node)
+        comandsTableView.reloadData()
+    }
+    
+    
+    func procesFinishWith(node:Node, processName:String, amountNodes:Int) {
+        switch processName {
+        case ComandType.fireWallBadHosts.rawValue:
+            blockedNodes.append(node)
+            
+            if amountNodes == blockedFireWallNodes.count {
+                fireWallTableView.reloadData()
+            }
+            
+        default:
+            print("Error:procesFinishWith(node:Node, processName:String, amountNodes:Int) ")
+        }
+    }
+    
+    
     
     func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) {
         
@@ -394,9 +428,9 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             return comandToShow.count
         }
         if tableView.identifier!.rawValue == "fireWall" {
-            return blockedFireWallNodes.count
+            return blockedNodes.count
         }
-        return ipsToShow?.count ?? 0
+        return ipsToShow.count
     }
     
     
@@ -404,17 +438,18 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         if tableView.identifier!.rawValue == "fireWall" {
             
-            let ip:TraceRouteNode = blockedFireWallNodes[row]
+//            let ip:TraceRouteNode = blockedFireWallNodes[row]
+            let ip: Node = blockedNodes[row]
             var text: String = "-"
             var cellIdentifier: String = ""
             
             if tableColumn == fireWallTableView.tableColumns[0] {
                 cellIdentifier = "IpBlocked"
-                text = ip.ip
+                text = ip.number!
             }
             if tableColumn == fireWallTableView.tableColumns[1] {
                 cellIdentifier = "country"
-                text = ip.country
+                text = ip.country!
             }
             if tableColumn == fireWallTableView.tableColumns[2] {
                 cellIdentifier = "date"
@@ -447,7 +482,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         
         
-        guard let ipToShow:Node = ipsToShow?[row]  else {
+        guard let ipToShow:Node = ipsToShow[row]  else {
             return nil
         }
         
@@ -516,7 +551,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         if ipsTableView.selectedRow >= 0 {
             
-            let ipSelected:Node = ipsToShow![ipsTableView.selectedRow]
+            let ipSelected:Node = ipsToShow[ipsTableView.selectedRow]
             selectedIp = ipSelected.number!
             selectedNode = ipSelected
             ipsTableView.deselectAll(nil)

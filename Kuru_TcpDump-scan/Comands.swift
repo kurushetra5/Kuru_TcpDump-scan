@@ -25,6 +25,9 @@ protocol ProcessDelegate {
     func procesFinish(processName:String)
     func procesFinishWith(nodes:[TraceRouteNode])
     func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int)
+    func procesFinishWith(node:Node)
+    func procesFinishWith(node:Node, processName:String)
+    func procesFinishWith(node:Node, processName:String, amountNodes:Int)
     func newDataFromProcess(data:String , processName:String)
 }
 
@@ -219,7 +222,9 @@ struct DeleteFireWallBadHosts:ComandIp  {
 
 final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
-    private init(){}
+    private init(){
+        dataBase.nodeFilledDelegate = self
+    }
     static let shared = Comands()
     
     let fileExtractor:FileComandExtractor = FileComandExtractor()
@@ -293,6 +298,10 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     var arrayResult:[String] = []
     var nodeInUse:Node!
     
+    
+    
+    
+    
     func startTimerEvery(seconds:Double) {
         comandWorkingTimer = Timer.scheduledTimer(timeInterval: seconds, target: self, selector:#selector(timerComandWorking), userInfo: nil, repeats: true)
         
@@ -343,10 +352,24 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     
     
-    
+    func ipLocationReady(ipLocation:IPLocation) {
+        
+    }
+    func nodeIpReady(node: Node) {
+        
+    }
     func nodeIpReady(node:TraceRouteNode) {
         ipsLocatorFounded.append(node)
     }
+    
+    
+    func filled(node:Node, amountIps:Int) { //TODO: acabar
+        processDelegate?.procesFinishWith(node:node, processName: comandType.rawValue, amountNodes: amountIps)
+    }
+    func filled(node:Node) { //TODO: acabar
+        processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue)
+    }
+    
     
     func filled(node:TraceRouteNode, amountIps:Int) {
         processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue, amountNodes:amountIps)
@@ -465,9 +488,12 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
                     let countIps:Int = ips.count
                     
                     for ip in ips {
-                        let node:TraceRouteNode = TraceRouteNode(ip:ip)
-                        node.nodeFilledDelegate = self
-                        node.fillNodeWithData(amountIps:countIps)
+                       self.dataBase.nodeWith(ip:ip, amountIps:countIps)
+                            
+                        //TODO: Acabar
+//                        let node:TraceRouteNode = TraceRouteNode(ip:ip)
+//                        node.nodeFilledDelegate = self
+//                        node.fillNodeWithData(amountIps:countIps)
                     }
                     print(ips)
                 }else if self.arrayResult.count == 0 {

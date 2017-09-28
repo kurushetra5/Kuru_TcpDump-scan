@@ -89,12 +89,16 @@ class AppController: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
     }
     
     
-    
+    func nodeIpReady(node: Node) {
+        
+    }
     func nodeIpReady(node:TraceRouteNode) {
         
       ipsDelegate?.newNode(node:dataBase.newIpWith(node:node))
     }
-    
+    func ipLocationReady(ipLocation:IPLocation) {
+        
+    }
     
     
     //MARK: ---------------- INIT -------------------------

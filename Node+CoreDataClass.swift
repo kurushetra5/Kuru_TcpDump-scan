@@ -49,6 +49,21 @@ public class Node: NSManagedObject {
     }
     
     
+    func fillFrom(ipLocation:IPLocation) -> Node {
+        self.number =  ipLocation.query
+        self.aso =  ipLocation.as
+        self.city =  ipLocation.city
+        self.country =  ipLocation.country
+        self.latitud =  ipLocation.lat
+        self.longitude =  ipLocation.lon
+        
+        //         timesBlocked: Int64
+        //         timesSeeIt: Int64
+        //         conectionPorts: NSSet?
+        return self //FIXME: no se si esto esta bien o solo rellenarlo
+    }
+    
+    
     func fromNode(node:TraceRouteNode) -> Node {
         self.number =  node.ip
         self.aso =  node.aso

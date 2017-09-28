@@ -8,14 +8,18 @@
 
 import Foundation
 
-protocol NodeFilledDelegate {
-    func filled(node:TraceRouteNode)
-    func filled(node:TraceRouteNode, amountIps:Int)
-}
+//protocol NodeFilledDelegate {
+//    func filled(node:TraceRouteNode)
+//    func filled(node:TraceRouteNode, amountIps:Int)
+//}
 
 
 
 class  TraceRouteNode:IPLocatorDelegate  {
+    
+    
+    
+    
     
     let dataBase:dataBaseManager = dataBaseManager()
     var ipLocator:IPLocator = IPLocator()
@@ -73,6 +77,7 @@ class  TraceRouteNode:IPLocatorDelegate  {
     }
     
     
+    
     func fillNode() {
         
         if dataBase.isFilledThis(node:self) {
@@ -109,7 +114,12 @@ class  TraceRouteNode:IPLocatorDelegate  {
         
     }
     
-    
+    func ipLocationReady(ipLocation:IPLocation) {
+        
+    }
+    func nodeIpReady(node: Node) {
+        
+    }
     
     
     func nodeIpReady(node:TraceRouteNode) {
