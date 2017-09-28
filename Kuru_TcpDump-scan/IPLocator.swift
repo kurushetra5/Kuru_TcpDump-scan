@@ -17,6 +17,31 @@ protocol IPLocatorDelegate {
 
 class   IPLocator  {
     
+    
+    struct  IPLocation:Codable {
+        var query:String
+        var isp:String
+        var `as`:String
+        var city:String
+        var country:String
+        var countryCode:String
+        var lat:Double
+        var lon:Double
+        var org:String
+        var region:String
+        var regionName:String
+        var status:String
+        var timezone:String
+        var zip:String
+        
+        func toNode() -> Node {
+            
+            
+            return Node()
+        }
+    }
+    
+    
     //    {"as":"AS9394 China TieTong Telecommunications Corporation","city":"Beijing","country":"China","countryCode":"CN","isp":"China TieTong","lat":39.9289,"lon":116.3883,"org":"China TieTong","query":"61.232.254.39","region":"11","regionName":"Beijing","status":"success","timezone":"Asia/Shanghai","zip":""}
     var locatorDelegate:IPLocatorDelegate!
     
@@ -24,8 +49,8 @@ class   IPLocator  {
     
     func fetchIpLocation(node:TraceRouteNode) {
         
-        
         let nodeString:String = node.ip
+       let decoder = JSONDecoder()
         
         let url = URL(string:"http://ip-api.com/json/" + nodeString)
         URLSession.shared.dataTask(with: url!, completionHandler: {
@@ -35,15 +60,14 @@ class   IPLocator  {
                 //TODO: delegate message error
             }else{
                 do{
+                    
+                let todo = try decoder.decode(IPLocation.self, from: data!)
+                    print(todo)
+                    
+                    
+                    
                     let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments) as! [String : AnyObject]
-                    
-                    //                    let lon:String = String(describing: json["longitude"] as! NSNumber)
-                    //                    print(lon)
-                    
                     OperationQueue.main.addOperation({
-                        
-                        
-                        
                         node.aso  = json["as"] as? String
                         node.city = json["city"] as? String
                         node.country = json["country"] as? String
@@ -61,19 +85,13 @@ class   IPLocator  {
                         if node.lat != nil && node.lon != nil {
                            self.locatorDelegate.nodeIpReady(node:node)
                         }
-                        
-                        
-//                       print(node.lat ?? 0.0)
-//                        print(node.lon ?? 0.0)
-                        
-                    })
+                   })
                     
                 }catch let error as NSError{
                     print(error)
                 }
             }
         }).resume()
-        
     }
     
     

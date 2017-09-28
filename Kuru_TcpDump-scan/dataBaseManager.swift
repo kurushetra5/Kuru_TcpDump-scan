@@ -60,35 +60,16 @@ class dataBaseManager {
     
     
     
-    
-    
-    
-    
-    
     func newIpWith(node:TraceRouteNode) -> Node {
-        
-        
         var newIp:Node = newIpEntity()
         newIp = newIp.fromNode(node: node)
-        
-        
-//        if dataBaseMode == DataBaseMode.on {
-        
-//            ipsFound.append(newIp)
-//            self.tcpDumpDelegate?.newIpComing(ips:self.ipsFound)
-        
-            do {
+        do {
                 try self.managedContext.save()
                 
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
             }
-            
-//        }else {
-//            ipsFoundOffMode.append(newIp)
-//            self.tcpDumpDelegate?.newIpComing(ips:self.ipsFoundOffMode)
-//        }
-        return newIp
+            return newIp
     }
 
     
