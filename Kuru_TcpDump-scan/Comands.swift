@@ -1,6 +1,6 @@
 //
 //  Comands.swift
-//  Kuru_TcpDump-scan
+//  AppController-scan
 //
 //  Created by Kurushetra on 27/8/17.
 //  Copyright © 2017 Kurushetra. All rights reserved.

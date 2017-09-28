@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  Kuru_TcpDump-scan
+//  AppController-scan
 //
 //  Created by Kurushetra on 20/8/17.
 //  Copyright © 2017 Kurushetra. All rights reserved.
@@ -13,156 +13,115 @@ import MapKit
 
 class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkingDelegate,NSTableViewDataSource,NSTableViewDelegate ,NSTabViewDelegate{
     
+    
     //MARK:--------------------------------------- OUTLETS ---------------------------------------
+    
     @IBOutlet weak var map: MKMapView!
-    
-    
     @IBOutlet weak var ipsTableView: NSTableView!
-    
     @IBOutlet weak var pathForTcpDumpFile: NSTextField!
     @IBOutlet weak var pathForTraceRouteFile: NSTextField!
     @IBOutlet weak var pathForSaveDumpFile: NSTextField!
-    
-    
     @IBOutlet weak var packagesCount: NSTextField!
     @IBOutlet weak var packagesProcessed: NSTextField!
-    
     @IBOutlet weak var traceRouteIp: NSTextField!
-    
     @IBOutlet weak var fireWallStateLabel: NSTextField!
-    
-    
     @IBOutlet var popOverController: anotationDetailPopOverController!
-    
     @IBOutlet weak var comandsTableView: NSTableView!
-    
     @IBOutlet weak var fireWallTableView: NSTableView!
-    
     @IBOutlet weak var stateRuning: NSImageView!
     @IBOutlet weak var comandRuningLabel: NSTextField!
-    
     @IBOutlet weak var blockIpText: NSTextField!
-    
     @IBOutlet weak var fireWallStartStop: NSButton!
     @IBOutlet weak var blockIpButton: NSButton!
-    
     @IBOutlet weak var unBlockIpButton: NSButton!
     
+    
     //MARK:--------------------------------------- ACTIONS ---------------------------------------
+    
     @IBAction func StartTcpDumpScan(_ sender: Any) {
-        tcpDump.startTcpScan()
+        appController.startTcpScan()
     }
-    
     @IBAction func StopTcpDumpScan(_ sender: Any) {
-        tcpDump.terminateCommand()
+        appController.terminateCommand()
     }
-    
-    
     @IBAction func freeScan(_ sender: Any) {
-        tcpDump.dataBaseModeOff()
+        appController.dataBaseModeOff()
     }
-    
     @IBAction func traceRoute(_ sender: Any) {
         renderedNodes = []
-        tcpDump.traceRouteTo(ip:traceRouteIp.stringValue)
+        appController.traceRouteTo(ip:traceRouteIp.stringValue)
         //        61.232.254.39
     }
-    
-    
     @IBAction func killConection(_ sender: NSButton) {
         
     }
-    
-    
     @IBAction func netStat(_ sender: NSButton) {
-        tcpDump.comandsManager.runProcessWith(comand:tcpDump.comandsManager.netStatComand, args:tcpDump.comandsManager.netStatArgs,delegate: self)
+        appController.comandsManager.runProcessWith(comand:appController.comandsManager.netStatComand, args:appController.comandsManager.netStatArgs,delegate: self)
     }
-    
-    
     @IBAction func whois(_ sender: NSButton) {
-        tcpDump.comandsManager.whoisTo(ip:traceRouteIp.stringValue)
+        appController.comandsManager.whoisTo(ip:traceRouteIp.stringValue)
     }
-    
-    
-    
     @IBAction func nsLookUp(_ sender: NSButton) {
-        tcpDump.comandsManager.nsLookupTo(ip:traceRouteIp.stringValue)
+        appController.comandsManager.nsLookupTo(ip:traceRouteIp.stringValue)
     }
-    
-    
     @IBAction func mtRoute(_ sender: NSButton) {
         
         if isIpSelected() {
-            tcpDump.comandsManager.runComand(type:ComandType.mtRoute, ip:traceRouteIp.stringValue, delegate:self)
+            appController.comandsManager.runComand(type:ComandType.mtRoute, ip:traceRouteIp.stringValue, delegate:self)
         }
         //tcpDump.comandsManager.runProcessWith(comand:tcpDump.comandsManager.mtrRouteComand , args:tcpDump.comandsManager.mtrRouteArgs ,delegate: self)
     }
-    
-    
-    
     @IBAction func startFireWall(_ sender: NSButton) {
         
         if sender.state == .on {
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallStart, ip:nil, delegate:self)
+            appController.comandsManager.runComand(type:ComandType.fireWallStart, ip:nil, delegate:self)
         }else {
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallStop, ip:nil, delegate:self)
+            appController.comandsManager.runComand(type:ComandType.fireWallStop, ip:nil, delegate:self)
         }
     }
-    
-    
-    
     @IBAction func setPathSettingsChanges(_ sender: Any) {
         filesManager.setFilesPaths(tcpDumpFilePath:pathForTcpDumpFile.stringValue, traceRouteFilePath: pathForTraceRouteFile.stringValue, saveDumpFilePath: pathForSaveDumpFile.stringValue)
         configureView()
     }
-    
-    
-    
     @IBAction func checkPacages(_ sender:NSButton) {
-        tcpDump.countPackages(mode:sender.state.rawValue)
+        appController.countPackages(mode:sender.state.rawValue)
     }
-    
     @IBAction func checkProcessed(_ sender: NSButton) {
-        tcpDump.countProcessed(mode:sender.state.rawValue)
+        appController.countProcessed(mode:sender.state.rawValue)
     }
-    
     @IBAction func cleanDataBase(_ sender: Any) {
-        tcpDump.cleanDataBase()
+        appController.cleanDataBase()
     }
-    
     @IBAction func cleanTcpDumpFile(_ sender: Any) {
         filesManager.createFileAtPath(path:filesManager.tcpDumpFileUrl.relativePath)
     }
-    
     @IBAction func filterIpsInTcpDumpCommand(_ sender: NSButton) {
-        tcpDump.filterInTcpDumpCommand = FilterInTcpDumpCommand(rawValue:sender.state.rawValue)!
+        appController.filterInTcpDumpCommand = FilterInTcpDumpCommand(rawValue:sender.state.rawValue)!
     }
-    
     @IBAction func showIpsDataBase(_ sender: Any) {
-        tcpDump.tcpDumpComand.getIps()
+        ipsToShow =  appController.dataBase.dataBase
+         ipsTableView.reloadData()
     }
-    
     @IBAction func blockIp(_ sender: Any) {
         nodeSelectedForFireWall()
-        tcpDump.comandsManager.runComand(type:ComandType.addFireWallBadHosts, node:selectedNode, delegate:self)
+        appController.comandsManager.runComand(type:ComandType.addFireWallBadHosts, node:selectedNode, delegate:self)
         
     }
-    
     @IBAction func unBlockIp(_ sender: Any) {
         nodeSelectedForFireWall()
-        tcpDump.comandsManager.runComand(type:ComandType.deleteFireWallBadHosts, node:selectedNode, delegate:self)
+        appController.comandsManager.runComand(type:ComandType.deleteFireWallBadHosts, node:selectedNode, delegate:self)
     }
-    
-    
     @IBAction func showNodesInMap(_ sender: NSButton) {
         
         if sender.state.rawValue == 0 {
-            tcpDump.showNodesInMapView = NotesInMapMode.off
+            appController.showNodesInMapView = NotesInMapMode.off
             mapEngine.mapView.removeAnnotations(mapEngine.mapView.annotations)
         } else {
-            tcpDump.showNodesInMap(mode:NotesInMapMode(rawValue: sender.state.rawValue)!)
+            appController.showNodesInMap(mode:NotesInMapMode(rawValue: sender.state.rawValue)!)
         }
     }
+    
+    
     
     
     
@@ -177,11 +136,9 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         static let LongitudeCell = "LongitudeCell"
         
     }
-    
-    
     var mapEngine:MapRouteEngine!
     let filesManager:FilesManager = FilesManager.shared
-    let tcpDump = Kuru_TcpDump()
+    let appController = AppController()
     var ipsToShow:[Node]?
     var comandToShow:[TraceRouteNode] = []
     var oldNode:Node!
@@ -194,13 +151,16 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     var selectedNode:Node!
     var selectedTraceRouteNode:TraceRouteNode!
     
+    
+    
+    
     //MARK:--------------------------------------- FUNC ---------------------------------------
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        tcpDump.ipsDelegate = self
+        appController.ipsDelegate = self
         mapEngine = MapRouteEngine(withMap:map)
         mapEngine.popOverController = popOverController
         mapEngine.startEngine()
@@ -263,13 +223,10 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         }
     }
     
-    
-    
     func commandIsWorking(comandType:ComandType) {
         animateComandWork()
         comandRuningLabel.stringValue = comandType.rawValue
     }
-    
     
     func animateComandWork() {
         
@@ -282,16 +239,9 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         }
     }
     
-    
-    
-    
-    
     func updatePackagesCounts() {
-        
         packagesCount.integerValue = filesManager.countLines(fileURL:filesManager.tcpDumpFileUrl)
     }
-    
-    
     
     func newPackage() {
         updatePackagesCounts()
@@ -300,8 +250,6 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     func packageProcessed(number:Int) {
         packagesProcessed.integerValue = number
     }
-    
-    
     
     func newNode(node:Node) {
         
@@ -312,7 +260,6 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         }
         
         renderedNodes.append(node)
-        
         var nodeAnotation:IpAnotation = IpAnotation()
         nodeAnotation  = node.nodeAnotation()
         //        nodeAnotation.subtitle = String(traceRouteNodesCount)
@@ -320,10 +267,9 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         //        nodeAnotation.coordinate.longitude = node.longitude
         //        nodeAnotation.node = node
         mapEngine.addIp(anotation:nodeAnotation)
-        
-        
         traceRouteNodesCount += 1
-        print(traceRouteNodesCount)
+        
+//        print(traceRouteNodesCount)
         let locationA:CLLocation!
         
         if oldNode == nil {
@@ -333,7 +279,6 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         }else {
             locationA  = CLLocation(latitude:oldNode.latitud, longitude:oldNode.longitude)
         }
-        
         let locationB:CLLocation = CLLocation(latitude:node.latitud, longitude:node.longitude)
         mapEngine.drawHaLine(locationA:locationA ,locationB:locationB)
         oldNode = node
@@ -346,19 +291,18 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     func newIpComing(ips:[Node]) {
-        ipsToShow = ips
-        ipsTableView.reloadData()
+         ipsToShow = ips
+         ipsTableView.reloadData()
     }
     
+    
     func newConection(ip:Node) {
-        
         mapEngine.addIp(anotation:ip.anotation)
         mapEngine.currentLocation =  CLLocation(latitude:41.1754, longitude:1.2697)
-        //        let locationA:CLLocation = CLLocation(latitude:ipsToShow![0].latitud, longitude:Double(ipsToShow![0].longitude!)!)
-        let locationB:CLLocation = CLLocation(latitude:(ip.latitud), longitude: ip.longitude)
+       let locationB:CLLocation = CLLocation(latitude:(ip.latitud), longitude: ip.longitude)
         mapEngine.drawHaLine(locationA:mapEngine.currentLocation ,locationB:locationB)
-        
     }
+    
     
     
     
@@ -390,10 +334,10 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     func procesFinish(processName:String) {
         switch processName {
         case ComandType.fireWallStart.rawValue:
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
+            appController.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
             
         case ComandType.fireWallStop.rawValue:
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
+            appController.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
             
         case ComandType.addFireWallBadHosts.rawValue:
             blockedFireWallNodes = []
@@ -436,7 +380,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     func updateBadHostsTableView() {
-        tcpDump.comandsManager.runComand(type:ComandType.fireWallBadHosts,ip:nil, delegate:self)
+        appController.comandsManager.runComand(type:ComandType.fireWallBadHosts,ip:nil, delegate:self)
     }
     
     
@@ -616,7 +560,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             print("Si")
             blockedFireWallNodes = []
             fireWallTableView.reloadData()
-            tcpDump.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
+            appController.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
             
         } else {
             print("No")

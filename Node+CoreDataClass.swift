@@ -1,6 +1,6 @@
 //
 //  Node+CoreDataClass.swift
-//  Kuru_TcpDump-scan
+//  AppController-scan
 //
 //  Created by Kurushetra on 1/9/17.
 //  Copyright © 2017 Kurushetra. All rights reserved.

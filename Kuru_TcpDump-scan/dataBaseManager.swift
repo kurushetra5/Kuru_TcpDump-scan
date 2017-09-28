@@ -1,6 +1,6 @@
 //
 //  dataBaseManager.swift
-//  Kuru_TcpDump-scan
+//  AppController-scan
 //
 //  Created by Kurushetra on 31/8/17.
 //  Copyright © 2017 Kurushetra. All rights reserved.
@@ -13,12 +13,15 @@ import Cocoa
 
 
 
-
 class dataBaseManager {
 
     let appDelegate = NSApplication.shared.delegate  as! AppDelegate
     let managedContext:NSManagedObjectContext!
     var foundedNode:Node!
+    
+    var dataBase:[Node] {
+        return nodesDataBase()
+    }
     
     
     init() {
@@ -32,7 +35,28 @@ class dataBaseManager {
         return ip
     }
 
+    
    
+  private  func nodesDataBase() -> [Node] {
+        
+        var nodes:[Node] = []
+       
+        let fetchRequest: NSFetchRequest<Node> = Node.fetchRequest()
+        
+        do {
+            let searchResults = try managedContext.fetch(fetchRequest)
+            print ("num of results = \(searchResults.count)")
+            
+            for ip in searchResults as [Node] {
+                nodes.append(ip)
+//                print("\(String(describing: ip.value(forKey: "number")))")
+            }
+            
+        } catch {
+            print("Error with request: \(error)")
+        }
+        return nodes
+    }
     
     
     

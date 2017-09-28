@@ -1,6 +1,6 @@
 //
 //  KuTcp_Scaner.swift
-//  Kuru_TcpDump-scan
+//  AppController-scan
 //
 //  Created by Kurushetra on 20/8/17.
 //  Copyright © 2017 Kurushetra. All rights reserved.
@@ -28,7 +28,7 @@ enum  NotesInMapMode:Int {
 
 
 
-class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
+class AppController: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
     
     enum  Direction:Int {
         case coming,going
@@ -96,6 +96,7 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
     }
     
     
+    
     //MARK: ---------------- INIT -------------------------
       init() {
         managedContext = self.appDelegate.persistentContainer.viewContext
@@ -107,13 +108,13 @@ class Kuru_TcpDump: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
     
     func dataBaseModeOff() {
         tcpDumpComand.dataBaseModeOff()
-        
     }
+    
     
     func countPackages(mode:Int) {
         tcpDumpComand.countPackagesMode = PackagesMode(rawValue:mode)!
-        
     }
+    
     func countProcessed(mode:Int) {
         tcpDumpComand.countProcessedMode = ProcessedMode(rawValue:mode)!
     }
