@@ -16,6 +16,7 @@
 		612AB8991F53035A00FC4CF4 /* Comands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612AB8981F53035A00FC4CF4 /* Comands.swift */; };
 		612AB89B1F5305D900FC4CF4 /* FileComandExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612AB89A1F5305D900FC4CF4 /* FileComandExtractor.swift */; };
 		613B13301F4F338500C5747C /* Conection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613B132F1F4F338500C5747C /* Conection.swift */; };
+		614457C51F81703800A806E5 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614457C41F81703800A806E5 /* StringExtensions.swift */; };
 		615329901F74842200B3BBFA /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6153298F1F74842200B3BBFA /* MapKit.framework */; };
 		6169AD421F49E63E0016B252 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6169AD411F49E63E0016B252 /* AppDelegate.swift */; };
 		6169AD441F49E63E0016B252 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6169AD431F49E63E0016B252 /* ViewController.swift */; };
@@ -43,6 +44,7 @@
 		612AB8981F53035A00FC4CF4 /* Comands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comands.swift; sourceTree = "<group>"; };
 		612AB89A1F5305D900FC4CF4 /* FileComandExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileComandExtractor.swift; sourceTree = "<group>"; };
 		613B132F1F4F338500C5747C /* Conection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Conection.swift; sourceTree = "<group>"; };
+		614457C41F81703800A806E5 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		6153298F1F74842200B3BBFA /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		6169AD3E1F49E63E0016B252 /* Kuru_TcpDump-scan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kuru_TcpDump-scan.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6169AD411F49E63E0016B252 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				61C4B8081F5749FC00917528 /* Comands */,
 				616706E71F4EED0700F76988 /* CoreData */,
 				61A2C95E1F578C7D00772D94 /* Suported */,
+				614457C41F81703800A806E5 /* StringExtensions.swift */,
 			);
 			path = "Kuru_TcpDump-scan";
 			sourceTree = "<group>";
@@ -253,6 +256,7 @@
 				616A14FE1F5A1FF5001B15A2 /* SudoComand.swift in Sources */,
 				6103A6891F50E8F60051E9F0 /* MapRouteEngine.swift in Sources */,
 				6193F0931F59E7D50026C254 /* Node+CoreDataProperties.swift in Sources */,
+				614457C51F81703800A806E5 /* StringExtensions.swift in Sources */,
 				61158B701F5385F400BA02DC /* TraceRouteNode.swift in Sources */,
 				610EEBE01F56EE8600DCD96F /* anotationDetailPopOverController.swift in Sources */,
 				611FA16A1F548B350081928C /* FilesManager.swift in Sources */,

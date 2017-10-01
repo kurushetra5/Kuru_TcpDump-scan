@@ -10,7 +10,6 @@ import Cocoa
 import MapKit
 
 
-
 class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkingDelegate,NSTableViewDataSource,NSTableViewDelegate ,NSTabViewDelegate{
     
     
@@ -125,6 +124,9 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     
+    
+    
+    
     //MARK:--------------------------------------- VARS ---------------------------------------
     
     fileprivate enum CellIdentifiers {
@@ -141,6 +143,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     let appController = AppController()
     var ipsToShow:[Node] = []
     var comandToShow:[TraceRouteNode] = []
+    var comandsToShow:[Node] = []
     var oldNode:Node!
     var renderedNodes:[Node] = []
     var traceRouteNodesCount:Int = 1
@@ -157,6 +160,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     //MARK:--------------------------------------- FUNC ---------------------------------------
     
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -164,7 +168,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         mapEngine = MapRouteEngine(withMap:map)
         mapEngine.popOverController = popOverController
         mapEngine.startEngine()
-        
+         
     }
     
     override var representedObject: Any? {
@@ -478,16 +482,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             return cell
         }
         
-        
-        
-        
-        
-        guard let ipToShow:Node = ipsToShow[row]  else {
-            return nil
-        }
-        
-        
-        
+        let ipToShow:Node = ipsToShow[row]
         //        var image: NSImage?
         var text: String = "-"
         var cellIdentifier: String = ""

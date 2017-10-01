@@ -42,7 +42,7 @@ class FileComandExtractor  {
         lines = ipsOk.components(separatedBy:"\n")
         
         for  ip in  lines {
-            if isIpNumber(ip:ip) {
+            if isValid(ip:ip) {
                 results.append(ip)
             }
         }
@@ -59,7 +59,7 @@ class FileComandExtractor  {
         let ipsArray:[String] = ips.components(separatedBy:"\n")
         
         for ip in ipsArray {
-            if isIpNumber(ip:ip) {
+            if isValid(ip:ip) {
                nodes.append(TraceRouteNode(ip:ip))
             } else {
                 print("ERROR: NO IP NUMBER...")
@@ -70,26 +70,33 @@ class FileComandExtractor  {
     }
     
     
-    
-    func isIpNumber(ip:String) -> Bool {
-        
-        var isIp:Bool = true
-        let array:[String] = ip.components(separatedBy:".")
-        
-        if array.count == 4 {
-            let number1  = Int(array[0])
-            let number2  = Int(array[1])
-            let number3  = Int(array[2])
-            let number4  = Int(array[3])
-            
-            if number1 == nil || number2 == nil  || number3 == nil || number4 == nil {
-                isIp = false
-            }
-        } else {
-           isIp = false
-        }
-         return isIp
+    func isValid(ip: String) -> Bool {
+        let parts = ip.components(separatedBy:".")
+        let numbers = parts.flatMap { Int($0) }
+        return parts.count == 4 && numbers.count == 4 && !numbers.contains {$0 < 0 || $0 > 255}
     }
+    
+    
+    
+//    func isIpNumber(ip:String) -> Bool {
+//
+//        var isIp:Bool = true
+//        let array:[String] = ip.components(separatedBy:".")
+//
+//        if array.count == 4 {
+//            let number1  = Int(array[0])
+//            let number2  = Int(array[1])
+//            let number3  = Int(array[2])
+//            let number4  = Int(array[3])
+//
+//            if number1 == nil || number2 == nil  || number3 == nil || number4 == nil {
+//                isIp = false
+//            }
+//        } else {
+//           isIp = false
+//        }
+//         return isIp
+//    }
     
     
     
@@ -104,6 +111,16 @@ class FileComandExtractor  {
         return nodes
     }
     
+    func findIpsIn(text:String) -> [String]! {
+        
+        let ips = findIP(inText:text)
+        
+        if ips.count >= 1 {
+           return ips
+        }else {
+          return nil
+        }
+    }
     
     
     
@@ -174,6 +191,49 @@ class FileComandExtractor  {
     
     
     
+    func findIP(inText:String) -> [String] {
+        
+//        let text = ".ip:9 (192.168.1.1) > 192.168.1.2 "
+        let text2 = inText.replacingOccurrences(of:" ", with:"")
+        var arrayNumbers:[String] = []
+        
+        
+        //       var numeros =  text2.filter { char in
+        //             let number = Int(char.description)
+        //
+        //            return (number != nil)
+        //        }
+        //
+        var text3:String = ""
+        
+        
+        for cha in text2 {
+            
+            let number = Int(cha.description)
+            
+            if number != nil {
+                
+                text3.append(cha)
+            }else  if cha == "." {
+                text3.append(cha)
+            }else   {
+                text3.append("-")
+            }
+        }
+        arrayNumbers = text3.components(separatedBy:"-")
+        var arrayN:[String] = []
+        
+        for  num in  arrayNumbers.indices {
+            if arrayNumbers[num].characters.count >= 7 {
+                if isValid(ip:arrayNumbers[num]) {
+                   arrayN.append(arrayNumbers[num])
+                }
+                
+            }
+            
+        }
+        return arrayN
+    }
     
     
     

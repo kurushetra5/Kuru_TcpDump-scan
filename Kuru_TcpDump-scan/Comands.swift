@@ -375,7 +375,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue, amountNodes:amountIps)
     }
     
-    func filled(node:TraceRouteNode) {
+    func filled(node:TraceRouteNode) { //FIXME: Node
         processDelegate?.procesFinishWith(nodes:[node]) //FIXME: pasar un node solo
 //        processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue)
     }
