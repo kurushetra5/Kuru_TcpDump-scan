@@ -484,31 +484,29 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
                 self.processDelegate.procesFinish(processName:self.comandType!.rawValue)
             case  .fireWallBadHosts:
                 if self.arrayResult.count >= 1 {
-                    let ips = self.fileExtractor.extractBadHostsIps(ips:self.arrayResult[0])
-                    let countIps:Int = ips.count
-                    
-                    for ip in ips {
-                       self.dataBase.nodeWith(ip:ip, amountIps:countIps)
-                            
-                        //TODO: Acabar
-//                        let node:TraceRouteNode = TraceRouteNode(ip:ip)
-//                        node.nodeFilledDelegate = self
-//                        node.fillNodeWithData(amountIps:countIps)
+                    let ips = self.fileExtractor.findIpsIn(text:self.arrayResult[0])
+                    for ip in ips! {
+                       self.dataBase.nodeWith(ip:ip, amountIps:ips!.count)
                     }
-                    print(ips)
+                    
                 }else if self.arrayResult.count == 0 {
                     self.processDelegate.newDataFromProcess(data:"0", processName:self.comandType!.rawValue)
                 }
             case .addFireWallBadHosts:
                 self.processDelegate.procesFinish(processName:self.comandType!.rawValue)
             default:
-                let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
-                
-                for node in nodes {
-                    node.nodeFilledDelegate = self
-                    node.fillNodeWithData()
-                    
-                }
+                  let ips = self.fileExtractor.findIpsIn(text:self.arrayResult[0])
+                  for ip in ips! {
+                    self.dataBase.nodeWith(ip:ip, amountIps:ips!.count)
+                  }
+                  
+//                print(ips)
+//                let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
+//                for node in nodes {
+//                    node.nodeFilledDelegate = self
+//                    node.fillNodeWithData()
+//
+//                }
             }
         })
         

@@ -142,7 +142,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     let filesManager:FilesManager = FilesManager.shared
     let appController = AppController()
     var ipsToShow:[Node] = []
-    var comandToShow:[TraceRouteNode] = []
+//    var comandToShow:[TraceRouteNode] = []
     var comandsToShow:[Node] = []
     var oldNode:Node!
     var renderedNodes:[Node] = []
@@ -150,9 +150,9 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     var selectedIp:String!
     var blockedIps:[String] = []
     var blockedNodes:[Node] = []
-    var blockedFireWallNodes:[TraceRouteNode] = []
+//    var blockedFireWallNodes:[TraceRouteNode] = []
     var selectedNode:Node!
-    var selectedTraceRouteNode:TraceRouteNode!
+//    var selectedTraceRouteNode:TraceRouteNode!
     
     
     
@@ -335,10 +335,13 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         case ComandType.fireWallBadHosts.rawValue:
             blockedNodes.append(node)
             
-            if amountNodes == blockedFireWallNodes.count {
+            if amountNodes == blockedNodes.count {
                 fireWallTableView.reloadData()
             }
-            
+        case ComandType.mtRoute.rawValue:
+            comandsToShow.append(node)
+            comandsTableView.reloadData()
+             print("MTRoute")
         default:
             print("Error:procesFinishWith(node:Node, processName:String, amountNodes:Int) ")
         }
@@ -348,24 +351,24 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) {
         
-        switch processName {
-        case ComandType.fireWallBadHosts.rawValue:
-             blockedFireWallNodes.append(node)
-            
-            if amountNodes == blockedFireWallNodes.count {
-                fireWallTableView.reloadData()
-            }
-            
-        default:
-            print("Error: procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) ")
-        }
+//        switch processName {
+//        case ComandType.fireWallBadHosts.rawValue:
+//             blockedFireWallNodes.append(node)
+//
+//            if amountNodes == blockedFireWallNodes.count {
+//                fireWallTableView.reloadData()
+//            }
+//
+//        default:
+//            print("Error: procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) ")
+//        }
     }
     
     
     
     func procesFinishWith(nodes:[TraceRouteNode]) {
-        comandToShow.append(nodes[0])
-        comandsTableView.reloadData()
+//        comandToShow.append(nodes[0])
+//        comandsTableView.reloadData()
     }
     
     
@@ -378,11 +381,11 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             appController.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
             
         case ComandType.addFireWallBadHosts.rawValue:
-            blockedFireWallNodes = []
+            blockedNodes = []
             updateBadHostsTableView()
             
         case ComandType.deleteFireWallBadHosts.rawValue:
-            blockedFireWallNodes = []
+            blockedNodes = []
             updateBadHostsTableView()
         default:
             print("Error: procesFinish(processName:String)")
@@ -408,7 +411,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
             updateBadHostsTableView()
             
         case ComandType.fireWallBadHosts.rawValue:
-            blockedFireWallNodes = []
+//            blockedNodes = []
             fireWallTableView.reloadData()
         default:
             print("Error: newDataFromProcess(data:String , processName:String)")
@@ -429,7 +432,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     func numberOfRows(in tableView: NSTableView) -> Int {
         
         if tableView.identifier!.rawValue == "comands" {
-            return comandToShow.count
+            return comandsToShow.count
         }
         if tableView.identifier!.rawValue == "fireWall" {
             return blockedNodes.count
@@ -466,13 +469,13 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         
         if tableView.identifier!.rawValue == "comands" {
-            let comands:TraceRouteNode = comandToShow[row]
+            let comands:Node = comandsToShow[row]
             var text: String = "-"
             var cellIdentifier: String = ""
             
             if tableColumn == comandsTableView.tableColumns[0] {
                 cellIdentifier = "NumberCell"
-                text = comands.ip ?? "-error-"
+                text = comands.number!
             } else if tableColumn == comandsTableView.tableColumns[1] {
                 cellIdentifier = "CountryCell"
                 text = comands.country ?? "-"
@@ -527,18 +530,22 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     func tableViewSelectionDidChange(_ notification: Notification) {
         
         if comandsTableView.selectedRow >= 0 {
-            let ipSelected:TraceRouteNode = comandToShow[comandsTableView.selectedRow]
-            traceRouteIp.stringValue = ipSelected.ip!
-            selectedIp = ipSelected.ip!
+            let ipSelected:Node = comandsToShow[comandsTableView.selectedRow]
+            traceRouteIp.stringValue = ipSelected.number!
+            selectedIp = ipSelected.number!
             //              return
         }
         
         if fireWallTableView.selectedRow >= 0 {
-            let ipSelected:TraceRouteNode = blockedFireWallNodes[fireWallTableView.selectedRow]
-            blockIpText.stringValue = ipSelected.ip!//TODO: arreglar esto node traceroutenode
+            let ipSelected2:Node = blockedNodes[fireWallTableView.selectedRow]
+            blockIpText.stringValue = ipSelected2.number!
+            containsIP(ip:ipSelected2.number!)
+            
+//            let ipSelected:TraceRouteNode = blockedFireWallNodes[fireWallTableView.selectedRow]
+//            blockIpText.stringValue = ipSelected.ip!//TODO: arreglar esto node traceroutenode
             fireWallTableView.deselectAll(nil)
             
-             containsIP(ip:ipSelected.ip!)
+//             containsIP(ip:ipSelected.ip!)
             return
             
         }
@@ -567,8 +574,8 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     func containsIP(ip:String)  {
         
-       for node in blockedFireWallNodes {
-            if node.ip ==  ip {
+       for node in blockedNodes {
+            if node.number! ==  ip {
                 blockIpButton.isEnabled = false
                 unBlockIpButton.isEnabled = true
                 return
@@ -588,7 +595,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         
         if tabView.selectedTabViewItem?.identifier! as! String == "fireWall" {
             print("Si")
-            blockedFireWallNodes = []
+            blockedNodes = []
             fireWallTableView.reloadData()
             appController.comandsManager.runComand(type:ComandType.fireWallState, ip:nil, delegate:self)
             

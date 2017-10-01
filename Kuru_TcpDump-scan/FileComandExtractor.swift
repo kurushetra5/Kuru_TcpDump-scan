@@ -111,6 +111,7 @@ class FileComandExtractor  {
         return nodes
     }
     
+    
     func findIpsIn(text:String) -> [String]! {
         
         let ips = findIP(inText:text)

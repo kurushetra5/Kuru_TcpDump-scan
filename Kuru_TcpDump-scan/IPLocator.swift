@@ -47,6 +47,7 @@ class   IPLocator  {
     
     func fetchIpLocation(ip:String) {
         
+        
         let decoder = JSONDecoder()
         
         let url = URL(string:"http://ip-api.com/json/" + ip)
@@ -58,14 +59,16 @@ class   IPLocator  {
             }else{
                 do{
                     let node = try decoder.decode(IPLocation.self, from: data!)
-                    print(node)
+//                    print(node)
                     OperationQueue.main.addOperation({
                         self.locatorDelegate.ipLocationReady(ipLocation:node)
                         
                    })
                     
-                }catch let error as NSError{
+                }catch let error as NSError{ //FIXME: pasar un node con la info rellena co el de error.
                     print(error)
+                     print(ip)
+                    
                 }
             }
         }).resume()
