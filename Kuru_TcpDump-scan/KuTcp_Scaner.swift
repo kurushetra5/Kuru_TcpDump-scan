@@ -28,7 +28,7 @@ enum  NotesInMapMode:Int {
 
 
 
-class AppController: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
+class AppController    {
     
     enum  Direction:Int {
         case coming,going
@@ -59,43 +59,43 @@ class AppController: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
     
     
     
-    func traceRouteIps(ips:[TraceRouteNode]) {
-        //TODO: mirar si esta en la dataBase y actualizar la de vez en cuando
-//        let dataBase:dataBaseManager = dataBaseManager()
-        
-        for node in ips {
-            if dataBase.isFilledThis(node:node) {
-                print("Node is Founded in DataBase")
-//                var nodeFilled = dataBase.foundedNode
-                ipsDelegate?.newNode(node:dataBase.foundedNode!)
-            } else {
-                print("Node is Filling from Internet")
-                ipLocator.fetchIpLocation(node:node)
-            }
-            
-        }
-
-        
-        
+//    func traceRouteIps(ips:[TraceRouteNode]) {
+//        //TODO: mirar si esta en la dataBase y actualizar la de vez en cuando
+////        let dataBase:dataBaseManager = dataBaseManager()
+//
 //        for node in ips {
 //            if dataBase.isFilledThis(node:node) {
-//                print("Node is filled")
-//                ipsDelegate?.newNode(node:node)
+//                print("Node is Founded in DataBase")
+////                var nodeFilled = dataBase.foundedNode
+//                ipsDelegate?.newNode(node:dataBase.foundedNode!)
 //            } else {
-//              ipLocator.fetchIpLocation(node:node)
+//                print("Node is Filling from Internet")
+//                ipLocator.fetchIpLocation(node:node)
 //            }
-//           
+//
 //        }
-    }
-    
+//
+//
+//
+////        for node in ips {
+////            if dataBase.isFilledThis(node:node) {
+////                print("Node is filled")
+////                ipsDelegate?.newNode(node:node)
+////            } else {
+////              ipLocator.fetchIpLocation(node:node)
+////            }
+////
+////        }
+//    }
+//
     
     func nodeIpReady(node: Node) {
         
     }
-    func nodeIpReady(node:TraceRouteNode) {
-        
-      ipsDelegate?.newNode(node:dataBase.newIpWith(node:node))
-    }
+//    func nodeIpReady(node:TraceRouteNode) {
+//
+//      ipsDelegate?.newNode(node:dataBase.newIpWith(node:node))
+//    }
     func ipLocationReady(ipLocation:IPLocation) {
         
     }
@@ -104,9 +104,9 @@ class AppController: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
     //MARK: ---------------- INIT -------------------------
       init() {
         managedContext = self.appDelegate.persistentContainer.viewContext
-        comandsManager.traceRouteIpsDelegate = self
-        ipLocator.locatorDelegate = self
-        tcpDumpComand.tcpDumpDelegate  = self
+//        comandsManager.traceRouteIpsDelegate = self
+//        ipLocator.locatorDelegate = self
+//        tcpDumpComand.tcpDumpDelegate  = self
     }
     
     
@@ -167,7 +167,7 @@ class AppController: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
     
     //    //MARK: ---------------- TRACE_ROUTE  -------------------------
     func traceRouteTo(ip:String) {
-        comandsManager.traceRouteTo(ip:ip)
+//        comandsManager.traceRouteTo(ip:ip)
        
     }
 

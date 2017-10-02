@@ -49,20 +49,20 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     }
     @IBAction func traceRoute(_ sender: Any) {
         renderedNodes = []
-        appController.traceRouteTo(ip:traceRouteIp.stringValue)
+//        appController.traceRouteTo(ip:traceRouteIp.stringValue)
         //        61.232.254.39
     }
     @IBAction func killConection(_ sender: NSButton) {
         
     }
     @IBAction func netStat(_ sender: NSButton) {
-        appController.comandsManager.runProcessWith(comand:appController.comandsManager.netStatComand, args:appController.comandsManager.netStatArgs,delegate: self)
+//        appController.comandsManager.runProcessWith(comand:appController.comandsManager.netStatComand, args:appController.comandsManager.netStatArgs,delegate: self)
     }
     @IBAction func whois(_ sender: NSButton) {
-        appController.comandsManager.whoisTo(ip:traceRouteIp.stringValue)
+//        appController.comandsManager.whoisTo(ip:traceRouteIp.stringValue)
     }
     @IBAction func nsLookUp(_ sender: NSButton) {
-        appController.comandsManager.nsLookupTo(ip:traceRouteIp.stringValue)
+//        appController.comandsManager.nsLookupTo(ip:traceRouteIp.stringValue)
     }
     @IBAction func mtRoute(_ sender: NSButton) {
         
@@ -200,10 +200,10 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     
-    func executeSudoComand() {
-        let sudo:SudoComand = SudoComand()
-        sudo.sudoWith(comand:"")
-    }
+//    func executeSudoComand() {
+//        let sudo:SudoComand = SudoComand()
+//        sudo.sudoWith(comand:"")
+//    }
     
     func alert(error: String, text: String) -> Bool {
         let alert = NSAlert()
@@ -352,8 +352,8 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     
     
     
-    func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) {
-        
+//    func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) {
+    
 //        switch processName {
 //        case ComandType.fireWallBadHosts.rawValue:
 //             blockedFireWallNodes.append(node)
@@ -365,14 +365,14 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
 //        default:
 //            print("Error: procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int) ")
 //        }
-    }
+//    }
     
     
     
-    func procesFinishWith(nodes:[TraceRouteNode]) {
+//    func procesFinishWith(nodes:[TraceRouteNode]) {
 //        comandToShow.append(nodes[0])
 //        comandsTableView.reloadData()
-    }
+//    }
     
     
     func procesFinish(processName:String) {

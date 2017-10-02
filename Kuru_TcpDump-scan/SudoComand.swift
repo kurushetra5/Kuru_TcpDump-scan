@@ -13,7 +13,7 @@ class SudoComand  {
     
     
     var sudoTask = Process()
-    var sudoDelegate:TraceRouteDelegate!
+//    var sudoDelegate:TraceRouteDelegate!
     let filesManager:FilesManager = FilesManager.shared
     
     

@@ -53,21 +53,21 @@ class FileComandExtractor  {
     
      //MARK: ---------------- MTR_ROUTE  -------------------------
     
-    func extractIpsFromMTRoute(ips:String) -> [TraceRouteNode] {
-        
-        var nodes:[TraceRouteNode] = []
-        let ipsArray:[String] = ips.components(separatedBy:"\n")
-        
-        for ip in ipsArray {
-            if isValid(ip:ip) {
-               nodes.append(TraceRouteNode(ip:ip))
-            } else {
-                print("ERROR: NO IP NUMBER...")
-            }
-            
-        }
-        return nodes
-    }
+//    func extractIpsFromMTRoute(ips:String) -> [TraceRouteNode] {
+//
+//        var nodes:[TraceRouteNode] = []
+//        let ipsArray:[String] = ips.components(separatedBy:"\n")
+//
+//        for ip in ipsArray {
+//            if isValid(ip:ip) {
+//               nodes.append(TraceRouteNode(ip:ip))
+//            } else {
+//                print("ERROR: NO IP NUMBER...")
+//            }
+//
+//        }
+//        return nodes
+//    }
     
     
     func isValid(ip: String) -> Bool {
@@ -101,15 +101,15 @@ class FileComandExtractor  {
     
     
     //MARK: ---------------- TRACE_ROUTE  -------------------------
-    func extractTraceRoute(fileUrl:URL) -> [TraceRouteNode] {
-        var fileLines:[String] = []
-        var nodes:[TraceRouteNode] = []
-        
-        fileLines = extractLinesFrom(file:fileUrl)
-        nodes =  extractIpsFromTraceRoute(lines:fileLines)
-        
-        return nodes
-    }
+//    func extractTraceRoute(fileUrl:URL) -> [TraceRouteNode] {
+//        var fileLines:[String] = []
+//        var nodes:[TraceRouteNode] = []
+//
+//        fileLines = extractLinesFrom(file:fileUrl)
+//        nodes =  extractIpsFromTraceRoute(lines:fileLines)
+//
+//        return nodes
+//    }
     
     
     func findIpsIn(text:String) -> [String]! {
@@ -126,70 +126,70 @@ class FileComandExtractor  {
     
     
     
-    func extractIpsFromTraceRoute(lines:[String]) -> [TraceRouteNode] {
-        
-        var completIP:[[String]] = []
-        var nodes:[TraceRouteNode] = []
-        
-        for  line in  lines {
-            
-            let  clean1 =  line.replacingOccurrences(of:" ", with:"/")
-            
-            var elementsCount = clean1.components(separatedBy:"//")
-            
-            for element in elementsCount {
-                if element.contains("/ms") {
-                    elementsCount.remove(at:elementsCount.index(of:element)!)
-                }
-                if element.characters.count <= 0 {
-                    elementsCount.remove(at:elementsCount.index(of:element)!)
-                }
-                
-            }
-            
-            if elementsCount.count == 2 {
-                completIP.append(elementsCount)
-            }
-        }
-        
-        for ip in completIP {
-            var  resultIp = ""
-            var resultIps =  ""
-            
-            let number = ip[0].replacingOccurrences(of:"/", with: "")
-            let element = ip[1].components(separatedBy:"/")
-            
-            if element.count == 3 { // trs values no puede ser
-                 let ipTmp1 = element[2].replacingOccurrences(of:"(", with:"")
-                   resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
-                   resultIps = element[1]
-                
-            } else if element.count == 2 {
-                
-                let ipTmp1 = element[1].replacingOccurrences(of:"(", with:"")
-                resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
-                resultIps = element[0]
-
-            }
-            
-            //let myString1 = "556"
-            //let myInt1 = Int(myString1)
-            
-            
-            if resultIp != "" { //FIXME: filtrar router
-                
-                
-                let node:TraceRouteNode = TraceRouteNode(ip:resultIp)
-//                node.ip = resultIp
-                node.ips = resultIps
-                node.number = number
-                nodes.append(node)
-            }
-        }
-         print(nodes)
-        return nodes
-    }
-    
+//    func extractIpsFromTraceRoute(lines:[String]) -> [TraceRouteNode] {
+//
+//        var completIP:[[String]] = []
+////        var nodes:[TraceRouteNode] = []
+//
+//        for  line in  lines {
+//
+//            let  clean1 =  line.replacingOccurrences(of:" ", with:"/")
+//
+//            var elementsCount = clean1.components(separatedBy:"//")
+//
+//            for element in elementsCount {
+//                if element.contains("/ms") {
+//                    elementsCount.remove(at:elementsCount.index(of:element)!)
+//                }
+//                if element.characters.count <= 0 {
+//                    elementsCount.remove(at:elementsCount.index(of:element)!)
+//                }
+//
+//            }
+//
+//            if elementsCount.count == 2 {
+//                completIP.append(elementsCount)
+//            }
+//        }
+//
+//        for ip in completIP {
+//            var  resultIp = ""
+//            var resultIps =  ""
+//
+//            let number = ip[0].replacingOccurrences(of:"/", with: "")
+//            let element = ip[1].components(separatedBy:"/")
+//
+//            if element.count == 3 { // trs values no puede ser
+//                 let ipTmp1 = element[2].replacingOccurrences(of:"(", with:"")
+//                   resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
+//                   resultIps = element[1]
+//
+//            } else if element.count == 2 {
+//
+//                let ipTmp1 = element[1].replacingOccurrences(of:"(", with:"")
+//                resultIp  = ipTmp1.replacingOccurrences(of:")", with:"")
+//                resultIps = element[0]
+//
+//            }
+//
+//            //let myString1 = "556"
+//            //let myInt1 = Int(myString1)
+//
+//
+//            if resultIp != "" { //FIXME: filtrar router
+//
+//
+////                let node:TraceRouteNode = TraceRouteNode(ip:resultIp)
+//////                node.ip = resultIp
+////                node.ips = resultIps
+////                node.number = number
+////                nodes.append(node)
+//            }
+//        }
+//         print(nodes)
+//        return nodes
+//    }
+//
     
     
     func findIP(inText:String) -> [String] {

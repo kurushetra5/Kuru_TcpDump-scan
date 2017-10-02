@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class anotationDetailPopOverController: NSViewController , WhoisDelegate,LookUpDelegate {
+class anotationDetailPopOverController: NSViewController   {
 
     
     @IBOutlet weak var ipName: NSTextField!
@@ -19,12 +19,12 @@ class anotationDetailPopOverController: NSViewController , WhoisDelegate,LookUpD
     
     @IBAction func whois(_ sender: Any) {
         print("whois")
-        comandsManager.whoisTo(ip:anotation.node.number!)
+//        comandsManager.whoisTo(ip:anotation.node.number!)
     }
     
     @IBAction func lookUp(_ sender: Any) {
         print("lookUp")
-        comandsManager.nsLookupTo(ip:anotation.node.number!)
+//        comandsManager.nsLookupTo(ip:anotation.node.number!)
     }
 
     @IBAction func route(_ sender: Any) {
@@ -48,8 +48,8 @@ class anotationDetailPopOverController: NSViewController , WhoisDelegate,LookUpD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        comandsManager.whoisDelegate = self
-        comandsManager.nsLookupDelegate = self
+//        comandsManager.whoisDelegate = self
+//        comandsManager.nsLookupDelegate = self
 //        nodeDetailInfoLabel.stringValue = formatNodeInfo(anotation:anotation)
     }
     

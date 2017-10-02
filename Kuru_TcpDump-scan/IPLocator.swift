@@ -10,7 +10,7 @@
 import Foundation
 
 protocol IPLocatorDelegate {
-    func nodeIpReady(node:TraceRouteNode)
+//    func nodeIpReady(node:TraceRouteNode)
     func nodeIpReady(node:Node)
     func ipLocationReady(ipLocation:IPLocation)
 }
@@ -77,52 +77,52 @@ class   IPLocator  {
     
     
     
-    func fetchIpLocation(node:TraceRouteNode) {
-        
-        let nodeString:String = node.ip
-       let decoder = JSONDecoder()
-        
-        let url = URL(string:"http://ip-api.com/json/" + nodeString)
-        URLSession.shared.dataTask(with: url!, completionHandler: {
-            (data, response, error) in
-            if(error != nil){
-                print(error ?? "Error in fetchIpLocation")
-                //TODO: delegate message error
-            }else{
-                do{
-                    
-                let todo = try decoder.decode(IPLocation.self, from: data!)
-                    print(todo)
-                    
-                    
-                    
-                    let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments) as! [String : AnyObject]
-                    OperationQueue.main.addOperation({
-                        node.aso  = json["as"] as? String
-                        node.city = json["city"] as? String
-                        node.country = json["country"] as? String
-                        node.countryCode = json["countryCode"] as? String
-                        node.isp = json["isp"] as? String
-                        node.lat = json["lat"] as? Double
-                        node.lon = json["lon"] as? Double
-                        node.org = json["org"] as? String
-                        node.region = json["region"] as? String
-                        node.regionName = json["regionName"] as? String
-                        node.status = json["status"] as? String
-                        node.timezone = json["timezone"] as? String
-                        node.zip = json["zip"] as? String
-                        
-                        if node.lat != nil && node.lon != nil {
-                           self.locatorDelegate.nodeIpReady(node:node)
-                        }
-                   })
-                    
-                }catch let error as NSError{
-                    print(error)
-                }
-            }
-        }).resume()
-    }
+//    func fetchIpLocation(node:TraceRouteNode) {
+//
+//        let nodeString:String = node.ip
+//       let decoder = JSONDecoder()
+//
+//        let url = URL(string:"http://ip-api.com/json/" + nodeString)
+//        URLSession.shared.dataTask(with: url!, completionHandler: {
+//            (data, response, error) in
+//            if(error != nil){
+//                print(error ?? "Error in fetchIpLocation")
+//                //TODO: delegate message error
+//            }else{
+//                do{
+//
+//                let todo = try decoder.decode(IPLocation.self, from: data!)
+//                    print(todo)
+//
+//
+//
+//                    let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments) as! [String : AnyObject]
+//                    OperationQueue.main.addOperation({
+//                        node.aso  = json["as"] as? String
+//                        node.city = json["city"] as? String
+//                        node.country = json["country"] as? String
+//                        node.countryCode = json["countryCode"] as? String
+//                        node.isp = json["isp"] as? String
+//                        node.lat = json["lat"] as? Double
+//                        node.lon = json["lon"] as? Double
+//                        node.org = json["org"] as? String
+//                        node.region = json["region"] as? String
+//                        node.regionName = json["regionName"] as? String
+//                        node.status = json["status"] as? String
+//                        node.timezone = json["timezone"] as? String
+//                        node.zip = json["zip"] as? String
+//
+//                        if node.lat != nil && node.lon != nil {
+////                           self.locatorDelegate.nodeIpReady(node:node)
+//                        }
+//                   })
+//
+//                }catch let error as NSError{
+//                    print(error)
+//                }
+//            }
+//        }).resume()
+//    }
     
     
 }

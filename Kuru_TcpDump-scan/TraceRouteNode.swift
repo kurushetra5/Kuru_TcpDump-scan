@@ -80,13 +80,13 @@ class  TraceRouteNode:IPLocatorDelegate  {
     
     func fillNode() {
         
-        if dataBase.isFilledThis(node:self) {
-            print("Node is Founded in DataBase")
-            fillWithCoreDataNode(node:dataBase.foundedNode)
-        } else {
-            print("Node is Filling from Internet")
-            ipLocator.fetchIpLocation(node:self)
-        }
+//        if dataBase.isFilledThis(node:self) {
+//            print("Node is Founded in DataBase")
+//            fillWithCoreDataNode(node:dataBase.foundedNode)
+//        } else {
+//            print("Node is Filling from Internet")
+////            ipLocator.fetchIpLocation(node:self)
+//        }
     }
     
     
@@ -147,11 +147,11 @@ class  TraceRouteNode:IPLocatorDelegate  {
     
     func callDelegates() {
         
-        if withAmountTarget == true {
-            nodeFilledDelegate?.filled(node:self, amountIps:amountIpsToCheck)
-        }else {
-            nodeFilledDelegate?.filled(node:self)
-        }
+//        if withAmountTarget == true {
+//            nodeFilledDelegate?.filled(node:self, amountIps:amountIpsToCheck)
+//        }else {
+//            nodeFilledDelegate?.filled(node:self)
+//        }
     }
     
 }
