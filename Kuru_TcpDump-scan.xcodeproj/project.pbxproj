@@ -31,6 +31,7 @@
 		61C4B80A1F574A3100917528 /* TcpDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C4B8091F574A3100917528 /* TcpDump.swift */; };
 		61CE6FD41F5B4D86007404C5 /* CustomAnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CE6FD31F5B4D86007404C5 /* CustomAnotation.swift */; };
 		61E694BF1F5CB0F200A2AD8D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E694BE1F5CB0F200A2AD8D /* Assets.xcassets */; };
+		61EF6CBF1F81B91F00E047F8 /* ComandsStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EF6CBE1F81B91F00E047F8 /* ComandsStructures.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		61C4B8091F574A3100917528 /* TcpDump.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = TcpDump.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		61CE6FD31F5B4D86007404C5 /* CustomAnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnotation.swift; sourceTree = "<group>"; };
 		61E694BE1F5CB0F200A2AD8D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		61EF6CBE1F81B91F00E047F8 /* ComandsStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComandsStructures.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +163,7 @@
 				612AB89A1F5305D900FC4CF4 /* FileComandExtractor.swift */,
 				616A14FD1F5A1FF5001B15A2 /* SudoComand.swift */,
 				611FA1691F548B350081928C /* FilesManager.swift */,
+				61EF6CBE1F81B91F00E047F8 /* ComandsStructures.swift */,
 			);
 			name = Comands;
 			sourceTree = "<group>";
@@ -245,6 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61C4B80A1F574A3100917528 /* TcpDump.swift in Sources */,
+				61EF6CBF1F81B91F00E047F8 /* ComandsStructures.swift in Sources */,
 				6169AD441F49E63E0016B252 /* ViewController.swift in Sources */,
 				61B954DE1F562F530061A3BC /* IpAnotation.swift in Sources */,
 				612AB89B1F5305D900FC4CF4 /* FileComandExtractor.swift in Sources */,

@@ -132,10 +132,6 @@ class AppController: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
 //        tcpDumpComand.tcpDumpDelegate  = self
     }
     
-    
-    
-    
-    
     func newIpComing(ips:[Node]) {
         
         if showNodesInMapView == NotesInMapMode.on {
@@ -148,6 +144,8 @@ class AppController: TraceRouteDelegate,IPLocatorDelegate ,TcpDumpDelegate  {
         }
         ipsDelegate?.newIpComing(ips:ips)
     }
+    
+    
     
     func newConection(ip:Node) {
         ipsDelegate?.newConection(ip:ip)

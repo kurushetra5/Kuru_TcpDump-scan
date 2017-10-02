@@ -32,9 +32,7 @@ protocol ProcessDelegate {
 }
 
 
-protocol ComandWorkingDelegate {
-    func commandIsWorking(comandType:ComandType)
-}
+ 
 
 
 
@@ -53,172 +51,9 @@ extension DispatchQueue { //TODO: Cambiar de sitio
     
 }
 
-protocol Comand  {
-    var taskPath:String{get set}
-    var taskArgs:[String]{get set}
-    var fileUrl:URL{get set}
-}
-
-protocol ComandIp:Comand  {
-    var ip:String{get set}
-    init(withIp:String)
-    mutating func addIp()
-}
 
 
-enum ComandType:String {
-    case tcpDump,traceRoute,mtRoute,whois,nsLookup,blockIp,netStat,fireWallState,fireWallBadHosts,addFireWallBadHosts,deleteFireWallBadHosts,fireWallStop,fireWallStart
-}
-
-
-struct TraceRoute:ComandIp {
-    var ip:String = ""
-    var taskPath:String =  "/usr/sbin/traceroute"
-    var taskArgs:[String] = ["-w 1" , "-m30" ,"www.google.com"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
-    
-    init(withIp:String) {
-        self.ip = withIp
-        addIp()
-    }
-    
-    mutating func addIp() {
-        self.taskArgs[2] = self.ip
-    }
-}
-
-
-struct NsLookup:ComandIp {
-    var ip:String = ""
-    var taskPath:String =  "/usr/bin/nslookup"
-    var taskArgs:[String] = []
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
-    
-    init(withIp:String) {
-        self.ip = withIp
-        addIp()
-    }
-    
-    mutating func addIp() {
-        self.taskArgs = [self.ip]
-    }
-}
-
-
-struct Whois:ComandIp {
-    var ip:String = ""
-    var taskPath:String =  "/usr/sbin/traceroute"
-    var taskArgs:[String] = []
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
-    
-    init(withIp:String) {
-        self.ip = withIp
-        addIp()
-    }
-    
-    mutating func addIp() {
-        self.taskArgs = [self.ip]
-    }
-}
-
-
-struct MtRoute:ComandIp {
-    
-    var ip:String = ""
-    var taskPath:String =  "/bin/sh"
-    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S  ./mtr -rw -n ??? | awk '{print $2}'"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
-    
-    init(withIp:String) {
-        self.ip = withIp
-        addIp()
-    }
-    
-    mutating func addIp() {
-        let comand:String = taskArgs[1]
-        let comandWithIp:String = comand.replacingOccurrences(of:"???", with:self.ip)
-        self.taskArgs[1] = comandWithIp
-        
-    }
-}
-
-
-struct NetStat:Comand  {
-    var taskPath:String =  "/bin/sh"
-    var taskArgs:[String] = ["-c" , "netstat -an  | grep ESTABLISHED"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
-}
-
-
-struct FireWallStart:Comand  {
-    var taskPath:String =  "/bin/sh"
-    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl -e -f  /etc/pf.conf"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
-}
-
-struct FireWallStop:Comand  {
-    var taskPath:String =  "/bin/sh"
-    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S  pfctl -d"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
-}
-
-
-struct FireWallState:Comand  {
-    var taskPath:String =  "/bin/sh"
-    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl  -s info | grep Status"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
-}
-
-
-struct FireWallBadHosts:Comand  {
-    var taskPath:String =  "/bin/sh"
-    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl -t badhosts -T show"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
-}
-
-
-struct AddFireWallBadHosts:ComandIp  {
-    
-    var ip:String = ""
-    var taskPath:String =  "/bin/sh"
-    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl  -t badhosts -T add ???"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
-    
-    init(withIp:String) {
-        self.ip = withIp
-        addIp()
-    }
-    
-    mutating func addIp() {
-        let comand:String = taskArgs[1]
-        let comandWithIp:String = comand.replacingOccurrences(of:"???", with:self.ip)
-        self.taskArgs[1] = comandWithIp
-        
-    }
-}
-
-
-struct DeleteFireWallBadHosts:ComandIp  {
-    
-    var ip:String = ""
-    var taskPath:String =  "/bin/sh"
-    var taskArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S pfctl  -t badhosts -T delete ???"]
-    var fileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt") //FIXME: no lleva file ??
-    
-    init(withIp:String) {
-        self.ip = withIp
-        addIp()
-    }
-    
-    mutating func addIp() {
-        let comand:String = taskArgs[1]
-        let comandWithIp:String = comand.replacingOccurrences(of:"???", with:self.ip)
-        self.taskArgs[1] = comandWithIp
-        
-    }
-}
-
-
+ 
 
 final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
@@ -400,6 +235,8 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         }
         
         switch type {
+        case .tcpDump:
+            run(comand:TcpDumpCom(), delegate:delegate)
         case .netStat:
             run(comand:NetStat(), delegate:delegate)
         case .traceRoute:
@@ -471,7 +308,8 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
         OperationQueue.main.addOperation({
             
             switch self.comandType {
-                
+            case  .tcpDump:
+                print("tcp dump finish")
             case  .fireWallState:
                 if self.arrayResult.count >= 1 {
                     self.processDelegate.newDataFromProcess(data:self.arrayResult[0], processName:self.comandType!.rawValue)
@@ -528,7 +366,22 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
             let string =  String(data: data, encoding: String.Encoding(rawValue: String.Encoding.ascii.rawValue))
             arrayResult.append(string!)
             
-            //OperationQueue.main.addOperation({
+            
+            if comandType == .tcpDump {
+                let  ips = self.fileExtractor.findIpsIn(text:string!)
+                if ips != nil {
+                    for ip in ips! {
+                         OperationQueue.main.addOperation({
+//                        self.dataBase.nodeWith(ip:ip)
+                            self.dataBase.nodeFromDataBase(ip:ip)
+                            print(ip)
+                        })
+                    }
+                }
+                
+            }
+            
+//             OperationQueue.main.addOperation({
             //self.processDelegate.newDataFromProcess(data:string!, processName:"")
             //})
             fh.waitForDataInBackgroundAndNotify()

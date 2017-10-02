@@ -74,6 +74,25 @@ class dataBaseManager:IPLocatorDelegate {
     }
     
     
+    func nodeFromDataBase(ip:String) {
+        if isInDataBase(ip:ip) {
+            print("Node is Founded in DataBase")
+            nodeFilledDelegate?.filled(node:foundedNode)
+        } else {
+            let newIp:Node = newIpEntity()
+            newIp.number = ip
+            do {
+                try self.managedContext.save()
+                
+            } catch let error as NSError {
+                print("Could not save. \(error), \(error.userInfo)")
+            }
+            nodeFilledDelegate?.filled(node:newIp)
+        }
+    }
+    
+    
+    
     func nodeFrom(ip:String) {
         
         if isInDataBase(ip:ip) {

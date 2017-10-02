@@ -38,7 +38,8 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     //MARK:--------------------------------------- ACTIONS ---------------------------------------
     
     @IBAction func StartTcpDumpScan(_ sender: Any) {
-        appController.startTcpScan()
+//        appController.startTcpScan()
+        appController.comandsManager.runComand(type:ComandType.tcpDump, ip:nil, delegate:self)
     }
     @IBAction func StopTcpDumpScan(_ sender: Any) {
         appController.terminateCommand()
@@ -317,7 +318,9 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
         case ComandType.fireWallBadHosts.rawValue:
              blockedNodes.append(node)
              fireWallTableView.reloadData()
-            
+        case ComandType.tcpDump.rawValue:
+            ipsToShow.append(node)
+            ipsTableView.reloadData()
         default:
             print("Error:procesFinishWith(node:Node, processName:String, amountNodes:Int) ")
         }
