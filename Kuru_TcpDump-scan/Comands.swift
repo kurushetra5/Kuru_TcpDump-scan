@@ -8,23 +8,10 @@
 
 import Foundation
 
-//protocol TraceRouteDelegate {
-//    func traceRouteIps(ips:[TraceRouteNode])
-//}
-//protocol WhoisDelegate {
-//    func whoisFinish(result:String)
-//}
-//protocol LookUpDelegate {
-//    func lookUpFinish(result:String)
-//}
-//protocol NetStatDelegate {
-//    func netStatFinish(result:String)
-//}
+
 
 protocol ProcessDelegate {
     func procesFinish(processName:String)
-//    func procesFinishWith(nodes:[TraceRouteNode])
-//    func procesFinishWith(node:TraceRouteNode, processName:String, amountNodes:Int)
     func procesFinishWith(node:Node)
     func procesFinishWith(node:Node, processName:String)
     func procesFinishWith(node:Node, processName:String, amountNodes:Int)
@@ -62,99 +49,26 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     }
     static let shared = Comands()
     
+    
     let fileExtractor:FileComandExtractor = FileComandExtractor()
     let filesManager:FilesManager = FilesManager.shared
     let dataBase:dataBaseManager = dataBaseManager()
     let ipLocator:IPLocator = IPLocator()
     var comandType:ComandType!
-//    var ipsLocatorFounded:[TraceRouteNode] = []
+ 
     
-    //MARK: ---------------- PROCESS WITH COMAND  -------------------------
+   
     var processDelegate:ProcessDelegate!
     var comandWorkingDelegate:ComandWorkingDelegate!
-    //    var processName:String!
     
-    
-    
-//    //MARK: ---------------- MTROUTE -------------------------
-//    var mtrRouteComand:String = "/bin/sh"
-//    var mtrRouteArgs:[String] = ["-c" , "echo nomeacuerdo8737 | sudo -S  ./mtr -rw -n www.google.com | awk '{print $2}'"]
-//    //    , "| awk '{print $2}'"]
-    
-    
-    
-//    //MARK: ---------------- TRACE_ROUTE  -------------------------
 //    var traceRouteComand:String =  "/usr/sbin/traceroute"
 //    var traceRouteArgs:[String] = ["-w 1" , "-m30" ,"www.google.com"]
-////    var traceRouteIpsDelegate:TraceRouteDelegate!
-//    var traceRouteTask =  Process()
-//    var traceRouteOutFile:FileHandle!
-//    var traceRouteFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/traceRoute.txt")
-    
-    
-//    //MARK: ---------------- WHOIS  -------------------------
-////    var whoisDelegate:WhoisDelegate!
-//    var whoisTask =  Process()
-//    var whoisOutFile:FileHandle!
-//    var whoisFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/whois.txt")
-//
-//    //MARK: ---------------- LOOKUP  -------------------------
-////    var nsLookupDelegate:LookUpDelegate!
-//    var nsLookupTask =  Process()
-//    var nsLookupOutFile:FileHandle!
-//    var nsLookupFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/nsLookup.txt")
-//
-//
-    
-    
-    
-    
-//    //MARK: ---------------- NETSTAT  -------------------------
-////    var netStatDelegate:NetStatDelegate!
-//    var netStatTask =  Process()
-//    var netStatOutFile:FileHandle!
-//    var netStatFileUrl:URL = URL(fileURLWithPath:"/Users/kurushetra/Desktop/netStat.txt")
-//    var netStatComand:String = "/bin/sh"
 //    var netStatArgs:[String] = ["-c" , "netstat -an  | grep ESTABLISHED"]
 //    //    netstat   -an   | grep ESTABLISHED | awk '{print $5}'
-//
-    
-    
-    
-    
 //    //MARK: ---------------- TCPKILL  -------------------------
 //    var tcpKillComand:String = "/bin/sh"
 //    var tcpKillArgs:[String] = ["-c","echo nomeacuerdo8737  | sudo -S tcpkill -i en4  host"]
 //    //sudo   tcpkill -i en4  host 216.58.210.170
-    
-    
-    
-    var comandWorkingTimer:Timer!
-    var arrayResult:[String] = []
-    var nodeInUse:Node!
-    
-    
-    
-    
-    
-    func startTimerEvery(seconds:Double) {
-        comandWorkingTimer = Timer.scheduledTimer(timeInterval: seconds, target: self, selector:#selector(timerComandWorking), userInfo: nil, repeats: true)
-        
-    }
-    
-    @objc func timerComandWorking() {  //FIXME: cambiar ha swift  @objc
-        comandWorkingDelegate?.commandIsWorking(comandType:comandType)
-    }
-    
-    func stopComandWorkingTimer() {
-        
-        if (comandWorkingTimer != nil) {
-            comandWorkingTimer.invalidate()
-        }
-    }
-    
-    
-    
     //MARK: ---------------- PFCTL -------------------------
     //    20  echo nomeacuerdo8737 | sudo -S   sudo pfctl -s info
     //    21  echo nomeacuerdo8737 | sudo -S   pfctl -a com.apple -s rules
@@ -179,10 +93,33 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     
     
+    var comandWorkingTimer:Timer!
+    var arrayResult:[String] = []
+    var nodeInUse:Node!
     
-    //MARK: ---------------- MTROUTE -------------------------
-    //    echo nomeacuerdo8737 | sudo -S  ./mtr -rw -n  google.com |  awk '{print $2}'
-    // traceroute www.google.com | awk '{print $2,  $3}'
+    func startTimerEvery(seconds:Double) {
+        comandWorkingTimer = Timer.scheduledTimer(timeInterval: seconds, target: self, selector:#selector(timerComandWorking), userInfo: nil, repeats: true)
+        
+    }
+    
+    @objc func timerComandWorking() {  //FIXME: cambiar ha swift  @objc
+        comandWorkingDelegate?.commandIsWorking(comandType:comandType)
+    }
+    
+    func stopComandWorkingTimer() {
+        
+        if (comandWorkingTimer != nil) {
+            comandWorkingTimer.invalidate()
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -193,10 +130,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     func nodeIpReady(node: Node) {
         
     }
-//    func nodeIpReady(node:TraceRouteNode) {
-//        ipsLocatorFounded.append(node)
-//    }
-    
+ 
     
     func filled(node:Node, amountIps:Int) { //TODO: acabar
         processDelegate?.procesFinishWith(node:node, processName: comandType.rawValue, amountNodes: amountIps)
@@ -206,15 +140,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     }
     
     
-//    func filled(node:TraceRouteNode, amountIps:Int) {
-////        processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue, amountNodes:amountIps)
-//    }
-//
-//    func filled(node:TraceRouteNode) { //FIXME: Node
-////        processDelegate?.procesFinishWith(nodes:[node]) //FIXME: pasar un node solo
-////        processDelegate?.procesFinishWith(node:node, processName:comandType.rawValue)
-//    }
-    
+ 
     
     
     func runComand(type:ComandType, node:Node, delegate:ProcessDelegate) {
@@ -274,11 +200,9 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     func run(comand:Comand, delegate:ProcessDelegate) {
         
-        
         filesManager.changeToWorkingPath(newPath:"/usr/local/sbin/")//FIXME: cambiarlo segun comando
-        
         processDelegate = delegate
-//        ipsLocatorFounded = []
+ 
         
         let task = Process()
         task.launchPath = comand.taskPath
@@ -339,13 +263,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
                     self.dataBase.nodeWith(ip:ip, amountIps:ips!.count)
                   }
                   
-//                print(ips)
-//                let nodes:[TraceRouteNode] = self.fileExtractor.extractIpsFromMTRoute(ips:self.arrayResult[0])
-//                for node in nodes {
-//                    node.nodeFilledDelegate = self
-//                    node.fillNodeWithData()
-//
-//                }
+ 
             }
         })
         
@@ -373,8 +291,7 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
                 if ips != nil {
                     for ip in ips! {
                          OperationQueue.main.addOperation({
-//                        self.dataBase.nodeWith(ip:ip)
-                            self.dataBase.nodeFromDataBase(ip:ip)
+                        self.dataBase.nodeFromDataBase(ip:ip)
                             print(ip)
                         })
                     }
@@ -395,134 +312,8 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     
     
     
-//    func netStat() {
-//
-//        if netStatTask.isRunning {
-//            terminateNetStat()
-//        }
-//        filesManager.createFileAtPath(path:"/Users/kurushetra/Desktop/netStat.txt")
-//
-//        DispatchQueue.background(delay: 0.0, background: {
-//            self.netStatTask = Process()
-//            self.netStatTask.launchPath = "/bin/sh"
-//            self.netStatTask.arguments = ["-c" , "netstat -an  | grep ESTABLISHED"]
-//            self.netStatOutFile = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/netStat.txt")
-//            self.netStatTask.standardOutput = self.netStatOutFile
-//
-//            self.netStatTask.launch()
-//            //             self.netStatTask.waitUntilExit() //FIXME: Cambiar ha Observer..
-//
-//        }, completion: {
-//            print("Completado")
-//            //            let ips =  self.extractTraceRouteIps()
-////            self.netStatDelegate?.netStatFinish(result:"finish")
-//        })
-//    }
-//
-//    func terminateNetStat() {
-//        netStatTask.terminate()
-//    }
-//
-//
-    
-    
-//    func runProcessWith(name:String, ip:String , delegate:ProcessDelegate) {
-//
-//        var theArgs:String!
-//
-//        if name == "mtRoute" {
-//            theArgs = mtrRouteArgs[0] + mtrRouteArgs[1] + ip + mtrRouteArgs[2]
-//            runProcessWith(comand:mtrRouteComand, args:[theArgs] , delegate:delegate)
-//        }
-//
-//
-//    }
-    
-    
-    
-    
-    
-//    func runProcessWith(comand:String, args:[String] , delegate:ProcessDelegate) {
-//
-//
-//        filesManager.changeToWorkingPath(newPath:"/usr/local/sbin/")
-//
-//        processDelegate = delegate
-//        ipsLocatorFounded = []
-//
-//        let task = Process()
-//        task.launchPath = comand
-//        task.arguments = args
-//        //        | awk '{print $3,  $5}'
-//
-//        let pipe = Pipe()
-//        task.standardOutput = pipe
-//        let fh = pipe.fileHandleForReading
-//        fh.waitForDataInBackgroundAndNotify()
-//
-//        let notificationCenter = NotificationCenter.default
-//        notificationCenter.addObserver(self, selector: #selector(receivedData), name: NSNotification.Name.NSFileHandleDataAvailable, object: nil)
-//
-//        task.terminationHandler = {task -> Void in
-//            print("acabado")
-//
-//
-//
-//            self.processResults()
-//        }
-//        task.launch()
-//    }
-    
-    
-    
-    
-    
-    
-    
-    
-//    //MARK: ---------------- TRACE_ROUTE  -------------------------
-//    func traceRouteTo(ip:String) {
-//
-//        if traceRouteTask.isRunning {
-//            terminateTraceRoute()
-//        }
-//
-//        DispatchQueue.background(delay: 0.0, background: {
-//            self.traceRouteTask = Process()
-//            self.traceRouteTask.launchPath = "/usr/sbin/traceroute"
-//            self.traceRouteTask.arguments = ["-w 1" , "-m30" ,ip]
-//            self.traceRouteOutFile = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/traceRoute.txt")
-//            self.traceRouteTask.standardOutput = self.traceRouteOutFile
-//
-//            self.traceRouteTask.launch()
-//            self.traceRouteTask.waitUntilExit() //FIXME: Cambiar ha Observer..
-//
-//        }, completion: {
-//            print("Completado")
-////            self.traceRouteIpsDelegate?.traceRouteIps(ips:self.extractTraceRouteIps())
-//        })
-//    }
-//
-    
-//    func terminateTraceRoute() {
-//        traceRouteTask.terminate()
-//    }
-//
-    
-//    func extractTraceRouteIps() -> [TraceRouteNode] {
-//        return fileExtractor.extractTraceRoute(fileUrl:traceRouteFileUrl)
-//    }
-//
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+ 
+ 
     
     
     //MARK: ---------------- WHOIS  -------------------------
@@ -556,67 +347,8 @@ final class  Comands:IPLocatorDelegate,NodeFilledDelegate  {
     //
     //    -r      Use the R'eseaux IP Europ'eens (RIPE) database.  It contains network numbers and domain contact information for Europe.
     
+ 
     
-//    func whoisTo(ip:String) {
-//
-//        filesManager.createFileAtPath(path:"/Users/kurushetra/Desktop/whois.txt")
-//
-//        whoisTask = Process()
-//        whoisTask.launchPath = "/usr/bin/whois"
-//        whoisTask.arguments = [ip]
-//        whoisOutFile = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/whois.txt")
-//        whoisTask.standardOutput = whoisOutFile
-//        NotificationCenter.default.addObserver(self, selector:#selector(whoisFinish), name:Process.didTerminateNotification, object:nil)
-//        whoisTask.launch()
-//
-//    }
-//
-//
-//    @objc func whoisFinish() {
-//        print("whois finish")
-//        whoisTask.terminate()
-//        do   {
-//            let data = try  Data(contentsOf:whoisFileUrl)
-//            let dataString:String = String(data:data, encoding:.utf8)!
-////            whoisDelegate.whoisFinish(result:dataString)
-//        }catch {
-//            print("ERROR: whois file not read it..")
-//        }
-//
-//    }
-//
-    
-    
-    
-    
-//    //MARK: ---------------- LOOKUP  -------------------------
-//
-//    func nsLookupTo(ip:String) {
-//
-//        filesManager.createFileAtPath(path:"/Users/kurushetra/Desktop/nsLookup.txt")
-//        nsLookupTask = Process()
-//        nsLookupTask.launchPath = "/usr/bin/nslookup"
-//        nsLookupTask.arguments = [ip]
-//        nsLookupOutFile = FileHandle(forWritingAtPath:"/Users/kurushetra/Desktop/nsLookup.txt")
-//        nsLookupTask.standardOutput = nsLookupOutFile
-//        NotificationCenter.default.addObserver(self, selector:#selector(lookUpFinish), name:Process.didTerminateNotification, object:nil)
-//        nsLookupTask.launch()
-//
-//    }
-//
-//    @objc func lookUpFinish() {
-//        print("lookUp finish")
-//
-//        nsLookupTask.terminate()
-//        do   {
-//            let data = try  Data(contentsOf:nsLookupFileUrl)
-//            let dataString:String = String(data:data, encoding:.utf8)!
-////            nsLookupDelegate.lookUpFinish(result:dataString)
-//        }catch {
-//            print("ERROR: lookUp file not read it..")
-//        }
-//
-//    }
-    
+ 
     
 }

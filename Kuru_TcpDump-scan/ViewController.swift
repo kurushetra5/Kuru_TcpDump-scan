@@ -35,6 +35,7 @@ class ViewController: NSViewController ,IPsDelegate,ProcessDelegate,ComandWorkin
     @IBOutlet weak var unBlockIpButton: NSButton!
     
     
+    
     //MARK:--------------------------------------- ACTIONS ---------------------------------------
     
     @IBAction func StartTcpDumpScan(_ sender: Any) {

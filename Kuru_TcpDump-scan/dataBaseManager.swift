@@ -39,10 +39,7 @@ class dataBaseManager:IPLocatorDelegate {
         ipLocator.locatorDelegate = self
     }
     
-    
-//    func nodeIpReady(node:TraceRouteNode) {
-//
-//    }
+  
     func nodeIpReady(node:Node) {
         
     }
@@ -136,19 +133,7 @@ class dataBaseManager:IPLocatorDelegate {
     }
     
     
-    
-//    func newIpWith(node:TraceRouteNode) -> Node {
-//        var newIp:Node = newIpEntity()
-//        newIp = newIp.fromNode(node: node)
-//        do {
-//            try self.managedContext.save()
-//
-//        } catch let error as NSError {
-//            print("Could not save. \(error), \(error.userInfo)")
-//        }
-//        return newIp
-//    }
-    
+ 
     
     
     func isInDataBase(ip:String) -> Bool {
@@ -166,20 +151,7 @@ class dataBaseManager:IPLocatorDelegate {
     }
     
     
-    
-//    func isFilledThis(node:TraceRouteNode) -> Bool {
-//
-//        if fetchInfoFor(node:node).found == true {
-//            //            let ipNode:String = node.ip
-//            //            print(ipNode)
-//            return true
-//        }else {
-//            return false
-//        }
-//
-//        //TODO: mirar si esta si esta rellenar si no false y lo localiza
-//
-//    }
+  
     
     func fetchInfoFor(ip:String) -> (found:Bool,ip:Node) { //FIXME: Sobra ip
         

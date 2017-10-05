@@ -12,10 +12,11 @@ protocol ComandWorkingDelegate {
     func commandIsWorking(comandType:ComandType)
 }
 
+
 protocol Comand  {
     var taskPath:String{get set}
     var taskArgs:[String]{get set}
-//    var fileUrl:URL{get set}
+ 
 }
 
 protocol ComandIp:Comand  {

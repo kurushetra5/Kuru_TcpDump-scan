@@ -58,44 +58,12 @@ class AppController    {
     var showNodesInMapView:NotesInMapMode = NotesInMapMode.off
     
     
-    
-//    func traceRouteIps(ips:[TraceRouteNode]) {
-//        //TODO: mirar si esta en la dataBase y actualizar la de vez en cuando
-////        let dataBase:dataBaseManager = dataBaseManager()
-//
-//        for node in ips {
-//            if dataBase.isFilledThis(node:node) {
-//                print("Node is Founded in DataBase")
-////                var nodeFilled = dataBase.foundedNode
-//                ipsDelegate?.newNode(node:dataBase.foundedNode!)
-//            } else {
-//                print("Node is Filling from Internet")
-//                ipLocator.fetchIpLocation(node:node)
-//            }
-//
-//        }
-//
-//
-//
-////        for node in ips {
-////            if dataBase.isFilledThis(node:node) {
-////                print("Node is filled")
-////                ipsDelegate?.newNode(node:node)
-////            } else {
-////              ipLocator.fetchIpLocation(node:node)
-////            }
-////
-////        }
-//    }
-//
+   
     
     func nodeIpReady(node: Node) {
         
     }
-//    func nodeIpReady(node:TraceRouteNode) {
-//
-//      ipsDelegate?.newNode(node:dataBase.newIpWith(node:node))
-//    }
+ 
     func ipLocationReady(ipLocation:IPLocation) {
         
     }
@@ -150,9 +118,7 @@ class AppController    {
     func newConection(ip:Node) {
         ipsDelegate?.newConection(ip:ip)
     }
-//    func newNode(node:TraceRouteNode) {
-//        ipsDelegate?.newNode(node:node)
-//    }
+ 
     func newPackage() {
         ipsDelegate?.newPackage()
     }
